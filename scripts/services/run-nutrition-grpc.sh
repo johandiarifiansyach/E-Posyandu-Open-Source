@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# Copyright (C) 2026 Johandi Arifiansyach
+
+set -euo pipefail
+
+project_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+env_file="${EPOSYANDU_GRPC_ENV_FILE:-$HOME/.config/e-posyandu/data-processing-worker.env}"
+binary="${EPOSYANDU_GRPC_BINARY:-$project_root/backend/services/data-processing-service/target/release/data-processing-worker}"
+
+if [[ ! -f "$env_file" ]]; then
+  echo "Konfigurasi gRPC tidak ditemukan: $env_file" >&2
+  exit 1
+fi
+
+set -a
+# shellcheck disable=SC1090
+source "$env_file"
+set +a
+
+required=(
+  CLOUDFLARE_ACCOUNT_ID
+  CLOUDFLARE_QUEUE_ID
+  CLOUDFLARE_QUEUES_API_TOKEN
+  EPOSYANDU_API_URL
+  RUST_WORKER_SHARED_SECRET
+)
+for name in "${required[@]}"; do
+  if [[ -z "${!name:-}" || "${!name}" == replace-* ]]; then
+    echo "Environment $name belum diisi." >&2
+    exit 1
+  fi
+done
+
+if [[ ! -x "$binary" ]]; then
+    echo "Binary data-processing-worker belum dibuat. Jalankan npm run data-processing:build." >&2
+  exit 1
+fi
+
+exec "$binary"

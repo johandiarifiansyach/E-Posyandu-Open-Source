@@ -1,0 +1,1338 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "E-Posyandu Puskesmas Demo API",
+    "version": "3.8.1",
+    "description": "REST API untuk autentikasi, CRUD, sinkronisasi, dan ekspor, serta endpoint GraphQL baca E-Posyandu."
+  },
+  "servers": [
+    {
+      "url": "https://api.eposyandu.app"
+    }
+  ],
+  "paths": {
+    "/api/v1/health": {
+      "get": {
+        "summary": "Memeriksa kesehatan API",
+        "operationId": "healthCheck",
+        "responses": {
+          "200": {
+            "description": "API aktif",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Health"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/health/ready": {
+      "get": {
+        "summary": "Memeriksa kesiapan komponen operasional tanpa membaca data balita",
+        "operationId": "readinessCheck",
+        "responses": {
+          "200": {
+            "description": "Ringkasan kesiapan API, database, cache, Queue, R2, dan worker gRPC",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Readiness"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/openapi.json": {
+      "get": {
+        "summary": "Mengambil kontrak OpenAPI",
+        "operationId": "openApiDocument",
+        "responses": {
+          "200": {
+            "description": "Dokumen OpenAPI"
+          }
+        }
+      }
+    },
+    "/api/v1/graphql": {
+      "post": {
+        "summary": "Menjalankan query GraphQL baca sesuai cakupan wilayah pengguna",
+        "operationId": "graphQlQuery",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["query"],
+                "properties": {
+                  "query": { "type": "string" },
+                  "variables": { "type": "object" },
+                  "operationName": { "type": ["string", "null"] }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Hasil query GraphQL atau error GraphQL terstruktur" },
+          "401": { "$ref": "#/components/responses/ApiError" }
+        }
+      }
+    },
+    "/api/v1/graphql/schema": {
+      "get": {
+        "summary": "Mengambil schema GraphQL baca",
+        "operationId": "graphQlSchema",
+        "responses": {
+          "200": { "description": "Schema Definition Language GraphQL" }
+        }
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "summary": "Masuk memakai username dan kata sandi",
+        "operationId": "login",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Cookie sesi HttpOnly dibuat; respons tidak memuat token bearer",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "429": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        }
+      }
+    },
+    "/api/v1/auth/mfa/enroll": {
+      "post": {
+        "summary": "Mendaftarkan faktor MFA administrator",
+        "operationId": "adminMfaEnroll",
+        "security": [{ "sessionCookie": [] }],
+        "responses": {
+          "200": { "description": "Faktor MFA dibuat dalam status belum terverifikasi" },
+          "401": { "$ref": "#/components/responses/ApiError" }
+        }
+      }
+    },
+    "/api/v1/auth/invite/complete": {
+      "post": {
+        "summary": "Menyelesaikan undangan administrator dan membuat sesi MFA sementara",
+        "operationId": "completeAdminInvite",
+        "responses": {
+          "200": {
+            "description": "Kata sandi disimpan dan sesi menunggu MFA",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MfaPendingLoginResponse" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/ApiError" }
+        }
+      }
+    },
+    "/api/v1/auth/mfa/challenge": {
+      "post": {
+        "summary": "Membuat challenge MFA administrator",
+        "operationId": "adminMfaChallenge",
+        "security": [{ "sessionCookie": [] }],
+        "responses": {
+          "200": { "description": "Challenge MFA dibuat" },
+          "401": { "$ref": "#/components/responses/ApiError" }
+        }
+      }
+    },
+    "/api/v1/auth/mfa/verify": {
+      "post": {
+        "summary": "Memverifikasi TOTP atau recovery code administrator",
+        "operationId": "adminMfaVerify",
+        "security": [{ "sessionCookie": [] }],
+        "responses": {
+          "200": { "description": "Sesi administrator aktif pada AAL2 atau recovery yang valid" },
+          "401": { "$ref": "#/components/responses/ApiError" }
+        }
+      }
+    },
+    "/api/v1/auth/passkey/registration/options": {
+      "post": {
+        "summary": "Membuat opsi pendaftaran passkey administrator",
+        "operationId": "adminPasskeyRegistrationOptions",
+        "security": [{ "sessionCookie": [] }],
+        "responses": {
+          "200": { "description": "Opsi WebAuthn dan challenge pendaftaran" },
+          "403": { "$ref": "#/components/responses/ApiError" },
+          "503": { "$ref": "#/components/responses/ApiError" }
+        }
+      }
+    },
+    "/api/v1/auth/passkey/registration/verify": {
+      "post": {
+        "summary": "Memverifikasi dan menyimpan passkey administrator",
+        "operationId": "adminPasskeyRegistrationVerify",
+        "security": [{ "sessionCookie": [] }],
+        "responses": {
+          "200": { "description": "Passkey tersimpan dan sesi administrator aktif" },
+          "401": { "$ref": "#/components/responses/ApiError" },
+          "422": { "$ref": "#/components/responses/ApiError" }
+        }
+      }
+    },
+    "/api/v1/auth/passkey/authentication/options": {
+      "post": {
+        "summary": "Membuat opsi autentikasi passkey administrator",
+        "operationId": "adminPasskeyAuthenticationOptions",
+        "security": [{ "sessionCookie": [] }],
+        "responses": {
+          "200": { "description": "Opsi WebAuthn dan challenge autentikasi" },
+          "403": { "$ref": "#/components/responses/ApiError" },
+          "503": { "$ref": "#/components/responses/ApiError" }
+        }
+      }
+    },
+    "/api/v1/auth/passkey/authentication/verify": {
+      "post": {
+        "summary": "Memverifikasi passkey administrator",
+        "operationId": "adminPasskeyAuthenticationVerify",
+        "security": [{ "sessionCookie": [] }],
+        "responses": {
+          "200": { "description": "Sesi administrator aktif" },
+          "401": { "$ref": "#/components/responses/ApiError" },
+          "422": { "$ref": "#/components/responses/ApiError" }
+        }
+      }
+    },
+    "/api/v1/auth/logout": {
+      "post": {
+        "summary": "Menghapus sesi HttpOnly dan sesi Supabase",
+        "operationId": "logout",
+        "security": [{ "sessionCookie": [] }],
+        "responses": {
+          "200": { "description": "Sesi dihapus" }
+        }
+      }
+    },
+    "/api/v1/auth/session": {
+      "get": {
+        "summary": "Memeriksa sesi HttpOnly aktif",
+        "operationId": "currentSession",
+        "security": [{ "sessionCookie": [] }, { "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Sesi dan profil aktif" },
+          "401": { "$ref": "#/components/responses/ApiError" },
+          "403": { "$ref": "#/components/responses/ApiError" }
+        }
+      }
+    },
+    "/api/v1/admin/accounts/{userId}": {
+      "parameters": [{ "name": "userId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
+      "patch": {
+        "summary": "Mengubah identitas, role, scope, dan hak akses akun",
+        "operationId": "updateAdminAccount",
+        "security": [{ "sessionCookie": [] }, { "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AdminAccountInput" } } }
+        },
+        "responses": {
+          "200": { "description": "Akun diperbarui dan sesi lamanya dibatalkan" },
+          "401": { "$ref": "#/components/responses/ApiError" },
+          "403": { "$ref": "#/components/responses/ApiError" },
+          "409": { "$ref": "#/components/responses/ApiError" },
+          "422": { "$ref": "#/components/responses/ApiError" }
+        }
+      },
+      "delete": {
+        "summary": "Menghapus akun aplikasi dan autentikasi",
+        "operationId": "deleteAdminAccount",
+        "security": [{ "sessionCookie": [] }, { "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Akun dihapus" },
+          "401": { "$ref": "#/components/responses/ApiError" },
+          "403": { "$ref": "#/components/responses/ApiError" },
+          "409": { "$ref": "#/components/responses/ApiError" }
+        }
+      }
+    },
+    "/api/v1/auth/presence": {
+      "post": {
+        "summary": "Memperbarui aktivitas akun untuk status online",
+        "operationId": "touchAccountPresence",
+        "security": [{ "sessionCookie": [] }, { "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Aktivitas akun tercatat",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PresenceResponse" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/ApiError" }
+        }
+      }
+    },
+    "/api/v1/admin/accounts": {
+      "get": {
+        "summary": "Memantau seluruh akun dari halaman administrasi backend",
+        "description": "Khusus super_admin dengan sesi MFA terverifikasi.",
+        "operationId": "adminAccountsOverview",
+        "security": [{ "sessionCookie": [] }, { "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Ringkasan akses penuh dan status aktivitas akun",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AdminAccountsOverview" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/ApiError" },
+          "403": { "$ref": "#/components/responses/ApiError" }
+        }
+      },
+      "post": {
+        "summary": "Membuat akun dan mengirim undangan aktivasi",
+        "description": "Khusus super_admin dengan sesi MFA terverifikasi.",
+        "operationId": "createAdminAccount",
+        "security": [{ "sessionCookie": [] }, { "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AdminAccountInput" } } }
+        },
+        "responses": {
+          "201": { "description": "Undangan akun dikirim" },
+          "401": { "$ref": "#/components/responses/ApiError" },
+          "403": { "$ref": "#/components/responses/ApiError" },
+          "409": { "$ref": "#/components/responses/ApiError" },
+          "422": { "$ref": "#/components/responses/ApiError" }
+        }
+      }
+    },
+    "/api/v1/admin/monitoring/stream": {
+      "get": {
+        "summary": "Mengalirkan metrik Oracle secara realtime melalui SSE",
+        "description": "Khusus super_admin dengan sesi MFA terverifikasi. Pengambilan metrik aktif hanya selama koneksi SSE terbuka.",
+        "operationId": "streamAdminMonitoring",
+        "security": [{ "sessionCookie": [] }],
+        "responses": {
+          "200": {
+            "description": "Aliran event metrics setiap lima detik",
+            "content": {
+              "text/event-stream": {
+                "schema": { "type": "string" },
+                "x-event-schema": { "$ref": "#/components/schemas/AdminMonitoringSample" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/ApiError" },
+          "403": { "$ref": "#/components/responses/ApiError" },
+          "429": { "$ref": "#/components/responses/ApiError" }
+        }
+      }
+    },
+    "/api/v1/realtime/stream": {
+      "get": {
+        "summary": "Mengalirkan notifikasi perubahan data aplikasi melalui SSE",
+        "description": "SSE terautentikasi yang hanya mengirim metadata perubahan tanpa isi data sensitif. Klien mengambil ulang data melalui endpoint berotorisasi.",
+        "operationId": "streamRealtimeData",
+        "security": [{ "sessionCookie": [] }, { "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Aliran event data atau resync",
+            "content": {
+              "text/event-stream": {
+                "schema": { "type": "string" },
+                "x-event-schema": {
+                  "type": "object",
+                  "required": ["id", "resource", "operation", "changedAt"],
+                  "properties": {
+                    "id": { "type": "string", "format": "uuid" },
+                    "resource": { "type": "string" },
+                    "operation": { "type": "string", "enum": ["create", "update", "delete"] },
+                    "changedAt": { "type": "string", "format": "date-time" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/ApiError" },
+          "429": { "$ref": "#/components/responses/ApiError" }
+        }
+      }
+    },
+    "/api/v1/me": {
+      "get": {
+        "summary": "Mengambil profil dan cakupan akses",
+        "operationId": "currentUser",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Profil pengguna"
+          },
+          "401": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        }
+      }
+    },
+    "/api/v1/features": {
+      "get": {
+        "summary": "Mengambil feature flag aktif",
+        "operationId": "featureFlags",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Daftar feature flag"
+          }
+        }
+      }
+    },
+    "/api/v1/monitoring/status": {
+      "get": {
+        "summary": "Mengambil status worker dan kesiapan infrastruktur untuk Ahli Gizi",
+        "operationId": "monitoringStatus",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Status infrastruktur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MonitoringStatus"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        }
+      }
+    },
+    "/api/v1/dashboard/stats": {
+      "get": {
+        "summary": "Mengambil ringkasan dashboard sesuai wilayah pengguna",
+        "operationId": "dashboardStats",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ringkasan dashboard"
+          }
+        }
+      }
+    },
+    "/api/v1/children/page": {
+      "get": {
+        "summary": "Mengambil satu halaman daftar balita",
+        "operationId": "childrenPage",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Halaman data balita"
+          }
+        }
+      }
+    },
+    "/api/v1/exclusive-breastfeeding/page": {
+      "get": {
+        "summary": "Mengambil satu halaman data ASI eksklusif",
+        "operationId": "exclusiveBreastfeedingPage",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Halaman data ASI eksklusif"
+          }
+        }
+      }
+    },
+    "/api/v1/exports/sigizi-measurements": {
+      "get": {
+        "summary": "Mengambil data ekspor pengukuran Sigizi",
+        "operationId": "sigiziMeasurementExport",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Baris data ekspor"
+          }
+        }
+      }
+    },
+    "/api/v1/sync": {
+      "post": {
+        "summary": "Mengirim mutasi offline dan menarik perubahan server",
+        "operationId": "synchronize",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Hasil sinkronisasi"
+          },
+          "409": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        }
+      }
+    },
+    "/api/v1/analysis/anthropometry": {
+      "post": {
+        "summary": "Menghitung status antropometri WHO melalui Python secara batch",
+        "operationId": "calculateAnthropometry",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["items"],
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "maxItems": 10000,
+                    "items": { "$ref": "#/components/schemas/AnthropometryInput" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Status dan skor-z WHO deterministik dari Python" },
+          "401": { "$ref": "#/components/responses/ApiError" },
+          "422": { "$ref": "#/components/responses/ApiError" },
+          "502": { "$ref": "#/components/responses/ApiError" }
+        }
+      }
+    },
+    "/api/v1/analysis/growth-chart": {
+      "post": {
+        "summary": "Menggambar grafik pertumbuhan WHO sebagai SVG melalui Python",
+        "operationId": "renderGrowthChart",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["chartType", "sex", "points"],
+                "properties": {
+                  "chartType": { "type": "string", "enum": ["bbu", "tbu", "bbtb", "imtu", "lilau", "lku"] },
+                  "sex": { "type": "string", "enum": ["L", "P"] },
+                  "childName": { "type": "string" },
+                  "language": { "type": "string", "enum": ["id"] },
+                  "points": { "type": "array", "maxItems": 10000, "items": { "$ref": "#/components/schemas/AnthropometryInput" } }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "SVG grafik WHO dan versi standar" },
+          "401": { "$ref": "#/components/responses/ApiError" },
+          "422": { "$ref": "#/components/responses/ApiError" },
+          "502": { "$ref": "#/components/responses/ApiError" }
+        }
+      }
+    },
+    "/api/v1/jobs": {
+      "post": {
+        "summary": "Membuat pekerjaan berat untuk Queue dan gRPC worker",
+        "operationId": "createBackgroundJob",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 128
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BackgroundJobCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Job masuk antrean",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BackgroundJob"
+                }
+              }
+            }
+          },
+          "422": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        }
+      }
+    },
+    "/api/v1/jobs/{jobId}": {
+      "get": {
+        "summary": "Membaca progres dan hasil pekerjaan",
+        "operationId": "getBackgroundJob",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "jobId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Status job",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BackgroundJob"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        }
+      }
+    },
+    "/api/v1/jobs/{jobId}/file": {
+      "get": {
+        "summary": "Mengunduh hasil Excel atau PDF privat dari R2",
+        "operationId": "downloadBackgroundJobFile",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "jobId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Berkas hasil job"
+          },
+          "404": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        }
+      }
+    },
+    "/api/v1/client-errors": {
+      "post": {
+        "summary": "Mencatat error teknis frontend tanpa data formulir",
+        "operationId": "reportClientError",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Laporan diterima"
+          }
+        }
+      }
+    },
+    "/api/v1/security/csp-report": {
+      "post": {
+        "summary": "Menerima laporan pelanggaran CSP yang sudah diminimalkan dan dibatasi laju",
+        "operationId": "reportCspViolation",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/csp-report": { "schema": { "type": "object" } },
+            "application/reports+json": {
+              "schema": { "type": "array", "items": { "type": "object" } }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Laporan diterima" },
+          "413": { "$ref": "#/components/responses/ApiError" },
+          "422": { "$ref": "#/components/responses/ApiError" },
+          "429": { "$ref": "#/components/responses/ApiError" }
+        }
+      }
+    },
+    "/api/v1/collections/{resource}": {
+      "parameters": [
+        {
+          "name": "resource",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "children",
+              "measurements",
+              "mpasi_logs",
+              "pmt_programs",
+              "change_logs"
+            ]
+          }
+        }
+      ],
+      "get": {
+        "summary": "Mengambil data koleksi sesuai cakupan akses",
+        "operationId": "listCollection",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Daftar dokumen"
+          }
+        }
+      },
+      "post": {
+        "summary": "Menambahkan dokumen dengan idempotency key",
+        "operationId": "createDocument",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dokumen dibuat"
+          }
+        }
+      }
+    },
+    "/api/v1/collections/{resource}/{id}": {
+      "parameters": [
+        {
+          "name": "resource",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Mengambil satu dokumen",
+        "operationId": "getDocument",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dokumen"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Memperbarui satu dokumen",
+        "operationId": "updateDocument",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dokumen diperbarui"
+          },
+          "409": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Menghapus satu dokumen",
+        "operationId": "deleteDocument",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dokumen dihapus"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      },
+      "sessionCookie": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "__Host-e-posyandu-session"
+      }
+    },
+    "schemas": {
+      "AnthropometryInput": {
+        "type": "object",
+        "description": "Data mentah pengukuran yang dihitung dengan tabel LMS WHO di service Python. Validasi rentang dilakukan oleh endpoint.",
+        "properties": {
+          "weightKg": { "type": ["number", "null"], "minimum": 0.1, "maximum": 60 },
+          "heightCm": { "type": ["number", "null"], "minimum": 10, "maximum": 220 },
+          "ageMonths": { "type": ["integer", "null"], "minimum": 0, "maximum": 60 },
+          "sex": { "type": "string", "enum": ["L", "P"] },
+          "measurementMethod": { "type": ["string", "null"] },
+          "rowNumber": { "type": ["integer", "null"], "minimum": 1 },
+          "recordId": { "type": ["string", "null"] },
+          "nik": { "type": ["string", "null"] },
+          "lilaCm": { "type": ["number", "null"], "minimum": 0.1, "maximum": 50 },
+          "headCircumferenceCm": { "type": ["number", "null"], "minimum": 0.1, "maximum": 80 },
+          "measurementDate": { "type": ["string", "null"], "format": "date" },
+          "exclusiveBreastfeeding": { "type": ["string", "null"] },
+          "history": { "type": "array", "items": { "type": "object", "additionalProperties": true } }
+        },
+        "additionalProperties": false
+      },
+      "Health": {
+        "type": "object",
+        "required": [
+          "ok",
+          "service",
+          "database",
+          "version"
+        ],
+        "properties": {
+          "ok": {
+            "type": "boolean"
+          },
+          "service": {
+            "type": "string"
+          },
+          "database": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          }
+        }
+      },
+      "Readiness": {
+        "type": "object",
+        "required": ["ok", "status", "checkedAt", "environment", "components"],
+        "properties": {
+          "ok": { "type": "boolean" },
+          "status": {
+            "type": "string",
+            "enum": ["ready", "degraded", "not-ready"]
+          },
+          "checkedAt": { "type": "string", "format": "date-time" },
+          "environment": { "type": "string" },
+          "components": { "type": "object" }
+        }
+      },
+      "MonitoringStatus": {
+        "type": "object",
+        "required": [
+          "environment",
+          "worker",
+          "database",
+          "storage",
+          "queue",
+          "alerts"
+        ],
+        "properties": {
+          "environment": {
+            "type": "string"
+          },
+          "worker": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "string",
+                "enum": ["healthy", "degraded", "down", "unknown", "unconfigured"]
+              },
+              "checkedAt": {
+                "type": ["string", "null"],
+                "format": "date-time"
+              },
+              "latencyMs": {
+                "type": ["integer", "null"]
+              },
+              "consecutiveFailures": {
+                "type": "integer"
+              }
+            }
+          },
+          "database": {
+            "type": "object"
+          },
+          "storage": {
+            "type": "object",
+            "properties": {
+              "r2Configured": {
+                "type": "boolean"
+              },
+              "status": {
+                "type": ["object", "null"],
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": ["healthy", "cleaned", "warning"]
+                  },
+                  "checkedAt": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "totalBytes": {
+                    "type": "integer"
+                  },
+                  "temporaryBytes": {
+                    "type": "integer"
+                  },
+                  "objectCount": {
+                    "type": "integer"
+                  },
+                  "deletedObjects": {
+                    "type": "integer"
+                  },
+                  "deletedBytes": {
+                    "type": "integer"
+                  },
+                  "softLimitBytes": {
+                    "type": "integer"
+                  },
+                  "cleanupTargetBytes": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          },
+          "queue": {
+            "type": "object"
+          },
+          "alerts": {
+            "type": "object"
+          }
+        }
+      },
+      "LoginRequest": {
+        "type": "object",
+        "required": [
+          "username",
+          "password"
+        ],
+        "properties": {
+          "username": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 32
+          },
+          "password": {
+            "type": "string",
+            "format": "password"
+          },
+          "turnstileToken": {
+            "type": "string"
+          }
+        }
+      },
+      "AccessProfile": {
+        "type": "object",
+        "required": [
+          "userId",
+          "role",
+          "accessMode"
+        ],
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "email": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "email"
+          },
+          "role": {
+            "type": "string"
+          },
+          "desa": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "posyandu": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "accessMode": {
+            "type": "string",
+            "enum": ["read", "write"]
+          }
+        }
+      },
+      "PresenceResponse": {
+        "type": "object",
+        "required": ["online", "checkedAt"],
+        "properties": {
+          "online": { "type": "boolean", "const": true },
+          "checkedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "AdminAccountPresence": {
+        "type": "object",
+        "required": ["userId", "active", "accessMode", "isCurrentAccount", "presenceStatus"],
+        "properties": {
+          "userId": { "type": "string", "format": "uuid" },
+          "username": { "type": ["string", "null"] },
+          "email": { "type": ["string", "null"], "format": "email" },
+          "role": { "type": ["string", "null"] },
+          "village": { "type": ["string", "null"] },
+          "posyandu": { "type": ["string", "null"] },
+          "active": { "type": "boolean" },
+          "accessMode": { "type": "string", "enum": ["read", "write"] },
+          "isCurrentAccount": { "type": "boolean" },
+          "presenceStatus": { "type": "string", "enum": ["online", "offline"] },
+          "lastSeenAt": { "type": ["string", "null"], "format": "date-time" },
+          "createdAt": { "type": ["string", "null"], "format": "date-time" }
+        }
+      },
+      "AdminAccountInput": {
+        "type": "object",
+        "required": ["email", "username", "role", "accessMode"],
+        "properties": {
+          "email": { "type": "string", "format": "email", "maxLength": 254 },
+          "username": { "type": "string", "minLength": 3, "maxLength": 32, "pattern": "^[a-z0-9][a-z0-9._-]{2,31}$" },
+          "role": { "type": "string", "enum": ["Kader Posyandu", "Bidan Desa", "Ahli Gizi", "super_admin"] },
+          "village": { "type": ["string", "null"] },
+          "posyandu": { "type": ["string", "null"] },
+          "accessMode": { "type": "string", "enum": ["read", "write"] },
+          "active": { "type": "boolean", "default": true }
+        }
+      },
+      "AdminAccountsOverview": {
+        "type": "object",
+        "required": ["checkedAt", "onlineWindowSeconds", "access", "summary", "accounts"],
+        "properties": {
+          "checkedAt": { "type": "string", "format": "date-time" },
+          "onlineWindowSeconds": { "type": "integer", "minimum": 60 },
+          "access": { "type": "object" },
+          "summary": {
+            "type": "object",
+            "required": ["total", "active", "online", "offline"],
+            "properties": {
+              "total": { "type": "integer", "minimum": 0 },
+              "active": { "type": "integer", "minimum": 0 },
+              "online": { "type": "integer", "minimum": 0 },
+              "offline": { "type": "integer", "minimum": 0 }
+            }
+          },
+          "accounts": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AdminAccountPresence" }
+          }
+        }
+      },
+      "AdminMonitoringSample": {
+        "type": "object",
+        "required": ["sequence", "timestamp", "intervalSeconds", "system", "services"],
+        "properties": {
+          "sequence": { "type": "integer", "minimum": 1 },
+          "timestamp": { "type": "string", "format": "date-time" },
+          "intervalSeconds": { "type": "number", "minimum": 0 },
+          "system": {
+            "type": "object",
+            "required": [
+              "cpuPercent", "memoryPercent", "memoryUsedBytes", "memoryTotalBytes", "loadAverage",
+              "diskReadOperationsPerSecond", "diskWriteOperationsPerSecond", "diskReadBytesPerSecond",
+              "diskWriteBytesPerSecond", "networkReceiveBytesPerSecond", "networkTransmitBytesPerSecond",
+              "uptimeSeconds"
+            ],
+            "properties": {
+              "cpuPercent": { "type": "number", "minimum": 0, "maximum": 100 },
+              "memoryPercent": { "type": "number", "minimum": 0, "maximum": 100 },
+              "memoryUsedBytes": { "type": "integer", "minimum": 0 },
+              "memoryTotalBytes": { "type": "integer", "minimum": 0 },
+              "loadAverage": { "type": "number", "minimum": 0 },
+              "diskReadOperationsPerSecond": { "type": "number", "minimum": 0 },
+              "diskWriteOperationsPerSecond": { "type": "number", "minimum": 0 },
+              "diskReadBytesPerSecond": { "type": "number", "minimum": 0 },
+              "diskWriteBytesPerSecond": { "type": "number", "minimum": 0 },
+              "networkReceiveBytesPerSecond": { "type": "number", "minimum": 0 },
+              "networkTransmitBytesPerSecond": { "type": "number", "minimum": 0 },
+              "uptimeSeconds": { "type": "number", "minimum": 0 }
+            }
+          },
+          "services": {
+            "type": "object",
+            "required": ["api", "database", "redis", "dataProcessingWorker"],
+            "properties": {
+              "api": { "type": "string", "enum": ["online", "offline"] },
+              "database": { "type": "string", "enum": ["online", "offline"] },
+              "redis": { "type": "string", "enum": ["online", "offline"] },
+              "dataProcessingWorker": { "type": "string", "enum": ["online", "offline"] }
+            }
+          }
+        }
+      },
+      "BackgroundJobCreate": {
+        "type": "object",
+        "required": [
+          "kind",
+          "payload"
+        ],
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "import_validation",
+              "nutrition_report",
+              "export_file",
+              "system_sync"
+            ]
+          },
+          "payload": {
+            "type": "object"
+          }
+        }
+      },
+      "BackgroundJob": {
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "status",
+          "progress"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "queued",
+              "processing",
+              "completed",
+              "failed",
+              "cancelled"
+            ]
+          },
+          "progress": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "result": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "error": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "downloadUrl": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "AuthenticatedLoginResponse": {
+        "type": "object",
+        "required": [
+          "user",
+          "profile"
+        ],
+        "properties": {
+          "user": {
+            "type": "object",
+            "required": [
+              "id"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "email": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "email"
+              }
+            }
+          },
+          "profile": {
+            "$ref": "#/components/schemas/AccessProfile"
+          }
+        }
+      },
+      "MfaPendingLoginResponse": {
+        "type": "object",
+        "required": ["mfaRequired", "setupRequired", "factors", "expiresIn"],
+        "properties": {
+          "mfaRequired": { "const": true },
+          "setupRequired": { "type": "boolean" },
+          "expiresIn": { "type": "integer", "minimum": 1 },
+          "factors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "type"],
+              "properties": {
+                "id": { "type": "string", "format": "uuid" },
+                "type": { "type": "string", "enum": ["webauthn", "totp"] },
+                "name": { "type": ["string", "null"] }
+              }
+            }
+          }
+        }
+      },
+      "LoginResponse": {
+        "oneOf": [
+          { "$ref": "#/components/schemas/AuthenticatedLoginResponse" },
+          { "$ref": "#/components/schemas/MfaPendingLoginResponse" }
+        ]
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "detail": {
+            "type": "string"
+          },
+          "error": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "responses": {
+      "ApiError": {
+        "description": "Permintaan ditolak",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    }
+  }
+}

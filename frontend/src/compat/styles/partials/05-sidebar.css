@@ -1,0 +1,1175 @@
+/* Copyright (C) 2026 Johandi Arifiansyach */
+
+.app-shell {
+  min-height: 100vh;
+  min-height: 100dvh;
+  isolation: isolate;
+  background: var(--apple-bg);
+}
+.app-shell svg {
+  flex: 0 0 auto;
+}
+
+.app-sidebar {
+  width: 288px;
+  flex: 0 0 288px;
+  border-right: 1px solid var(--apple-separator);
+  background: rgba(246, 246, 248, 0.82);
+  box-shadow: 12px 0 36px rgba(0, 0, 0, 0.045);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  backdrop-filter: blur(30px) saturate(180%);
+  transition: width 140ms ease-out, flex-basis 140ms ease-out, transform 180ms ease-out;
+}
+
+.sidebar-mobile-toolbar {
+  display: flex;
+  min-height: 64px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px 10px 18px;
+  border-bottom: 1px solid var(--apple-separator);
+  color: #3a3a3c;
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.sidebar-mobile-toolbar button {
+  display: inline-flex;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  color: #636366;
+}
+
+.sidebar-mobile-toolbar button:hover {
+  background: rgba(118, 118, 128, 0.12);
+}
+
+.sidebar-section-label {
+  margin: 0 12px 8px;
+  color: #94a3b8;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1.25;
+  text-transform: uppercase;
+}
+
+.sidebar-nav-item {
+  --sidebar-symbol-bg: #8e8e93;
+  position: relative;
+  display: flex;
+  width: 100%;
+  min-height: 48px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  color: #64748b;
+  font-weight: 600;
+  transition: color 180ms ease, background-color 180ms ease, border-color 180ms ease, transform 180ms ease;
+}
+
+.sidebar-collapse-button {
+  position: relative;
+  width: 100%;
+  min-height: 44px;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding: 6px 12px;
+  border: 1px solid rgba(60, 60, 67, 0.08);
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.5);
+  color: #636366;
+  font-weight: 650;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  transition: background-color 180ms ease, border-color 180ms ease, transform 180ms ease;
+}
+
+.sidebar-collapse-button:hover {
+  border-color: rgba(0, 122, 255, 0.14);
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--apple-blue);
+}
+
+.sidebar-collapse-symbol {
+  width: 30px;
+  height: 30px;
+  flex-basis: 30px;
+  border-radius: 9px;
+  background: #007aff;
+  color: #fff;
+  box-shadow: 0 5px 13px rgba(0, 122, 255, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.42);
+}
+
+.sidebar-collapse-symbol svg {
+  width: 19px;
+  height: 19px;
+  color: #fff !important;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  filter: drop-shadow(0 1px 1px rgba(0, 64, 140, 0.2));
+}
+
+.sidebar-expand-icon,
+.sidebar-expand-label {
+  display: none;
+}
+
+.sidebar-collapse-icon,
+.sidebar-collapse-label {
+  display: inline-flex;
+}
+
+.sidebar-nav-spacer {
+  height: 16px;
+}
+
+.sidebar-nav-spacer-small {
+  height: 8px;
+}
+
+.sidebar-nav-item:hover {
+  border-color: rgba(0, 122, 255, 0.08);
+  background: rgba(255, 255, 255, 0.58);
+  color: var(--apple-blue);
+}
+
+.sidebar-nav-item.is-active {
+  border-color: rgba(0, 122, 255, 0.12);
+  background: rgba(0, 122, 255, 0.12);
+  color: #0068d9;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55);
+}
+
+.sidebar-nav-item.is-active::before {
+  position: absolute;
+  left: -5px;
+  width: 4px;
+  height: 24px;
+  border-radius: 0 4px 4px 0;
+  background: var(--apple-blue);
+  content: "";
+}
+
+.sidebar-nav-icon {
+  display: inline-flex;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  border-radius: 9px;
+  background: var(--sidebar-symbol-bg);
+  color: #fff;
+  box-shadow: 0 4px 9px rgba(0, 0, 0, 0.13), inset 0 1px 0 rgba(255, 255, 255, 0.34);
+  transition: filter 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.sidebar-nav-icon .apple-symbol {
+  width: 18px;
+  height: 18px;
+  stroke-width: 1.9;
+}
+
+.sidebar-nav-icon.sidebar-collapse-symbol {
+  background: #007aff;
+  color: #fff;
+  box-shadow: 0 5px 13px rgba(0, 122, 255, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.42);
+}
+
+.sidebar-nav-icon.sidebar-collapse-symbol .apple-symbol,
+.sidebar-nav-icon.sidebar-collapse-symbol svg {
+  width: 19px;
+  height: 19px;
+  color: #fff !important;
+  stroke: currentColor;
+  stroke-width: 2.4;
+}
+
+.sidebar-nav-item.is-active .sidebar-nav-icon {
+  border-color: rgba(255, 255, 255, 0.54);
+  background: var(--sidebar-symbol-bg);
+  color: #fff;
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.42);
+  filter: saturate(1.08);
+  transform: scale(1.03);
+}
+
+.sidebar-nav-item[data-nav-id="dashboard"] { --sidebar-symbol-bg: #007aff; }
+.sidebar-nav-item[data-nav-id="data_balita"] { --sidebar-symbol-bg: #32ade6; }
+.sidebar-nav-item[data-nav-id="asi_eksklusif"] { --sidebar-symbol-bg: #ff2d55; }
+.sidebar-nav-item[data-nav-id="mpasi"] { --sidebar-symbol-bg: #ff9500; }
+.sidebar-nav-item[data-nav-id="problem_underweight"] { --sidebar-symbol-bg: #ff6961; }
+.sidebar-nav-item[data-nav-id="problem_stunting"] { --sidebar-symbol-bg: #af52de; }
+.sidebar-nav-item[data-nav-id="problem_wasting"] { --sidebar-symbol-bg: #ff3b30; }
+.sidebar-nav-item[data-nav-id="problem_tidak_naik"] { --sidebar-symbol-bg: #8e8e93; }
+.sidebar-nav-item[data-nav-id="pmt_program"] { --sidebar-symbol-bg: #34c759; }
+.sidebar-nav-item[data-nav-id="add_child"] { --sidebar-symbol-bg: #0a84ff; }
+.sidebar-nav-item[data-nav-id="recent"] { --sidebar-symbol-bg: #00c7be; }
+.sidebar-nav-item[data-nav-id="change_history"] { --sidebar-symbol-bg: #5856d6; }
+.sidebar-nav-item[data-nav-id="recycle_bin"] { --sidebar-symbol-bg: #ff453a; }
+
+.sidebar-expanded-dismiss {
+  display: none;
+}
+
+.sidebar-dock-tooltip {
+  position: fixed;
+  z-index: 70;
+  left: 88px;
+  display: none;
+  max-width: min(240px, calc(100vw - 104px));
+  padding: 8px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.78);
+  border-radius: 13px;
+  background: rgba(232, 232, 235, 0.9);
+  color: #1c1c1e;
+  box-shadow: 0 9px 28px rgba(15, 23, 42, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.25;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-50%);
+  visibility: hidden;
+  white-space: nowrap;
+  -webkit-backdrop-filter: blur(24px) saturate(170%);
+  backdrop-filter: blur(24px) saturate(170%);
+}
+
+.sidebar-dock-tooltip::before {
+  position: absolute;
+  top: 50%;
+  left: -5px;
+  width: 10px;
+  height: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.72);
+  border-left: 1px solid rgba(255, 255, 255, 0.72);
+  background: rgba(232, 232, 235, 0.9);
+  content: "";
+  transform: translateY(-50%) rotate(45deg);
+}
+
+@keyframes sidebar-tooltip-in {
+  from {
+    opacity: 0;
+    transform: translate(4px, -50%) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, -50%) scale(1);
+  }
+}
+
+@media (min-width: 768px), (orientation: landscape) and (min-width: 560px) {
+  .app-shell {
+    padding-left: 78px;
+  }
+
+  .app-shell .app-sidebar {
+    position: fixed !important;
+    inset: 0 auto 0 0;
+    width: 78px;
+    height: 100vh;
+    height: 100dvh;
+    flex-basis: 78px;
+    padding: 10px 8px;
+    border-right: 0;
+    background: transparent;
+    box-shadow: none;
+    transform: translateX(0) !important;
+  }
+
+  .app-shell:not(.is-sidebar-collapsed) .app-sidebar {
+    inset: 8px auto 8px 8px;
+    width: 280px;
+    height: calc(100vh - 16px);
+    height: calc(100dvh - 16px);
+    padding: 0;
+    overflow: hidden;
+    isolation: isolate;
+    border: 1px solid rgba(255, 255, 255, 0.82);
+    border-radius: 34px;
+    background: rgba(244, 247, 252, 0.42);
+    box-shadow:
+      0 16px 44px rgba(28, 39, 58, 0.14),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9),
+      inset 1px 0 0 rgba(255, 255, 255, 0.46),
+      inset 0 -1px 0 rgba(113, 126, 148, 0.12);
+    -webkit-backdrop-filter: blur(24px) saturate(185%) brightness(1.04);
+    backdrop-filter: blur(24px) saturate(185%) brightness(1.04);
+  }
+
+  .app-shell:not(.is-sidebar-collapsed) .app-sidebar::before {
+    position: absolute;
+    z-index: 0;
+    inset: 1px;
+    border-radius: 33px;
+    background: linear-gradient(
+      150deg,
+      rgba(255, 255, 255, 0.34) 0%,
+      rgba(255, 255, 255, 0.08) 38%,
+      rgba(196, 211, 231, 0.08) 72%,
+      rgba(255, 255, 255, 0.2) 100%
+    );
+    content: "";
+    pointer-events: none;
+  }
+
+  .app-shell:not(.is-sidebar-collapsed) .app-sidebar-nav {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+    flex: 1 1 auto;
+    margin: 0;
+    padding: 16px 13px;
+    border: 0;
+    border-radius: inherit;
+    background: transparent;
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .sidebar-mobile-toolbar {
+    display: none;
+  }
+
+  .sidebar-mobile-trigger,
+  .sidebar-scrim {
+    display: none !important;
+  }
+
+  .app-shell:not(.is-sidebar-collapsed) > .sidebar-expanded-dismiss {
+    position: fixed;
+    z-index: 40;
+    inset: 0;
+    display: block;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: default;
+  }
+
+  .sidebar-collapse-button {
+    display: flex;
+  }
+
+  .sidebar-dock-tooltip {
+    display: block;
+  }
+
+  .sidebar-dock-tooltip.is-visible {
+    opacity: 1;
+    visibility: visible;
+    animation: sidebar-tooltip-in 120ms ease-out;
+  }
+
+  .app-shell.is-sidebar-collapsed .app-sidebar {
+    width: 78px;
+    flex-basis: 78px;
+    padding: 10px 8px;
+    border-right: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .app-shell.is-sidebar-collapsed .app-sidebar-nav {
+    width: 62px;
+    max-height: calc(100dvh - 20px);
+    flex: 0 1 auto;
+    margin: auto;
+    padding: 8px;
+    overflow-x: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.78);
+    border-radius: 22px;
+    background: rgba(234, 234, 238, 0.72);
+    box-shadow: 0 18px 46px rgba(15, 23, 42, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.94);
+    -webkit-backdrop-filter: blur(30px) saturate(180%);
+    backdrop-filter: blur(30px) saturate(180%);
+  }
+
+  .app-shell.is-sidebar-collapsed .sidebar-section-label {
+    display: none;
+  }
+
+  .app-shell.is-sidebar-collapsed .sidebar-collapse-button {
+    width: 44px;
+    min-height: 44px;
+    justify-content: center;
+    margin: 0 0 7px;
+    padding: 2px;
+    border-color: transparent;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .app-shell.is-sidebar-collapsed .sidebar-collapse-symbol {
+    width: 38px;
+    height: 38px;
+    flex-basis: 38px;
+    border-radius: 12px;
+  }
+
+  .app-shell.is-sidebar-collapsed .sidebar-expand-icon,
+  .app-shell.is-sidebar-collapsed .sidebar-expand-label {
+    display: inline-flex;
+  }
+
+  .app-shell.is-sidebar-collapsed .sidebar-collapse-icon,
+  .app-shell.is-sidebar-collapsed .sidebar-collapse-label {
+    display: none;
+  }
+
+  .app-shell.is-sidebar-collapsed .sidebar-nav-item {
+    width: 44px;
+    min-height: 44px;
+    justify-content: center;
+    padding: 2px;
+    border-color: transparent;
+    border-radius: 13px;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .app-shell.is-sidebar-collapsed .sidebar-nav-content {
+    justify-content: center;
+    gap: 0;
+  }
+
+  .app-shell.is-sidebar-collapsed .sidebar-nav-label {
+    display: none;
+  }
+
+  .app-shell.is-sidebar-collapsed .sidebar-nav-icon {
+    width: 38px;
+    height: 38px;
+    flex-basis: 38px;
+    border-radius: 11px;
+  }
+
+  .app-shell.is-sidebar-collapsed .sidebar-nav-item:hover .sidebar-nav-icon,
+  .app-shell.is-sidebar-collapsed .sidebar-collapse-button:hover .sidebar-nav-icon {
+    filter: saturate(1.08) brightness(1.04);
+    transform: scale(1.12);
+  }
+
+  .app-shell.is-sidebar-collapsed .sidebar-nav-item.is-active::before {
+    left: -5px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+  }
+
+  .app-shell.is-sidebar-collapsed .sidebar-nav-spacer {
+    height: 1px;
+    margin: 7px 5px;
+    background: rgba(60, 60, 67, 0.15);
+  }
+
+  .app-shell.is-sidebar-collapsed .sidebar-nav-spacer-small {
+    height: 1px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1100px) {
+  .app-shell .app-topbar {
+    min-height: 126px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "title account"
+      "period period";
+  }
+
+  .period-control {
+    width: 100%;
+  }
+
+  .period-select {
+    flex: 1 1 50%;
+  }
+
+  .app-page-context {
+    display: none;
+  }
+
+  .topbar-title-divider {
+    display: none;
+  }
+}
+
+/*
+ * Narrow viewports use a real drawer instead of the desktop icon rail.
+ *
+ * Phones use the bottom navigation dock instead of a sidebar. Keep the
+ * compact rail for md-sized screens and larger, while retaining the drawer
+ * rules only for the phone breakpoint so desktop/tablet navigation remains
+ * available without an extra mobile trigger.
+ */
+@media (max-width: 767px) {
+  .app-shell {
+    padding-left: 0 !important;
+  }
+
+  .app-shell .app-sidebar {
+    position: fixed !important;
+    inset: 0 auto 0 0 !important;
+    width: min(288px, calc(100vw - 20px)) !important;
+    max-width: calc(100vw - 20px);
+    height: 100vh !important;
+    height: 100dvh !important;
+    flex: 0 0 auto !important;
+    padding: 0 !important;
+    overflow: hidden;
+    border-right: 1px solid var(--apple-separator);
+    border-radius: 0 24px 24px 0;
+    background: rgba(246, 246, 248, 0.96);
+    box-shadow: 14px 0 36px rgba(15, 23, 42, 0.2);
+    transform: translateX(-105%) !important;
+    visibility: hidden;
+    pointer-events: none;
+    transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* is-sidebar-collapsed is still the initial state on narrow screens. */
+  .app-shell.is-sidebar-collapsed:not(.is-mobile-sidebar-open) .app-sidebar {
+    width: min(288px, calc(100vw - 20px)) !important;
+    flex-basis: auto !important;
+    transform: translateX(-105%) !important;
+  }
+
+  .app-shell.is-mobile-sidebar-open .app-sidebar,
+  .app-shell.is-sidebar-collapsed.is-mobile-sidebar-open .app-sidebar {
+    transform: translateX(0) !important;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .app-shell.is-mobile-sidebar-open .app-sidebar-nav,
+  .app-shell.is-sidebar-collapsed.is-mobile-sidebar-open .app-sidebar-nav {
+    position: relative;
+    z-index: 1;
+    width: 100% !important;
+    max-height: 100%;
+    flex: 1 1 auto;
+    margin: 0;
+    padding: 16px 13px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .app-shell.is-mobile-sidebar-open .sidebar-mobile-toolbar,
+  .app-shell.is-sidebar-collapsed.is-mobile-sidebar-open .sidebar-mobile-toolbar,
+  .app-shell.is-mobile-sidebar-open .sidebar-brand-panel,
+  .app-shell.is-sidebar-collapsed.is-mobile-sidebar-open .sidebar-brand-panel,
+  .app-shell.is-mobile-sidebar-open .sidebar-section-label,
+  .app-shell.is-sidebar-collapsed.is-mobile-sidebar-open .sidebar-section-label,
+  .app-shell.is-mobile-sidebar-open .sidebar-nav-label,
+  .app-shell.is-sidebar-collapsed.is-mobile-sidebar-open .sidebar-nav-label {
+    display: flex !important;
+  }
+
+  .app-shell.is-mobile-sidebar-open .sidebar-section-label,
+  .app-shell.is-sidebar-collapsed.is-mobile-sidebar-open .sidebar-section-label {
+    display: block !important;
+  }
+
+  .app-shell.is-mobile-sidebar-open .sidebar-nav-item,
+  .app-shell.is-sidebar-collapsed.is-mobile-sidebar-open .sidebar-nav-item {
+    width: 100% !important;
+    min-height: 48px;
+    justify-content: space-between;
+    padding: 8px 12px;
+    border-color: transparent;
+    border-radius: 14px;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .app-shell.is-mobile-sidebar-open .sidebar-nav-content,
+  .app-shell.is-sidebar-collapsed.is-mobile-sidebar-open .sidebar-nav-content {
+    justify-content: flex-start;
+    gap: 12px;
+  }
+
+  .app-shell.is-mobile-sidebar-open .sidebar-nav-icon,
+  .app-shell.is-sidebar-collapsed.is-mobile-sidebar-open .sidebar-nav-icon {
+    width: 32px;
+    height: 32px;
+    flex-basis: 32px;
+    border-radius: 9px;
+  }
+
+  .app-shell.is-mobile-sidebar-open .sidebar-nav-item.is-active::before,
+  .app-shell.is-sidebar-collapsed.is-mobile-sidebar-open .sidebar-nav-item.is-active::before {
+    left: -5px;
+    width: 4px;
+    height: 24px;
+    border-radius: 0 4px 4px 0;
+  }
+
+  .app-shell.is-mobile-sidebar-open .sidebar-nav-spacer,
+  .app-shell.is-sidebar-collapsed.is-mobile-sidebar-open .sidebar-nav-spacer {
+    height: 16px;
+    margin: 0;
+    background: none;
+  }
+
+  .app-shell.is-mobile-sidebar-open .sidebar-nav-spacer-small,
+  .app-shell.is-sidebar-collapsed.is-mobile-sidebar-open .sidebar-nav-spacer-small {
+    height: 8px;
+  }
+
+  .app-shell .sidebar-collapse-button,
+  .app-shell > .sidebar-expanded-dismiss,
+  .sidebar-dock-tooltip {
+    display: none !important;
+  }
+
+  /* Tailwind's md:hidden stops applying at 768px; keep the mobile controls
+     available through the narrow-tablet range as well. */
+  .sidebar-mobile-trigger {
+    display: inline-flex !important;
+  }
+
+  .sidebar-scrim {
+    z-index: 45;
+    display: block !important;
+  }
+
+  .app-shell .app-topbar {
+    min-height: 64px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "title actions";
+    gap: 9px;
+    padding: max(8px, env(safe-area-inset-top)) 10px 8px;
+  }
+
+  .app-page-context {
+    display: block !important;
+  }
+
+  .app-page-context h1 {
+    font-size: 17px;
+  }
+}
+
+/*
+ * Liquid-glass sidebar
+ *
+ * The surface is deliberately neutral and translucent. Its luminance and
+ * text contrast stay neutral rather than introducing a permanent dark or
+ * saturated sidebar. Navigation behavior and breakpoints remain unchanged.
+ */
+:root {
+  --sidebar-glass-surface: rgba(255, 255, 255, 0.4);
+  --sidebar-glass-surface-soft: rgba(255, 255, 255, 0.18);
+  --sidebar-glass-surface-hover: rgba(255, 255, 255, 0.5);
+  --sidebar-glass-active: rgba(255, 255, 255, 0.64);
+  --sidebar-glass-border: rgba(255, 255, 255, 0.2);
+  --sidebar-glass-highlight: rgba(255, 255, 255, 0.72);
+  --sidebar-glass-shadow: rgba(15, 23, 42, 0.12);
+  --sidebar-glass-glow: rgba(255, 255, 255, 0.22);
+  --sidebar-glass-label: rgba(28, 28, 30, 0.84);
+  --sidebar-glass-muted: rgba(60, 60, 67, 0.58);
+  --sidebar-glass-icon: transparent;
+  --sidebar-glass-icon-border: transparent;
+  --sidebar-glass-icon-label: rgba(28, 28, 30, 0.78);
+}
+
+.app-sidebar,
+.app-sidebar-nav,
+.sidebar-nav-item,
+.sidebar-collapse-button,
+.sidebar-nav-icon {
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (min-width: 900px) {
+  .app-shell:not(.is-sidebar-collapsed) .app-sidebar,
+  .app-shell.is-sidebar-collapsed .app-sidebar-nav {
+    border-radius: 24px;
+  }
+
+  .app-shell:not(.is-sidebar-collapsed) .app-sidebar::before {
+    border-radius: 23px;
+  }
+}
+
+.app-shell:not(.is-sidebar-collapsed) .app-sidebar,
+.app-shell.is-mobile-sidebar-open .app-sidebar {
+  border-color: var(--sidebar-glass-border);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.18), transparent 46%),
+    var(--sidebar-glass-surface);
+  box-shadow:
+    0 20px 54px var(--sidebar-glass-shadow),
+    0 0 26px var(--sidebar-glass-glow),
+    inset 0 1px 0 var(--sidebar-glass-highlight),
+    inset 1px 0 0 rgba(255, 255, 255, 0.2);
+  -webkit-backdrop-filter: blur(24px) saturate(165%);
+  backdrop-filter: blur(24px) saturate(165%);
+}
+
+.app-shell:not(.is-sidebar-collapsed) .app-sidebar::before,
+.app-shell.is-mobile-sidebar-open .app-sidebar::before {
+  background: linear-gradient(
+    150deg,
+    rgba(255, 255, 255, 0.3) 0%,
+    rgba(255, 255, 255, 0.05) 44%,
+    rgba(0, 0, 0, 0.05) 100%
+  );
+}
+
+.app-shell.is-sidebar-collapsed .app-sidebar-nav {
+  border-color: var(--sidebar-glass-border);
+  background:
+    linear-gradient(155deg, rgba(255, 255, 255, 0.2), transparent 48%),
+    var(--sidebar-glass-surface);
+  box-shadow:
+    0 20px 48px var(--sidebar-glass-shadow),
+    0 0 26px var(--sidebar-glass-glow),
+    inset 0 1px 0 var(--sidebar-glass-highlight),
+    inset 1px 0 0 rgba(255, 255, 255, 0.2);
+  -webkit-backdrop-filter: blur(24px) saturate(165%);
+  backdrop-filter: blur(24px) saturate(165%);
+}
+
+.app-shell:not(.is-sidebar-collapsed) .sidebar-brand-panel,
+.app-shell.is-mobile-sidebar-open .sidebar-brand-panel {
+  border-bottom-color: var(--sidebar-glass-border);
+}
+
+.app-shell:not(.is-sidebar-collapsed) .sidebar-brand-name-row strong,
+.app-shell:not(.is-sidebar-collapsed) .sidebar-brand-copy p,
+.app-shell.is-mobile-sidebar-open .sidebar-brand-name-row strong,
+.app-shell.is-mobile-sidebar-open .sidebar-brand-copy p {
+  color: var(--sidebar-glass-label);
+}
+
+.sidebar-nav-item {
+  --sidebar-symbol-bg: var(--sidebar-glass-icon);
+  border-color: transparent;
+  color: var(--sidebar-glass-label);
+  transition:
+    color 180ms ease,
+    background-color 180ms ease,
+    border-color 180ms ease,
+    transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.sidebar-nav-item:hover,
+.sidebar-nav-item:focus-visible {
+  border-color: var(--sidebar-glass-border);
+  background: var(--sidebar-glass-surface-hover);
+  color: var(--sidebar-glass-label);
+  outline: none;
+}
+
+.sidebar-nav-item.is-active {
+  border-color: transparent;
+  background: transparent;
+  color: var(--sidebar-glass-label);
+  box-shadow: none;
+}
+
+.sidebar-nav-item.is-active::before {
+  background: transparent;
+  box-shadow: none;
+}
+
+.sidebar-nav-icon,
+.sidebar-nav-icon.sidebar-collapse-symbol {
+  border-color: var(--sidebar-glass-icon-border);
+  background: var(--sidebar-glass-icon);
+  color: var(--sidebar-glass-icon-label);
+  box-shadow: none;
+  transition:
+    transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.sidebar-nav-icon.sidebar-collapse-symbol .apple-symbol,
+.sidebar-nav-icon.sidebar-collapse-symbol svg {
+  color: currentColor !important;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.18));
+}
+
+.sidebar-nav-item:hover .sidebar-nav-icon,
+.sidebar-nav-item:focus-visible .sidebar-nav-icon,
+.sidebar-collapse-button:hover .sidebar-nav-icon {
+  border-color: var(--sidebar-glass-border);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.05)),
+    var(--sidebar-glass-surface-hover);
+  box-shadow:
+    inset 0 1px 0 var(--sidebar-glass-highlight),
+    0 5px 14px var(--sidebar-glass-shadow);
+  transform: scale(1.06);
+}
+
+.sidebar-nav-item.is-active .sidebar-nav-icon {
+  border-radius: 999px;
+  border-color: var(--sidebar-glass-border);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.38), rgba(255, 255, 255, 0.08)),
+    var(--sidebar-glass-active);
+  color: var(--sidebar-glass-icon-label);
+  box-shadow:
+    inset 0 1px 0 var(--sidebar-glass-highlight),
+    0 5px 14px var(--sidebar-glass-shadow);
+  transform: scale(1.03);
+  filter: none;
+}
+
+.sidebar-nav-item:active {
+  transform: scale(0.98);
+}
+
+.sidebar-nav-item:active .sidebar-nav-icon,
+.sidebar-collapse-button:active .sidebar-nav-icon {
+  transform: scale(0.93);
+}
+
+@media (min-width: 900px) {
+  /* Give the selected page its own leading glass capsule on the compact rail. */
+  .app-shell.is-sidebar-collapsed .sidebar-nav-item.is-active {
+    width: 52px;
+    margin-left: -4px;
+  }
+
+  .app-shell.is-sidebar-collapsed .sidebar-nav-item.is-active .sidebar-nav-icon {
+    width: 46px;
+    flex-basis: 46px;
+    border-radius: 999px;
+  }
+
+  .app-shell.is-sidebar-collapsed .sidebar-nav-item:hover .sidebar-nav-icon,
+  .app-shell.is-sidebar-collapsed .sidebar-nav-item:focus-visible .sidebar-nav-icon {
+    transform: scale(1.1);
+  }
+}
+
+.sidebar-collapse-button {
+  border-color: var(--sidebar-glass-border);
+  background: var(--sidebar-glass-surface-soft);
+  color: var(--sidebar-glass-label);
+  box-shadow: inset 0 1px 0 var(--sidebar-glass-highlight), 0 6px 16px var(--sidebar-glass-shadow);
+}
+
+.sidebar-collapse-button:hover,
+.sidebar-collapse-button:focus-visible {
+  border-color: var(--sidebar-glass-highlight);
+  background: var(--sidebar-glass-surface-hover);
+  color: var(--sidebar-glass-label);
+  outline: none;
+}
+
+.sidebar-section-label {
+  color: var(--sidebar-glass-muted);
+}
+
+.sidebar-nav-spacer {
+  background: var(--sidebar-glass-border);
+}
+
+.sidebar-mobile-toolbar,
+.sidebar-mobile-toolbar button {
+  border-color: var(--sidebar-glass-border);
+  color: var(--sidebar-glass-label);
+}
+
+.sidebar-mobile-toolbar {
+  background: var(--sidebar-glass-surface-soft);
+}
+
+.sidebar-mobile-toolbar button:hover {
+  background: var(--sidebar-glass-surface-hover);
+}
+
+/* The phone/tablet drawer uses the outer glass surface; avoid a second sheet. */
+@media (max-width: 767px) {
+  .app-shell.is-mobile-sidebar-open .app-sidebar-nav,
+  .app-shell.is-sidebar-collapsed.is-mobile-sidebar-open .app-sidebar-nav {
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .app-shell:not(.is-sidebar-collapsed) .app-sidebar,
+  .app-shell.is-mobile-sidebar-open .app-sidebar,
+  .app-shell.is-sidebar-collapsed .app-sidebar-nav {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: rgba(248, 248, 250, 0.94);
+  }
+}
+
+/* GPU-light fallback for browsers that do not implement backdrop-filter. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .app-shell:not(.is-sidebar-collapsed) .app-sidebar,
+  .app-shell.is-mobile-sidebar-open .app-sidebar,
+  .app-shell.is-sidebar-collapsed:not(.is-mobile-sidebar-open) .app-sidebar-nav {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: rgba(248, 248, 250, 0.94);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar-nav-icon,
+  .sidebar-nav-item:hover .sidebar-nav-icon,
+  .sidebar-nav-item:focus-visible .sidebar-nav-icon,
+  .sidebar-nav-item.is-active .sidebar-nav-icon,
+  .sidebar-nav-item:active .sidebar-nav-icon,
+  .sidebar-collapse-button:active .sidebar-nav-icon {
+    transition: none;
+    transform: none;
+  }
+
+  .sidebar-nav-item:active {
+    transform: none;
+  }
+}
+
+/* React sidebar surface powered by liquid-glass-react.  The surrounding
+   aside/nav keep their layout dimensions, while the library owns the glass
+   refraction layer. */
+.app-sidebar.liquid-sidebar-host {
+  border-color: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+.app-sidebar.liquid-sidebar-host::before {
+  display: none !important;
+}
+
+.app-sidebar.liquid-sidebar-host .liquid-sidebar-nav-host {
+  border-color: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+@media (min-width: 900px) {
+  .app-shell.is-sidebar-collapsed .liquid-sidebar-nav-host {
+    height: calc(100dvh - 20px) !important;
+    max-height: calc(100dvh - 20px) !important;
+  }
+
+  .app-shell:not(.is-sidebar-collapsed) .liquid-sidebar-nav-host {
+    height: 100% !important;
+  }
+}
+
+.liquid-sidebar-nav-host > .bg-black {
+  display: none !important;
+}
+
+.sidebar-liquid-surface > .glass {
+  border: 1px solid rgba(255, 255, 255, 0.34) !important;
+  background: rgba(255, 255, 255, 0.3) !important;
+  box-shadow:
+    0 20px 48px rgba(15, 23, 42, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72),
+    inset 1px 0 0 rgba(255, 255, 255, 0.24) !important;
+}
+
+.sidebar-liquid-surface > .glass::before {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.34) 0%,
+    rgba(255, 255, 255, 0.08) 40%,
+    transparent 72%
+  );
+  content: "";
+  pointer-events: none;
+}
+
+.sidebar-liquid-surface > .glass > div:last-child {
+  z-index: 1 !important;
+}
+
+/* Keep the navigation controls in normal flow above the refraction surface.
+   The library applies its own elastic transform to the glass root; the menu
+   layer must not inherit that transform so the flyout back button can never
+   be clipped outside the viewport. */
+.liquid-sidebar-nav-host {
+  position: relative;
+  min-height: 0;
+}
+
+.liquid-sidebar-nav-host .sidebar-nav-layer {
+  position: relative;
+  z-index: 2;
+  box-sizing: border-box;
+  min-height: 0;
+}
+
+/* The library's two outline spans are useful on short horizontal pills, but
+   on a tall flyout they render as a bright vertical stripe down the middle.
+   The glass surface already has its own edge highlight, so keep those helper
+   overlays out of the sidebar only. */
+.liquid-sidebar-nav-host > span {
+  display: none !important;
+}
+
+@media (min-width: 900px) {
+  /* The compact rail fits the desktop viewport as a clean floating pill. Its
+     content is intentionally non-scrollable; the expanded flyout below keeps
+     scrolling available for the complete menu. */
+  .app-shell.is-sidebar-collapsed .liquid-sidebar-nav-host,
+  .app-shell.is-sidebar-collapsed .liquid-sidebar-nav-host .sidebar-nav-layer {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .app-shell.is-sidebar-collapsed .liquid-sidebar-nav-host::-webkit-scrollbar,
+  .app-shell.is-sidebar-collapsed .liquid-sidebar-nav-host .sidebar-nav-layer::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+  }
+
+  .app-shell.is-sidebar-collapsed .liquid-sidebar-nav-host .sidebar-nav-layer {
+    align-items: center;
+    overflow-y: hidden !important;
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+  }
+
+  .app-shell.is-sidebar-collapsed .liquid-sidebar-nav-host .sidebar-nav-item.is-active {
+    box-sizing: border-box;
+    width: 44px;
+    max-width: 44px;
+    margin-left: 0;
+    overflow: hidden;
+    transform: none !important;
+  }
+
+  .app-shell.is-sidebar-collapsed .liquid-sidebar-nav-host .sidebar-nav-item.is-active .sidebar-nav-icon {
+    box-sizing: border-box;
+    width: 38px !important;
+    max-width: 38px !important;
+    flex-basis: 38px !important;
+    transform: none !important;
+    background: rgba(255, 255, 255, 0.2) !important;
+    border: 2px solid rgba(0, 122, 255, 0.34) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.64) !important;
+    filter: none !important;
+  }
+
+  .app-shell.is-sidebar-collapsed .liquid-sidebar-nav-host .sidebar-active-blob {
+    inset: 3px;
+    filter: none;
+  }
+}
+
+/* React sidebar active state: one soft glass blob follows the selected item. */
+.sidebar-nav-item {
+  isolation: isolate;
+  overflow: visible;
+}
+
+.sidebar-nav-content {
+  position: relative;
+  z-index: 1;
+}
+
+.sidebar-active-blob {
+  position: absolute;
+  z-index: 0;
+  inset: 3px;
+  pointer-events: none;
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.48),
+    0 8px 20px rgba(15, 23, 42, 0.1);
+  filter: blur(4px);
+}
+
+.sidebar-nav-item.is-active {
+  color: #007aff;
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.sidebar-nav-item.is-active .sidebar-nav-icon-active {
+  color: #007aff;
+  border-color: rgba(0, 122, 255, 0.22);
+  background: rgba(255, 255, 255, 0.22);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.64),
+    0 4px 12px rgba(0, 122, 255, 0.16);
+  transform: scale(1.08);
+}
+
+.sidebar-nav-item.is-active .sidebar-nav-icon-active svg {
+  color: #007aff !important;
+  stroke: currentColor;
+  fill: currentColor;
+  fill-opacity: 0.18;
+  filter: drop-shadow(0 1px 2px rgba(0, 122, 255, 0.2));
+}
+
+.sidebar-nav-item.is-active .sidebar-nav-label-active {
+  color: #007aff;
+  font-weight: 700;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar-active-blob {
+    filter: none;
+  }
+
+  .sidebar-nav-item.is-active .sidebar-nav-icon-active {
+    transform: none;
+  }
+}
+
+/* Mobile navigation is provided by the floating bottom dock.  Do not render
+   the desktop rail/drawer or its trigger below the md breakpoint. */
+@media (max-width: 767px) {
+  .app-shell .app-sidebar,
+  .app-shell .sidebar-scrim,
+  .app-shell .sidebar-expanded-dismiss,
+  .app-shell #react-sidebar-tooltip,
+  .sidebar-mobile-trigger {
+    display: none !important;
+  }
+}

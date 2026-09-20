@@ -1,0 +1,8 @@
+**
+!backend/services/analysis-service/requirements.txt
+!backend/services/analysis-service/analysis_service/**
+!backend/services/analysis-service/proto/**
+!backend/services/analysis-service/data/**
+!frontend/src/compat/data/whoGrowthLms.ts
+backend/services/analysis-service/**/__pycache__/
+backend/services/analysis-service/**/*.pyc

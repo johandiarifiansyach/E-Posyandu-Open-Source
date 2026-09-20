@@ -1,0 +1,263 @@
+/* Copyright (C) 2026 Johandi Arifiansyach */
+
+/*
+ * Ein UI-inspired glass-input / glass-select surfaces.
+ *
+ * Ein UI's registry examples target a dark canvas. These controls keep the
+ * same layered glass treatment while using dark slate text and a brighter
+ * translucent surface for the app's light appearance.
+ */
+.glass-input-shell,
+.glass-select-shell {
+  position: relative;
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
+.glass-input-glow {
+  position: absolute;
+  z-index: 0;
+  inset: -1px;
+  pointer-events: none;
+  border-radius: 17px;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.38), rgba(56, 189, 248, 0.18), transparent 68%);
+  filter: blur(9px);
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+
+.glass-input-shell:focus-within .glass-input-glow {
+  opacity: 0.72;
+}
+
+.glass-input,
+.glass-select {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  appearance: none;
+  border: 1px solid rgba(255, 255, 255, 0.56);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.54);
+  color: #1e293b;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  outline: none;
+  padding: 0.72rem 0.9rem;
+  -webkit-backdrop-filter: blur(20px) saturate(155%);
+  backdrop-filter: blur(20px) saturate(155%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.86),
+    inset 0 -1px 0 rgba(15, 23, 42, 0.035),
+    0 5px 14px rgba(15, 23, 42, 0.035);
+  transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.glass-input::placeholder {
+  color: rgba(71, 85, 105, 0.56);
+}
+
+.glass-input:hover,
+.glass-select:hover {
+  border-color: rgba(148, 163, 184, 0.48);
+  background-color: rgba(255, 255, 255, 0.68);
+}
+
+.glass-input:focus,
+.glass-select:focus {
+  border-color: rgba(59, 130, 246, 0.66);
+  background-color: rgba(255, 255, 255, 0.82);
+  box-shadow:
+    0 0 0 3px rgba(59, 130, 246, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.92),
+    0 7px 18px rgba(37, 99, 235, 0.08);
+  transform: translateY(-1px);
+}
+
+.glass-input:disabled,
+.glass-select:disabled,
+.glass-input[readonly] {
+  cursor: not-allowed;
+  border-color: rgba(148, 163, 184, 0.2);
+  background-color: rgba(226, 232, 240, 0.48);
+  color: rgba(71, 85, 105, 0.68);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.58);
+}
+
+.glass-select {
+  cursor: pointer;
+  padding-right: 2.5rem;
+}
+
+.glass-select:disabled {
+  cursor: not-allowed;
+}
+
+.glass-select-chevron {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  right: 0.82rem;
+  width: 1rem;
+  height: 1rem;
+  pointer-events: none;
+  color: rgba(71, 85, 105, 0.65);
+  transform: translateY(-50%);
+  transition: color 160ms ease;
+}
+
+.glass-select-shell:focus-within .glass-select-chevron {
+  color: rgb(37, 99, 235);
+}
+
+.glass-input-adornment {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  right: 0.85rem;
+  color: rgba(71, 85, 105, 0.68);
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+/* Compact variant used by the location filter chips. */
+.filter-glass-chip-select.glass-select {
+  min-height: 26px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  box-shadow: none;
+  padding: 0 22px 0 0;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  transform: none;
+}
+
+.filter-glass-chip-select.glass-select:hover,
+.filter-glass-chip-select.glass-select:focus {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  transform: none;
+}
+
+.filter-glass-chip-select.glass-select + .glass-select-chevron {
+  display: none;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .glass-input,
+  .glass-select {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background-color: rgba(248, 250, 252, 0.96);
+  }
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass-input,
+  .glass-select {
+    background-color: rgba(248, 250, 252, 0.96);
+  }
+}
+
+/*
+ * Fluid Glass surfaces
+ *
+ * The R3F canvas is an optical highlight layer only.  The DOM layer below it
+ * is always present so Safari/Firefox and devices without WebGL still get a
+ * dependable translucent surface.  Keeping the surface and navigation in
+ * separate stacking contexts prevents the canvas from tinting text or
+ * intercepting pointer events.
+ */
+.fluid-glass-surface {
+  isolation: isolate;
+  border-radius: inherit;
+  background: transparent;
+}
+
+.fluid-glass-css-layer {
+  z-index: 0;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.54), rgba(255, 255, 255, 0.3) 56%, rgba(255, 255, 255, 0.42)),
+    rgba(255, 255, 255, 0.45);
+  -webkit-backdrop-filter: blur(2px) saturate(120%);
+  backdrop-filter: blur(2px) saturate(120%);
+}
+
+.fluid-glass-highlight {
+  z-index: 1;
+  border: 1px solid rgba(255, 255, 255, 0.36);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.46),
+    inset 0 -1px 0 rgba(15, 23, 42, 0.035),
+    inset 1px 0 0 rgba(255, 255, 255, 0.11),
+    0 12px 28px rgba(15, 23, 42, 0.06);
+}
+
+/* @react-three/fiber mounts Canvas inside a wrapper div, then appends the
+ * actual canvas to that wrapper.  Target both layers: styling only the
+ * direct canvas leaves the wrapper's opaque black clear color above the CSS
+ * glass, which is why the dock/rail can turn black on some browsers. */
+.fluid-glass-surface > div {
+  position: absolute !important;
+  z-index: 2 !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: hidden !important;
+  background: transparent !important;
+  opacity: 0.05;
+  mix-blend-mode: screen;
+  pointer-events: none !important;
+}
+
+.fluid-glass-surface > div > canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  background: transparent !important;
+}
+
+.fluid-sidebar-host {
+  border-color: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+.fluid-sidebar-nav-host {
+  border-color: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .fluid-glass-css-layer {
+    background: rgba(248, 250, 252, 0.94);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .fluid-glass-surface > div {
+    display: none;
+  }
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .fluid-glass-css-layer {
+    background: rgba(248, 250, 252, 0.88);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .fluid-glass-surface > div {
+    display: none;
+  }
+}

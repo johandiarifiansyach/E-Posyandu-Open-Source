@@ -1,0 +1,29 @@
+[Unit]
+Description=Prepare E-Posyandu runtime secrets from OCI Vault
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=root
+Group=root
+RuntimeDirectory=e-posyandu
+RuntimeDirectoryMode=0700
+RuntimeDirectoryPreserve=yes
+ExecStart=/usr/local/libexec/e-posyandu/eposyandu-vault-env.py
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/run/e-posyandu
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6 AF_NETLINK
+# Permit only the ownership adjustment needed for the non-root cloudflared
+# container (UID/GID 65532) to read its 0600 token file.
+CapabilityBoundingSet=CAP_CHOWN
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+RestrictRealtime=yes
+SystemCallArchitectures=native
+
+[Install]
+WantedBy=multi-user.target

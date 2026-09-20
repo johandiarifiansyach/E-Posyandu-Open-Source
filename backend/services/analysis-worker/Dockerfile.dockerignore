@@ -1,0 +1,14 @@
+**
+!backend/services/analysis-worker/Cargo.toml
+!backend/services/analysis-worker/Cargo.lock
+!backend/services/analysis-worker/src/**
+!backend/services/analysis-worker/requirements.txt
+!backend/services/eposyandu-proto/**
+!backend/services/data-processing-service/proto/**
+!backend/services/analysis-service/proto/**
+!backend/services/analysis-service/analysis_service/**
+!backend/services/analysis-service/data/**
+!frontend/src/compat/data/whoGrowthLms.ts
+backend/services/analysis-worker/target/**
+backend/services/analysis-service/**/__pycache__/**
+backend/services/analysis-service/**/*.pyc

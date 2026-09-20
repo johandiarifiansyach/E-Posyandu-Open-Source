@@ -1,0 +1,5 @@
+/* Copyright (C) 2026 Johandi Arifiansyach */
+
+/* Responsive page surfaces and shared mobile/tablet/desktop adjustments. */
+@import "./partials/08-surfaces.css";
+@import "./partials/12-admin-backend.css";

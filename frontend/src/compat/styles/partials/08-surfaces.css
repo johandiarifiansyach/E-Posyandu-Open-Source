@@ -1,0 +1,2955 @@
+/* Copyright (C) 2026 Johandi Arifiansyach */
+
+/* Shared Apple-style application surfaces */
+.apple-page {
+  color: var(--apple-label);
+}
+.apple-page-header {
+  gap: 16px;
+}
+
+.apple-page-title,
+.apple-page > div:first-child h2 {
+  margin: 0;
+  color: var(--apple-label);
+  font-size: 28px;
+  font-weight: 760;
+  line-height: 1.15;
+  letter-spacing: 0;
+}
+
+.apple-page > div:first-child p,
+.apple-page-header p {
+  color: var(--apple-secondary-label);
+}
+
+.apple-section-title {
+  color: var(--apple-label);
+  font-size: 19px;
+  font-weight: 740;
+  line-height: 1.25;
+  letter-spacing: 0;
+}
+
+/* The dashboard's top heading is a section heading, not a page title. Keep
+ * enough specificity to override the legacy first-child heading rule. */
+.apple-page .apple-page-header .dashboard-overview-title {
+  margin: 0;
+  color: var(--apple-label);
+  font-size: 19px;
+  font-weight: 740;
+  line-height: 1.25;
+  letter-spacing: 0;
+}
+
+.apple-button {
+  min-height: 40px;
+  border-radius: 12px;
+  letter-spacing: 0;
+  /* Action buttons use a flat, solid surface instead of the old glass highlight. */
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.1);
+}
+
+.apple-button .apple-symbol {
+  width: 17px;
+  height: 17px;
+}
+
+.apple-button.ios-toolbar-button {
+  min-height: 44px;
+  padding: 5px 12px 5px 5px;
+  gap: 8px;
+  border-radius: 13px;
+}
+
+.ios-button-symbol {
+  position: relative;
+  display: inline-flex;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: inherit;
+  background-color: inherit;
+  color: #fff;
+  box-shadow: none;
+}
+
+.ios-button-symbol::after {
+  display: none;
+}
+
+.apple-button.ios-toolbar-button .ios-button-symbol .apple-symbol {
+  position: relative;
+  z-index: 1;
+  width: 17px;
+  height: 17px;
+  color: currentColor;
+}
+
+@media (max-width: 639px) {
+  .apple-button.ios-toolbar-button.icon-only-mobile {
+    width: 44px;
+    min-width: 44px;
+    padding: 5px;
+    gap: 0;
+  }
+}
+
+.apple-button-primary {
+  box-shadow: 0 4px 10px rgba(0, 122, 255, 0.18);
+}
+
+.apple-button-secondary {
+  border-color: #dbe3ef;
+  background: #f8fafc;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.apple-button-ghost,
+.apple-button-danger {
+  box-shadow: none;
+}
+
+.apple-button:focus-visible,
+.icon-button:focus-visible,
+.account-trigger:focus-visible {
+  outline: 3px solid rgba(0, 122, 255, 0.24);
+  outline-offset: 2px;
+}
+
+.apple-select {
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
+  backdrop-filter: blur(14px) saturate(150%);
+}
+
+.apple-segmented-control {
+  gap: 2px;
+  border: 1px solid rgba(60, 60, 67, 0.11);
+  border-radius: 13px;
+  background: rgba(118, 118, 128, 0.12);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.025);
+}
+
+.apple-segmented-control button {
+  min-height: 36px;
+  border-radius: 10px;
+  padding: 7px 16px;
+  color: rgba(60, 60, 67, 0.76);
+  font-size: 13px;
+  font-weight: 650;
+  transition: color 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
+}
+
+.apple-segmented-control button:hover {
+  color: var(--apple-label);
+}
+
+.apple-segmented-control button.is-selected,
+.apple-segmented-control button.is-active {
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--apple-label);
+  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.13), inset 0 1px 0 rgba(255, 255, 255, 0.96);
+}
+
+.apple-metric-card,
+.apple-feature-card,
+.apple-prevalence-card,
+.apple-summary-card,
+.apple-list-card {
+  position: relative;
+  overflow: hidden;
+  border-color: rgba(255, 255, 255, 0.82);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.052), inset 0 1px 0 rgba(255, 255, 255, 0.92);
+  -webkit-backdrop-filter: blur(24px) saturate(170%);
+  backdrop-filter: blur(24px) saturate(170%);
+}
+
+.apple-metric-card {
+  min-height: 146px;
+  isolation: isolate;
+}
+
+.apple-metric-card::after {
+  position: absolute;
+  inset: auto 13px 10px;
+  z-index: -1;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--metric-color, var(--apple-blue));
+  content: "";
+  opacity: 0.78;
+}
+
+.apple-metric-card svg {
+  color: var(--metric-color, var(--apple-blue));
+}
+
+.apple-metric-card > div:first-child > .apple-symbol {
+  width: 32px;
+  height: 32px;
+  padding: 7px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 10px;
+  background: var(--metric-color, var(--apple-blue));
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.13), inset 0 1px 0 rgba(255, 255, 255, 0.38);
+  color: #fff;
+  stroke-width: 1.9;
+}
+
+.apple-metric-card .text-2xl,
+.apple-metric-card .text-3xl {
+  color: var(--apple-label);
+  font-variant-numeric: tabular-nums;
+}
+
+.apple-metric-blue { --metric-color: var(--apple-blue); }
+.apple-metric-green { --metric-color: var(--apple-green); }
+.apple-metric-indigo { --metric-color: var(--apple-indigo); }
+.apple-metric-orange { --metric-color: var(--apple-orange); }
+.apple-metric-cyan { --metric-color: var(--apple-cyan); }
+.apple-metric-red { --metric-color: var(--apple-red); }
+
+/* Dashboard cards use two visible glass layers: the card surface blurs
+   the dashboard behind it, while ::before supplies the curved specular edge
+   highlight. The inset shadow acts as the darker inner border of the glass. */
+.dashboard-glass-card,
+.dashboard-skdn-card {
+  --dashboard-card-tint: rgba(0, 122, 255, 0.08);
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: 28px !important;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.4), transparent 34%),
+    linear-gradient(145deg, var(--dashboard-card-tint), transparent 68%),
+    rgba(255, 255, 255, 0.34) !important;
+  box-shadow:
+    0 16px 42px rgba(15, 23, 42, 0.1),
+    0 0 0 1px rgba(255, 255, 255, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.62),
+    inset 0 -1px 0 rgba(15, 23, 42, 0.1) !important;
+  -webkit-backdrop-filter: blur(40px) saturate(150%);
+  backdrop-filter: blur(40px) saturate(150%);
+  transition:
+    transform 260ms cubic-bezier(0.22, 1.3, 0.36, 1),
+    box-shadow 260ms ease,
+    -webkit-backdrop-filter 260ms ease,
+    backdrop-filter 260ms ease;
+}
+
+.dashboard-skdn-card::before {
+  position: absolute;
+  z-index: 0;
+  inset: 1px;
+  border-radius: 27px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.4) 0%,
+    rgba(255, 255, 255, 0.12) 20%,
+    transparent 42%,
+    transparent 76%,
+    rgba(255, 255, 255, 0.08) 100%
+  );
+  content: "";
+  pointer-events: none;
+}
+
+.dashboard-glass-card > *,
+.dashboard-skdn-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Feature and prevalence cards keep their existing status stripe pseudo
+   element; this child provides the shared glass reflection layer. */
+.dashboard-glass-highlight {
+  position: absolute !important;
+  z-index: 0 !important;
+  inset: 1px;
+  border-radius: 27px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.4) 0%,
+    rgba(255, 255, 255, 0.12) 20%,
+    transparent 42%,
+    transparent 76%,
+    rgba(255, 255, 255, 0.08) 100%
+  );
+  content: "";
+  pointer-events: none;
+}
+
+.dashboard-skdn-card::after {
+  z-index: 1;
+  bottom: 10px;
+}
+
+.apple-metric-blue { --dashboard-card-tint: rgba(0, 122, 255, 0.1); }
+.apple-metric-green { --dashboard-card-tint: rgba(48, 209, 88, 0.1); }
+.apple-metric-indigo { --dashboard-card-tint: rgba(88, 86, 214, 0.1); }
+.apple-metric-orange { --dashboard-card-tint: rgba(255, 149, 0, 0.1); }
+.apple-metric-cyan { --dashboard-card-tint: rgba(50, 173, 230, 0.1); }
+.apple-metric-red { --dashboard-card-tint: rgba(255, 59, 48, 0.1); }
+
+.dashboard-glass-card:hover,
+.dashboard-skdn-card:hover {
+  transform: translateY(-3px) scale(1.006);
+  box-shadow:
+    0 20px 48px rgba(15, 23, 42, 0.14),
+    0 0 0 1px rgba(255, 255, 255, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72),
+    inset 0 -1px 0 rgba(15, 23, 42, 0.08) !important;
+  -webkit-backdrop-filter: blur(48px) saturate(165%);
+  backdrop-filter: blur(48px) saturate(165%);
+}
+
+.dashboard-glass-card:active,
+.dashboard-skdn-card:active {
+  transform: translateY(-1px) scale(0.992);
+}
+
+.dashboard-glass-card .dashboard-stat-skeleton-value,
+.dashboard-glass-card .dashboard-stat-skeleton-percent,
+.dashboard-glass-card .dashboard-stat-skeleton-progress,
+.dashboard-skdn-card .dashboard-stat-skeleton-value,
+.dashboard-skdn-card .dashboard-stat-skeleton-percent,
+.dashboard-skdn-card .dashboard-stat-skeleton-progress {
+  -webkit-backdrop-filter: blur(4px) saturate(150%);
+  backdrop-filter: blur(4px) saturate(150%);
+}
+
+.dashboard-glass-card .apple-symbol-tile,
+.dashboard-glass-card .prevalence-dot,
+.apple-metric-card > div:first-child > .apple-symbol {
+  -webkit-backdrop-filter: blur(4px) saturate(150%);
+  backdrop-filter: blur(4px) saturate(150%);
+}
+
+.apple-feature-card { --dashboard-card-tint: rgba(50, 173, 230, 0.08); }
+.prevalence-red { --dashboard-card-tint: rgba(255, 59, 48, 0.1); }
+.prevalence-orange { --dashboard-card-tint: rgba(255, 149, 0, 0.1); }
+.prevalence-yellow { --dashboard-card-tint: rgba(255, 204, 0, 0.1); }
+
+.apple-feature-card {
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.apple-feature-card .bg-gradient-to-r {
+  background: rgba(52, 199, 89, 0.11);
+}
+
+.apple-prevalence-card {
+  min-height: 176px;
+  border: 1px solid rgba(255, 255, 255, 0.86);
+}
+
+.apple-prevalence-card::before,
+.apple-summary-card::before {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 5px;
+  background: var(--status-color, var(--apple-blue));
+  content: "";
+}
+
+.prevalence-red { --status-color: var(--apple-red); }
+.prevalence-orange { --status-color: var(--apple-orange); }
+.prevalence-yellow { --status-color: var(--apple-yellow); }
+
+.prevalence-dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  flex: 0 0 9px;
+  border-radius: 999px;
+}
+
+.prevalence-red .prevalence-dot { box-shadow: 0 0 0 4px rgba(255, 59, 48, 0.12); }
+.prevalence-orange .prevalence-dot { box-shadow: 0 0 0 4px rgba(255, 149, 0, 0.13); }
+.prevalence-yellow .prevalence-dot { box-shadow: 0 0 0 4px rgba(255, 204, 0, 0.14); }
+
+.apple-prevalence-card .text-4xl {
+  color: var(--apple-label);
+  font-size: 34px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+}
+
+.apple-summary-card {
+  min-height: 112px;
+  padding-left: 20px;
+}
+
+.apple-summary-blue { --status-color: var(--apple-blue); }
+.apple-summary-green { --status-color: var(--apple-green); }
+
+.apple-count-chip {
+  border: 1px solid rgba(88, 86, 214, 0.16);
+  border-radius: 999px;
+  background: rgba(88, 86, 214, 0.1);
+  color: #4f46c8;
+  font-variant-numeric: tabular-nums;
+}
+
+.apple-list-card {
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.apple-list-card:hover {
+  border-color: rgba(0, 122, 255, 0.17);
+  box-shadow: 0 11px 30px rgba(0, 0, 0, 0.07), inset 0 1px 0 rgba(255, 255, 255, 0.94);
+  transform: translateY(-1px);
+}
+
+.apple-page .app-card {
+  border-radius: 18px;
+}
+
+.apple-page .app-card.overflow-hidden,
+.apple-page .overflow-x-auto {
+  scrollbar-color: rgba(60, 60, 67, 0.3) transparent;
+  scrollbar-width: thin;
+}
+
+.apple-page table th {
+  border-bottom: 1px solid var(--apple-separator);
+  padding-top: 12px;
+  padding-bottom: 12px;
+  color: rgba(60, 60, 67, 0.64);
+  font-size: 11px;
+  font-weight: 720;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.apple-page table td {
+  border-bottom-color: rgba(60, 60, 67, 0.1);
+  color: rgba(28, 28, 30, 0.88);
+}
+
+.apple-page table tbody {
+  background: rgba(255, 255, 255, 0.48);
+}
+
+.apple-page table tbody tr:last-child td {
+  border-bottom-width: 0;
+}
+
+.apple-page label,
+.apple-page legend {
+  letter-spacing: 0;
+}
+
+.apple-page input[type="checkbox"],
+.apple-page input[type="radio"] {
+  accent-color: var(--apple-blue);
+}
+
+.apple-page .rounded-full.bg-emerald-100,
+.apple-page .rounded-full.bg-green-100 {
+  background: rgba(52, 199, 89, 0.12);
+  color: #248a3d;
+}
+
+.apple-page .rounded-full.bg-rose-100,
+.apple-page .rounded-full.bg-red-100 {
+  background: rgba(255, 59, 48, 0.11);
+  color: #d70015;
+}
+
+.app-shell > .fixed.inset-0.z-50 {
+  background: rgba(28, 28, 30, 0.28);
+  -webkit-backdrop-filter: blur(14px) saturate(130%);
+  backdrop-filter: blur(14px) saturate(130%);
+}
+
+.app-shell > .fixed.inset-0.z-50 > div {
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.82);
+  border-radius: 24px;
+  background: rgba(248, 248, 250, 0.9);
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.94);
+  -webkit-backdrop-filter: blur(34px) saturate(180%);
+  backdrop-filter: blur(34px) saturate(180%);
+}
+
+.app-shell > .fixed.inset-0.z-50 > div > .border-b,
+.app-shell > .fixed.inset-0.z-50 > div > .border-t {
+  border-color: var(--apple-separator);
+  background: rgba(255, 255, 255, 0.34);
+}
+
+.app-shell *::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.app-shell *::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.app-shell *::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background: rgba(60, 60, 67, 0.28);
+  background-clip: padding-box;
+}
+
+.app-shell *::-webkit-scrollbar-thumb:hover {
+  background: rgba(60, 60, 67, 0.42);
+  background-clip: padding-box;
+}
+
+@keyframes account-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-5px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 767px) {
+  .app-topbar {
+    min-height: 124px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "title account"
+      "period period";
+    gap: 8px 10px;
+    padding: max(9px, env(safe-area-inset-top)) 12px 10px;
+  }
+
+  .app-header-eyebrow {
+    display: none;
+  }
+
+  .app-page-context,
+  .topbar-title-divider {
+    display: none;
+  }
+
+  .topbar-brand-logo-shell {
+    width: 38px;
+    height: 38px;
+    flex-basis: 38px;
+    border-radius: 12px;
+  }
+
+  .topbar-brand-logo-shell img {
+    width: 28px;
+    height: 28px;
+  }
+
+  .topbar-brand-copy {
+    max-width: min(150px, 38vw);
+  }
+
+  .topbar-brand-name-row h1 {
+    font-size: 14px;
+  }
+
+  .topbar-version-badge {
+    padding-inline: 4px;
+    font-size: 8px;
+  }
+
+  .topbar-brand-copy > p {
+    font-size: 8px;
+  }
+
+  .period-control {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .period-select {
+    min-width: 0;
+    flex: 1 1 50%;
+    font-size: 14px;
+  }
+
+  .period-year {
+    flex-basis: 35%;
+  }
+
+  .account-trigger {
+    width: 46px;
+    min-width: 46px;
+    height: 46px;
+    justify-content: center;
+    padding: 4px;
+    border-radius: 14px;
+  }
+
+  .account-trigger-copy,
+  .account-trigger .account-chevron {
+    display: none;
+  }
+
+  .account-avatar {
+    width: 36px;
+    height: 36px;
+    flex-basis: 36px;
+    border-radius: 11px;
+  }
+
+  .account-menu {
+    position: fixed;
+    top: calc(max(56px, env(safe-area-inset-top) + 46px) + 6px);
+    right: 10px;
+  }
+
+  .app-content {
+    padding: 14px 12px 24px;
+  }
+
+  .app-sidebar {
+    width: min(88vw, 304px);
+    flex-basis: auto;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .measurement-history-heading {
+    min-height: 62px;
+    padding: 12px 14px;
+  }
+
+  .ios-measurement-table {
+    min-width: 1240px;
+  }
+
+  .app-footer {
+    min-height: 68px;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+    padding-inline: 16px;
+  }
+
+  .apple-page {
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+  }
+
+  .apple-page-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .apple-page-title,
+  .apple-page > div:first-child h2 {
+    font-size: 23px;
+  }
+
+  .apple-section-title {
+    font-size: 18px;
+  }
+
+  .apple-page .apple-page-header .dashboard-overview-title {
+    font-size: 18px;
+  }
+
+  .apple-metrics-grid {
+    gap: 10px;
+  }
+
+  .apple-metric-card {
+    min-height: 132px;
+    padding: 14px;
+  }
+
+  .apple-prevalence-card {
+    min-height: 154px;
+  }
+
+  .apple-segmented-control {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .apple-segmented-control button {
+    width: 100%;
+    padding-inline: 9px;
+  }
+
+  .apple-page .app-card {
+    border-radius: 16px;
+  }
+
+  .app-shell > .fixed.inset-0.z-50 {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .app-shell > .fixed.inset-0.z-50 > div {
+    width: 100%;
+    max-width: none;
+    max-height: 92dvh;
+    margin: 0;
+    border-right: 0;
+    border-bottom: 0;
+    border-left: 0;
+    border-radius: 24px 24px 0 0;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Keep the clean top bar rules last so legacy responsive declarations cannot restore the old layout. */
+.app-topbar {
+  min-height: 68px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "title actions";
+  gap: 12px;
+  padding: 8px 20px;
+}
+
+.app-page-context { display: block; }
+
+.app-page-context h1 {
+  overflow: hidden;
+  margin: 0;
+  color: var(--apple-label);
+  font-size: 20px;
+  font-weight: 760;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.topbar-actions {
+  grid-area: actions;
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 9px;
+}
+
+.app-sidebar-nav { min-height: 0; }
+
+@media (min-width: 768px), (orientation: landscape) and (min-width: 560px) {
+  .app-shell:not(.is-sidebar-collapsed) .app-sidebar-nav {
+    height: auto;
+    max-height: none;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1100px) {
+  .app-shell .app-topbar {
+    min-height: 68px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "title actions";
+    gap: 12px;
+  }
+}
+
+@media (max-width: 767px) {
+  .app-topbar {
+    min-height: 64px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "title actions";
+    gap: 9px;
+    padding: max(8px, env(safe-area-inset-top)) 10px 8px;
+  }
+
+  .app-page-context { display: block; }
+  .app-page-context h1 { font-size: 17px; }
+  .topbar-actions { gap: 7px; }
+}
+
+/* One reusable liquid-glass language for SKDN, ASI, and nutrition cards. */
+.dashboard-card-shell {
+  position: relative;
+  min-width: 0;
+  border-radius: 24px;
+}
+
+.dashboard-card {
+  --dashboard-card-status: #007aff;
+  --dashboard-card-status-soft: rgba(0, 122, 255, 0.14);
+  --dashboard-card-radius: 24px;
+  position: relative;
+  display: flex;
+  min-height: 176px;
+  flex-direction: column;
+  overflow: hidden;
+  isolation: isolate;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  border-radius: var(--dashboard-card-radius) !important;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.5), transparent 36%),
+    linear-gradient(145deg, var(--dashboard-card-status-soft), transparent 68%),
+    rgba(255, 255, 255, 0.4) !important;
+  box-shadow:
+    0 16px 42px rgba(0, 0, 0, 0.05),
+    0 0 0 1px rgba(255, 255, 255, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.62),
+    inset 0 -1px 0 rgba(15, 23, 42, 0.1) !important;
+  -webkit-backdrop-filter: blur(40px) saturate(150%);
+  backdrop-filter: blur(40px) saturate(150%);
+  transition: transform 240ms cubic-bezier(0.22, 1.3, 0.36, 1), box-shadow 240ms ease, -webkit-backdrop-filter 240ms ease, backdrop-filter 240ms ease;
+}
+
+.dashboard-card--good { --dashboard-card-status: #34c759; --dashboard-card-status-soft: rgba(52, 199, 89, 0.14); }
+.dashboard-card--neutral { --dashboard-card-status: #007aff; --dashboard-card-status-soft: rgba(0, 122, 255, 0.14); }
+.dashboard-card--warning { --dashboard-card-status: #ff9500; --dashboard-card-status-soft: rgba(255, 149, 0, 0.14); }
+.dashboard-card--risk { --dashboard-card-status: #ff3b30; --dashboard-card-status-soft: rgba(255, 59, 48, 0.14); }
+
+.dashboard-card-highlight {
+  position: absolute;
+  z-index: 0;
+  inset: 1px;
+  border-radius: calc(var(--dashboard-card-radius) - 1px);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.12) 20%, transparent 44%, transparent 76%, rgba(255, 255, 255, 0.08));
+  pointer-events: none;
+}
+
+.dashboard-card > *:not(.dashboard-card-highlight) { position: relative; z-index: 1; }
+
+/* GlassCard contributes its own pseudo-elements. Keep their geometry in
+ * lockstep with the card so no squarer inset corner flashes at high zoom or
+ * while the backdrop is recomposited by the browser. */
+.dashboard-card::before {
+  border-radius: var(--dashboard-card-radius) !important;
+  background: transparent !important;
+  background-image: none !important;
+}
+
+.dashboard-card::after {
+  inset: 1px !important;
+  border-radius: calc(var(--dashboard-card-radius) - 1px) !important;
+}
+
+/* Ein UI's GlassCard keeps children in a z-index wrapper. Let dashboard
+ * children participate directly in the metric grid so the feature card can
+ * keep its horizontal icon/value/progress arrangement. */
+.dashboard-card > .glass-card-content { display: contents; }
+
+.dashboard-card-top,
+.dashboard-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.dashboard-card-label {
+  color: var(--apple-secondary-label);
+  font-size: 12px;
+  font-weight: 750;
+  letter-spacing: 0.045em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.dashboard-card-icon {
+  display: inline-flex;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.52);
+  border-radius: 999px;
+  background: var(--dashboard-card-status-soft);
+  box-shadow: 0 5px 14px rgba(15, 23, 42, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.58);
+  -webkit-backdrop-filter: blur(8px) saturate(150%);
+  backdrop-filter: blur(8px) saturate(150%);
+  color: var(--dashboard-card-status);
+}
+
+.dashboard-card-icon svg { width: 19px; height: 19px; color: var(--dashboard-card-status) !important; }
+
+.dashboard-card-value-row {
+  display: flex;
+  min-height: 58px;
+  align-items: baseline;
+  justify-content: center;
+  gap: 7px;
+  text-align: center;
+}
+
+.dashboard-card-value {
+  color: var(--apple-label);
+  font-size: 34px;
+  font-weight: 780;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.035em;
+}
+
+.dashboard-card-unit {
+  color: var(--apple-secondary-label);
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.dashboard-card-bottom { margin-top: auto; min-height: 24px; }
+
+.dashboard-card-sub-label {
+  overflow: hidden;
+  color: var(--apple-secondary-label);
+  font-size: 12px;
+  font-weight: 550;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dashboard-card-percentage {
+  flex: 0 0 auto;
+  color: var(--dashboard-card-status);
+  font-size: 12px;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+}
+
+.dashboard-card-progress-track {
+  height: 4px;
+  margin-top: 12px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.14);
+}
+
+.dashboard-card-progress-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--dashboard-card-status);
+  box-shadow: 0 0 9px var(--dashboard-card-status-soft);
+  transition: width 320ms ease;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-3px) scale(1.006);
+  box-shadow:
+    0 20px 48px rgba(15, 23, 42, 0.14),
+    0 0 0 1px rgba(255, 255, 255, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72),
+    inset 0 -1px 0 rgba(15, 23, 42, 0.08) !important;
+  -webkit-backdrop-filter: blur(48px) saturate(165%);
+  backdrop-filter: blur(48px) saturate(165%);
+}
+
+.dashboard-card:active { transform: translateY(-1px) scale(0.992); }
+
+.dashboard-card--feature {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr) auto;
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
+  grid-template-areas:
+    "icon label percentage"
+    "icon value percentage"
+    "icon sub percentage"
+    "icon progress percentage";
+  column-gap: 18px;
+  align-items: center;
+  min-height: 196px;
+  padding: 22px;
+}
+
+/* Keep the ASI feature card prominent without letting it span the entire
+ * desktop canvas. It still owns a full grid row, but is comfortably centered
+ * and expands to the available width on smaller screens. */
+.dashboard-card--feature {
+  width: min(100%, 1380px);
+  justify-self: center;
+}
+
+.dashboard-card--feature .dashboard-card-top,
+.dashboard-card--feature .dashboard-card-bottom { display: contents; }
+.dashboard-card--feature .dashboard-card-label,
+.dashboard-card--feature .dashboard-card-icon,
+.dashboard-card--feature .dashboard-card-sub-label,
+.dashboard-card--feature .dashboard-card-percentage { position: relative; z-index: 1; }
+.dashboard-card--feature .dashboard-card-label { grid-area: label; align-self: end; }
+.dashboard-card--feature .dashboard-card-icon { grid-area: icon; width: 56px; height: 56px; flex-basis: 56px; align-self: center; justify-self: center; }
+.dashboard-card--feature .dashboard-card-icon svg { width: 23px; height: 23px; }
+.dashboard-card--feature .dashboard-card-value-row { grid-area: value; min-height: 72px; justify-content: flex-start; }
+.dashboard-card--feature .dashboard-card-value { font-size: 40px; }
+.dashboard-card--feature .dashboard-card-sub-label { grid-area: sub; align-self: start; }
+.dashboard-card--feature .dashboard-card-percentage { grid-area: percentage; align-self: center; font-size: 24px; }
+.dashboard-card--feature .dashboard-card-progress-track { grid-area: progress; width: 100%; margin-top: 4px; }
+
+@media (max-width: 639px) {
+  /* Two-column compact cards keep all six SKDN metrics and the three
+   * prevalence metrics visible without a long single-column scroll. */
+  .dashboard-card-shell { border-radius: 20px; }
+  .dashboard-card { --dashboard-card-radius: 20px; min-height: 136px; padding: 13px; }
+  .dashboard-card-top,
+  .dashboard-card-bottom { gap: 6px; }
+  .dashboard-card-label { font-size: 10px; letter-spacing: 0.035em; }
+  .dashboard-card-icon { width: 32px; height: 32px; flex-basis: 32px; }
+  .dashboard-card-icon svg { width: 16px; height: 16px; }
+  .dashboard-card-value-row { min-height: 42px; gap: 4px; }
+  .dashboard-card-value { font-size: 27px; }
+  .dashboard-card-unit { font-size: 11px; }
+  .dashboard-card-bottom { min-height: 19px; }
+  .dashboard-card-sub-label,
+  .dashboard-card-percentage { font-size: 10px; }
+  .dashboard-card-progress-track { height: 3px; margin-top: 8px; }
+
+  /* ASI remains a full-width card, but stacks its content into three compact
+   * rows so the ratio and percentage stay readable on narrow screens. */
+  .dashboard-card--feature {
+    width: 100%;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto auto auto;
+    grid-template-areas:
+      "label icon"
+      "value percentage"
+      "sub sub"
+      "progress progress";
+    column-gap: 8px;
+    row-gap: 2px;
+    min-height: 154px;
+    padding: 15px;
+  }
+  .dashboard-card--feature .dashboard-card-label { align-self: center; }
+  .dashboard-card--feature .dashboard-card-icon {
+    width: 36px;
+    height: 36px;
+    flex-basis: 36px;
+    align-self: center;
+    justify-self: end;
+  }
+  .dashboard-card--feature .dashboard-card-icon svg { width: 18px; height: 18px; }
+  .dashboard-card--feature .dashboard-card-value-row {
+    min-height: 46px;
+    align-items: baseline;
+    justify-content: flex-start;
+  }
+  .dashboard-card--feature .dashboard-card-value { font-size: 30px; }
+  .dashboard-card--feature .dashboard-card-unit { font-size: 11px; }
+  .dashboard-card--feature .dashboard-card-sub-label { align-self: center; font-size: 10px; }
+  .dashboard-card--feature .dashboard-card-percentage { align-self: center; font-size: 17px; }
+  .dashboard-card--feature .dashboard-card-progress-track { margin-top: 6px; }
+
+  /* Give the odd prevalence card a full row instead of leaving a large gap. */
+  .dashboard-prevalence-grid > div:last-child { grid-column: span 2; }
+}
+
+/* Shared application chrome: one light liquid-glass language for the header,
+ * context navigation, and floating sidebar. */
+.app-topbar {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.045);
+  -webkit-backdrop-filter: blur(32px) saturate(150%);
+  backdrop-filter: blur(32px) saturate(150%);
+}
+
+.app-navigation-bar {
+  border-bottom: 0;
+  background: rgba(255, 255, 255, 0.4);
+  box-shadow: none;
+  -webkit-backdrop-filter: blur(28px) saturate(150%);
+  backdrop-filter: blur(28px) saturate(150%);
+}
+
+.app-navigation-kicker {
+  color: rgba(60, 60, 67, 0.5);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.app-navigation-separator {
+  color: rgba(60, 60, 67, 0.34);
+}
+
+.app-navigation-title {
+  color: var(--apple-label);
+  font-size: 14px;
+  font-weight: 760;
+}
+
+.app-header-brand .topbar-brand-logo-shell {
+  width: 40px;
+  height: 40px;
+  flex-basis: 40px;
+  border-radius: 999px;
+  background: rgba(52, 199, 89, 0.12);
+  box-shadow:
+    0 6px 16px rgba(52, 199, 89, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.account-trigger {
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.4);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.account-avatar {
+  border-radius: 50%;
+}
+
+.sidebar-nav-item.is-active .sidebar-nav-icon-active {
+  border-color: rgba(0, 122, 255, 0.32);
+  background: var(--apple-blue);
+  color: #fff;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.42),
+    0 6px 14px rgba(0, 122, 255, 0.24);
+}
+
+.sidebar-nav-item.is-active .sidebar-nav-icon-active svg {
+  color: #fff !important;
+  fill: currentColor;
+  stroke: currentColor;
+}
+
+.sidebar-nav-item:not(.is-active) .sidebar-nav-icon {
+  border-color: transparent;
+  background: transparent;
+  color: rgba(60, 60, 67, 0.68);
+  box-shadow: none;
+}
+
+@media (min-width: 900px) {
+  .app-shell:not(.is-sidebar-collapsed) .app-sidebar,
+  .app-shell.is-sidebar-collapsed .app-sidebar-nav {
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 28px;
+    background:
+      linear-gradient(160deg, rgba(255, 255, 255, 0.22), transparent 48%),
+      rgba(255, 255, 255, 0.4);
+    box-shadow:
+      0 18px 44px rgba(15, 23, 42, 0.1),
+      0 0 24px rgba(255, 255, 255, 0.18),
+      inset 0 1px 0 rgba(255, 255, 255, 0.72);
+    -webkit-backdrop-filter: blur(28px) saturate(150%);
+    backdrop-filter: blur(28px) saturate(150%);
+  }
+
+  .app-shell.is-sidebar-collapsed .app-sidebar-nav {
+    width: 64px;
+    padding-inline: 8px;
+  }
+}
+
+@media (max-width: 899px) {
+  .app-header-brand .topbar-brand-logo-shell {
+    width: 36px;
+    height: 36px;
+    flex-basis: 36px;
+  }
+
+  .app-navigation-content {
+    padding-inline: 12px;
+  }
+
+  .app-navigation-kicker {
+    font-size: 11px;
+  }
+
+  .app-navigation-title {
+    font-size: 13px;
+  }
+}
+
+/* Final sidebar treatment: the rail and flyout are separate floating glass
+ * surfaces, while the shared motion blob remains responsible for the active
+ * route indicator. Keep these rules at the end so they win over legacy shell
+ * dimensions without changing navigation behavior. */
+@media (min-width: 900px) {
+  .app-shell:not(.is-sidebar-collapsed) .app-sidebar {
+    inset: 12px auto 12px 12px;
+    width: 280px;
+    height: calc(100dvh - 24px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 28px;
+    background:
+      linear-gradient(155deg, rgba(255, 255, 255, 0.32), transparent 48%),
+      rgba(255, 255, 255, 0.6);
+    box-shadow:
+      0 22px 58px rgba(15, 23, 42, 0.14),
+      0 0 30px rgba(255, 255, 255, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.82),
+      inset 1px 0 0 rgba(255, 255, 255, 0.28);
+    -webkit-backdrop-filter: blur(28px) saturate(150%);
+    backdrop-filter: blur(28px) saturate(150%);
+  }
+
+  .app-shell:not(.is-sidebar-collapsed) .app-sidebar::before {
+    border-radius: 27px;
+  }
+
+  .app-shell.is-sidebar-collapsed .app-sidebar {
+    padding: 0 5px;
+  }
+
+  .app-shell.is-sidebar-collapsed .app-sidebar-nav {
+    width: 68px;
+    max-height: calc(100dvh - 24px);
+    margin: 12px auto;
+    padding: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 28px;
+    background:
+      linear-gradient(155deg, rgba(255, 255, 255, 0.28), transparent 48%),
+      rgba(255, 255, 255, 0.4);
+    box-shadow:
+      0 18px 48px rgba(15, 23, 42, 0.11),
+      0 0 26px rgba(255, 255, 255, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.78),
+      inset 1px 0 0 rgba(255, 255, 255, 0.22);
+    -webkit-backdrop-filter: blur(28px) saturate(150%);
+    backdrop-filter: blur(28px) saturate(150%);
+  }
+
+  /* The expanded header is a round glass back control; its text remains
+   * available through the title/aria-label for keyboard and assistive users. */
+  .app-shell:not(.is-sidebar-collapsed) .sidebar-collapse-button {
+    width: 40px;
+    min-height: 40px;
+    margin: 0 0 12px;
+    padding: 0;
+    justify-content: center;
+    gap: 0;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.5);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.78),
+      0 6px 16px rgba(15, 23, 42, 0.1);
+  }
+
+  .app-shell:not(.is-sidebar-collapsed) .sidebar-collapse-button .sidebar-nav-label {
+    display: none;
+  }
+
+  .app-shell:not(.is-sidebar-collapsed) .sidebar-collapse-button .sidebar-nav-icon {
+    width: 32px;
+    height: 32px;
+    flex-basis: 32px;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .app-shell:not(.is-sidebar-collapsed) .sidebar-collapse-symbol .sidebar-expand-icon {
+    display: none;
+  }
+
+  .app-shell:not(.is-sidebar-collapsed) .sidebar-collapse-symbol .sidebar-collapse-icon {
+    display: block;
+  }
+
+  .app-shell:not(.is-sidebar-collapsed) .sidebar-collapse-button:hover,
+  .app-shell:not(.is-sidebar-collapsed) .sidebar-collapse-button:focus-visible {
+    background: rgba(255, 255, 255, 0.72);
+  }
+
+  .app-shell:not(.is-sidebar-collapsed) .sidebar-nav-spacer,
+  .app-shell:not(.is-sidebar-collapsed) .sidebar-nav-spacer-small {
+    height: 1px;
+    margin: 10px 12px;
+    background: rgba(60, 60, 67, 0.12);
+  }
+
+  /* A full-row blue tint makes the active route legible in the flyout; the
+   * Framer Motion blob adds the soft liquid highlight as it changes route. */
+  .app-shell:not(.is-sidebar-collapsed) .sidebar-nav-item.is-active {
+    border-radius: 16px;
+    background: rgba(0, 122, 255, 0.1);
+  }
+}
+
+.sidebar-section-label {
+  color: rgba(60, 60, 67, 0.52);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.sidebar-nav-item {
+  border-radius: 16px;
+}
+
+.sidebar-nav-item:not(.is-active):hover,
+.sidebar-nav-item:not(.is-active):focus-visible {
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.sidebar-active-blob {
+  inset: 0;
+  border-color: rgba(0, 122, 255, 0.14);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.52),
+    0 8px 20px rgba(0, 122, 255, 0.1);
+}
+
+.sidebar-nav-item.is-active .sidebar-nav-icon-active {
+  border-color: rgba(0, 122, 255, 0.22);
+  background: rgba(0, 122, 255, 0.12);
+  color: #007aff;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.68),
+    0 5px 14px rgba(0, 122, 255, 0.16);
+}
+
+.sidebar-nav-item.is-active .sidebar-nav-icon-active svg {
+  color: #007aff !important;
+  stroke: currentColor;
+  fill: currentColor;
+  fill-opacity: 0.22;
+}
+
+/* Keep the desktop content softly receded while the flyout is open. The
+ * dismiss button is beneath the z-50 sidebar, so it cannot obscure the menu. */
+@media (min-width: 900px) {
+  .app-shell:not(.is-sidebar-collapsed) > .sidebar-expanded-dismiss {
+    display: block;
+    background: rgba(0, 0, 0, 0.05);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+  }
+}
+
+@media (max-width: 899px) {
+  .sidebar-scrim {
+    background: rgba(0, 0, 0, 0.05);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+  }
+}
+
+/* Preserve the lightweight/accessible fallback after the visual overrides
+ * above. This keeps the rail legible when transparency is disabled or the
+ * browser has no backdrop-filter implementation. */
+@media (prefers-reduced-transparency: reduce) {
+  .app-shell:not(.is-sidebar-collapsed) .app-sidebar,
+  .app-shell.is-mobile-sidebar-open .app-sidebar,
+  .app-shell.is-sidebar-collapsed .app-sidebar-nav {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: rgba(248, 248, 250, 0.94);
+  }
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .app-shell:not(.is-sidebar-collapsed) .app-sidebar,
+  .app-shell.is-mobile-sidebar-open .app-sidebar,
+  .app-shell.is-sidebar-collapsed .app-sidebar-nav {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: rgba(248, 248, 250, 0.94);
+  }
+}
+
+/* Quiet footer surface: recessed below the data cards while preserving the
+ * same light-glass materials used by the rest of the dashboard chrome. */
+.app-footer-glass {
+  min-height: 0;
+  margin-top: 2rem;
+  padding: 1rem 1.5rem max(1rem, env(safe-area-inset-bottom));
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.3);
+  color: rgba(60, 60, 67, 0.55);
+  font-size: 0.75rem;
+  font-weight: 500;
+  box-shadow:
+    0 8px 24px rgba(15, 23, 42, 0.045),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  -webkit-backdrop-filter: blur(16px) saturate(145%);
+  backdrop-filter: blur(16px) saturate(145%);
+}
+
+.app-footer-copy {
+  color: rgba(60, 60, 67, 0.55);
+}
+
+.app-footer-support {
+  color: rgba(0, 122, 255, 0.78);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 160ms ease, opacity 160ms ease;
+}
+
+.app-footer-support:hover,
+.app-footer-support:focus-visible {
+  color: var(--apple-blue);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.app-footer-version {
+  padding: 0.125rem 0.5rem;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(0, 122, 255, 0.1);
+  color: #007aff;
+  font-size: 0.75rem;
+  font-weight: 650;
+  line-height: 1.25rem;
+}
+
+.app-footer-version:hover,
+.app-footer-version:focus-visible {
+  background: rgba(0, 122, 255, 0.16);
+  color: #0068d9;
+}
+
+@media (max-width: 899px) {
+  .app-footer-glass {
+    align-items: center;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 2rem;
+    padding-inline: 1rem;
+    text-align: center;
+  }
+
+  .app-footer-copy,
+  .app-footer-meta {
+    max-width: 100%;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .app-footer-glass {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: rgba(248, 248, 250, 0.94);
+  }
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .app-footer-glass {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: rgba(248, 248, 250, 0.94);
+  }
+}
+
+/* Registration form: each semantic section floats as its own glass card so
+ * a long form stays easy to scan while scrolling. */
+.add-child-form-card {
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+.add-child-form {
+  min-width: 0;
+}
+
+.add-child-section,
+.ios-identity-modal .identity-form-section {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 28px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.42), transparent 42%),
+    rgba(255, 255, 255, 0.4);
+  box-shadow:
+    0 16px 40px rgba(15, 23, 42, 0.08),
+    0 0 0 1px rgba(255, 255, 255, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.62),
+    inset 0 -1px 0 rgba(15, 23, 42, 0.06);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  backdrop-filter: blur(24px) saturate(150%);
+}
+
+.add-child-section::before,
+.ios-identity-modal .identity-form-section::before {
+  position: absolute;
+  z-index: 0;
+  inset: 1px;
+  border-radius: 27px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.38), transparent 42%);
+  content: "";
+  pointer-events: none;
+}
+
+.add-child-section > *,
+.ios-identity-modal .identity-form-section > * {
+  position: relative;
+  z-index: 1;
+}
+
+.add-child-section > .ios-form-section-header,
+.ios-identity-modal .identity-form-section > .ios-form-section-copy {
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.ios-form-section-copy {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.ios-form-section-copy h3 {
+  color: #1c1c1e;
+  font-size: 1rem;
+  font-weight: 750;
+}
+
+.ios-form-section-copy p {
+  color: rgba(60, 60, 67, 0.58);
+  font-size: 0.75rem;
+  line-height: 1.35;
+}
+
+.add-child-section input:not([type="checkbox"]):not([type="radio"]),
+.add-child-section select,
+.add-child-section textarea,
+.ios-identity-modal .identity-form-section input:not([type="checkbox"]):not([type="radio"]),
+.ios-identity-modal .identity-form-section select,
+.ios-identity-modal .identity-form-section textarea {
+  min-height: 48px;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: 16px !important;
+  background: rgba(255, 255, 255, 0.6) !important;
+  box-shadow:
+    0 2px 8px rgba(15, 23, 42, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  color: #1c1c1e;
+  outline: none;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.add-child-section input:not([type="checkbox"]):not([type="radio"]):focus,
+.add-child-section select:focus,
+.add-child-section textarea:focus,
+.ios-identity-modal .identity-form-section input:not([type="checkbox"]):not([type="radio"]):focus,
+.ios-identity-modal .identity-form-section select:focus,
+.ios-identity-modal .identity-form-section textarea:focus {
+  border-color: rgba(96, 165, 250, 0.9) !important;
+  background: rgba(255, 255, 255, 0.8) !important;
+  box-shadow:
+    0 0 0 3px rgba(96, 165, 250, 0.2),
+    0 7px 18px rgba(15, 23, 42, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.88);
+  transform: translateY(-1px);
+}
+
+.add-child-section input[readonly],
+.ios-identity-modal .identity-form-section input[readonly],
+.add-child-section select:disabled,
+.ios-identity-modal .identity-form-section select:disabled {
+  background: rgba(148, 163, 184, 0.14) !important;
+  color: rgba(71, 85, 105, 0.72);
+}
+
+.add-child-section .ios-form-switch,
+.ios-identity-modal .identity-form-section .ios-form-switch {
+  width: fit-content;
+  min-height: 32px;
+  padding: 3px 10px 3px 4px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.4);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.58);
+}
+
+.add-child-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid rgba(96, 165, 250, 0.14);
+  border-radius: 0.75rem;
+  background: rgba(59, 130, 246, 0.1);
+  color: #1d4ed8;
+  font-size: 0.75rem;
+  font-weight: 550;
+  line-height: 1.4;
+}
+
+.add-child-form-actions {
+  margin-top: 0.5rem;
+}
+
+.add-child-cancel,
+.add-child-save {
+  min-height: 44px;
+  border-radius: 999px !important;
+}
+
+.add-child-cancel {
+  border: 1px solid rgba(148, 163, 184, 0.4) !important;
+  background: rgba(255, 255, 255, 0.3) !important;
+  color: #475569 !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.64);
+}
+
+.add-child-cancel:hover,
+.add-child-cancel:focus-visible {
+  background: rgba(255, 255, 255, 0.62) !important;
+  color: #1e293b !important;
+}
+
+.add-child-save {
+  background: #007aff !important;
+  color: #fff !important;
+  box-shadow:
+    0 10px 22px rgba(0, 122, 255, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.38);
+}
+
+.add-child-save:hover,
+.add-child-save:focus-visible {
+  background: #006ee6 !important;
+  box-shadow:
+    0 12px 26px rgba(0, 122, 255, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.42);
+}
+
+@media (max-width: 639px) {
+  .add-child-section,
+  .ios-identity-modal .identity-form-section {
+    padding: 1.25rem;
+    border-radius: 24px;
+  }
+
+  .add-child-section::before,
+  .ios-identity-modal .identity-form-section::before {
+    border-radius: 23px;
+  }
+
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .add-child-section,
+  .ios-identity-modal .identity-form-section,
+  .add-child-section input:not([type="checkbox"]):not([type="radio"]),
+  .add-child-section select,
+  .add-child-section textarea,
+  .ios-identity-modal .identity-form-section input:not([type="checkbox"]):not([type="radio"]),
+  .ios-identity-modal .identity-form-section select,
+  .ios-identity-modal .identity-form-section textarea {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: rgba(248, 248, 250, 0.94) !important;
+  }
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .add-child-section,
+  .ios-identity-modal .identity-form-section,
+  .add-child-section input:not([type="checkbox"]):not([type="radio"]),
+  .add-child-section select,
+  .add-child-section textarea,
+  .ios-identity-modal .identity-form-section input:not([type="checkbox"]):not([type="radio"]),
+  .ios-identity-modal .identity-form-section select,
+  .ios-identity-modal .identity-form-section textarea {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: rgba(248, 248, 250, 0.94) !important;
+  }
+}
+
+/* Measurement workspace --------------------------------------------------
+ * Keep the history table and its entry form in the same calm, light glass
+ * language used by the dashboard filters and cards. These rules intentionally
+ * live at the end of the compatibility sheet so they take precedence over
+ * the older measurement panel treatments. */
+.measurement-segmented {
+  position: relative;
+  display: flex;
+  width: min(100%, 300px);
+  min-height: 46px;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 3px;
+  padding: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.3);
+  box-shadow:
+    0 12px 28px rgba(15, 23, 42, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.68);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  backdrop-filter: blur(24px) saturate(150%);
+}
+
+.measurement-segmented button {
+  position: relative;
+  z-index: 0;
+  display: inline-flex;
+  min-width: 130px;
+  min-height: 36px;
+  flex: 1 1 0;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  overflow: hidden;
+  border: 0;
+  border-radius: 999px;
+  background: transparent !important;
+  color: rgba(71, 85, 105, 0.76);
+  font-size: 13px;
+  font-weight: 650;
+  transition: color 180ms ease, transform 180ms ease;
+}
+
+.measurement-segmented button:hover {
+  color: #1e293b;
+}
+
+.measurement-segmented button.is-active {
+  color: #007aff;
+  transform: scale(1.015);
+}
+
+.measurement-segment-pill {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: inherit;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow:
+    0 3px 9px rgba(15, 23, 42, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.98);
+}
+
+.measurement-segment-content {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+
+.measurement-history-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: 28px !important;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.46), transparent 40%),
+    rgba(255, 255, 255, 0.4) !important;
+  box-shadow:
+    0 18px 44px rgba(15, 23, 42, 0.08),
+    0 0 0 1px rgba(255, 255, 255, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.68) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  backdrop-filter: blur(24px) saturate(150%);
+}
+
+.measurement-history-heading {
+  min-height: 72px;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3) !important;
+  background: rgba(255, 255, 255, 0.24) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  backdrop-filter: blur(18px) saturate(150%);
+}
+
+.measurement-history-heading h3 {
+  color: #1e293b;
+  font-size: 15px;
+  font-weight: 750;
+}
+
+.measurement-history-heading p {
+  color: rgba(71, 85, 105, 0.65);
+}
+
+.measurement-history-tools {
+  gap: 8px;
+}
+
+.measurement-history-card .measurement-growth-button,
+.measurement-history-card .measurement-analysis-button {
+  min-height: 38px;
+  padding: 7px 10px !important;
+  border: 1px solid rgba(255, 255, 255, 0.42) !important;
+  border-radius: 999px !important;
+  background: rgba(255, 255, 255, 0.5) !important;
+  color: #007aff !important;
+  box-shadow:
+    0 4px 12px rgba(15, 23, 42, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.82) !important;
+}
+
+.measurement-history-card .measurement-growth-button:hover,
+.measurement-history-card .measurement-analysis-button:hover,
+.measurement-history-card .measurement-growth-button:focus-visible,
+.measurement-history-card .measurement-analysis-button:focus-visible {
+  background: rgba(255, 255, 255, 0.72) !important;
+  color: #006ee6 !important;
+  transform: translateY(-1px);
+}
+
+.measurement-growth-badge {
+  display: inline-flex;
+  min-width: 21px;
+  height: 21px;
+  align-items: center;
+  justify-content: center;
+  padding-inline: 5px;
+  border-radius: 999px;
+  background: #007aff;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 750;
+  line-height: 1;
+}
+
+.measurement-history-scroll {
+  max-height: min(68vh, 720px);
+  overflow-x: auto;
+  overflow-y: auto;
+  background: rgba(255, 255, 255, 0.22) !important;
+  scrollbar-color: rgba(100, 116, 139, 0.42) transparent;
+}
+
+.measurement-history-scroll::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+
+.measurement-history-scroll::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.measurement-history-scroll::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background: rgba(100, 116, 139, 0.42);
+  background-clip: padding-box;
+}
+
+.measurement-history-card .ios-measurement-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 18;
+  border-right-color: rgba(255, 255, 255, 0.22) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3) !important;
+  background: rgba(255, 255, 255, 0.58) !important;
+  color: #64748b !important;
+  -webkit-backdrop-filter: blur(14px) saturate(145%);
+  backdrop-filter: blur(14px) saturate(145%);
+}
+
+.measurement-history-card .ios-measurement-table thead th:first-child,
+.measurement-history-card .ios-measurement-table thead th:last-child {
+  z-index: 26;
+  background: rgba(255, 255, 255, 0.7) !important;
+}
+
+.measurement-history-card .ios-measurement-table tbody td {
+  border-right-color: rgba(255, 255, 255, 0.24) !important;
+  border-bottom-color: rgba(255, 255, 255, 0.26) !important;
+  background: rgba(255, 255, 255, 0.28) !important;
+  color: #334155;
+}
+
+.measurement-history-card .ios-measurement-table tbody tr:nth-child(even) td {
+  background: rgba(255, 255, 255, 0.38) !important;
+}
+
+.measurement-history-card .ios-measurement-table tbody tr:hover td,
+.measurement-history-card .ios-measurement-table tbody tr:focus-within td {
+  background: rgba(255, 255, 255, 0.58) !important;
+}
+
+.measurement-history-card .ios-measurement-table tbody td:first-child,
+.measurement-history-card .ios-measurement-table tbody td:last-child {
+  background: rgba(255, 255, 255, 0.58) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(145%);
+  backdrop-filter: blur(14px) saturate(145%);
+}
+
+.measurement-history-card .table-action-button,
+.measurement-history-card .table-action-button.table-action-blue,
+.measurement-history-card .table-action-button.table-action-red {
+  width: 34px;
+  height: 34px;
+  min-height: 34px;
+  border: 1px solid currentColor !important;
+  border-radius: 999px !important;
+  box-shadow: 0 3px 8px rgba(15, 23, 42, 0.07) !important;
+  transition: background-color 160ms ease, color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+}
+
+.measurement-history-card .table-action-button.table-action-blue {
+  background: rgba(0, 122, 255, 0.1) !important;
+  border-color: rgba(0, 122, 255, 0.22) !important;
+  color: #007aff !important;
+}
+
+.measurement-history-card .table-action-button.table-action-red {
+  background: rgba(255, 59, 48, 0.1) !important;
+  border-color: rgba(255, 59, 48, 0.22) !important;
+  color: #d92d20 !important;
+}
+
+.measurement-history-card .table-action-button.table-action-blue:hover,
+.measurement-history-card .table-action-button.table-action-blue:focus-visible {
+  background: rgba(0, 122, 255, 0.2) !important;
+  color: #006ee6 !important;
+  transform: scale(1.06);
+}
+
+.measurement-history-card .table-action-button.table-action-red:hover,
+.measurement-history-card .table-action-button.table-action-red:focus-visible {
+  background: rgba(255, 59, 48, 0.19) !important;
+  color: #c5221f !important;
+  transform: scale(1.06);
+}
+
+.measurement-form-card {
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.measurement-form-stack {
+  min-width: 0;
+}
+
+.measurement-form-section {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 28px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.48), transparent 42%),
+    rgba(255, 255, 255, 0.4);
+  box-shadow:
+    0 16px 40px rgba(15, 23, 42, 0.08),
+    0 0 0 1px rgba(255, 255, 255, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.65),
+    inset 0 -1px 0 rgba(15, 23, 42, 0.05);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  backdrop-filter: blur(24px) saturate(150%);
+}
+
+.measurement-form-section::before {
+  position: absolute;
+  z-index: 0;
+  inset: 1px;
+  border-radius: 27px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), transparent 44%);
+  content: "";
+  pointer-events: none;
+}
+
+.measurement-form-section > * {
+  position: relative;
+  z-index: 1;
+}
+
+.measurement-form-section-copy {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.24);
+}
+
+.measurement-form-section-copy h3 {
+  margin: 0;
+  color: #1e293b;
+  font-size: 1rem;
+  font-weight: 750;
+}
+
+.measurement-form-section-copy p {
+  margin: 0;
+  color: rgba(71, 85, 105, 0.68);
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+.measurement-form-section input:not([type="checkbox"]):not([type="radio"]),
+.measurement-form-section .measurement-select-field {
+  min-height: 48px;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: 16px !important;
+  background: rgba(255, 255, 255, 0.6) !important;
+  box-shadow:
+    0 2px 8px rgba(15, 23, 42, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  color: #1e293b;
+  outline: none;
+  transition: background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.measurement-form-section input:not([type="checkbox"]):not([type="radio"]):focus,
+.measurement-form-section .measurement-select-field:focus {
+  border-color: rgba(96, 165, 250, 0.9) !important;
+  background: rgba(255, 255, 255, 0.8) !important;
+  box-shadow:
+    0 0 0 3px rgba(96, 165, 250, 0.2),
+    0 7px 18px rgba(15, 23, 42, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.88);
+  transform: translateY(-1px);
+}
+
+.measurement-form-section .measurement-input-readonly {
+  background: rgba(148, 163, 184, 0.14) !important;
+  color: rgba(71, 85, 105, 0.72) !important;
+}
+
+.measurement-info-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+  padding: 0.75rem;
+  border: 1px solid rgba(96, 165, 250, 0.16);
+  border-radius: 0.75rem;
+  background: rgba(59, 130, 246, 0.1);
+  color: #1d4ed8;
+  font-size: 0.75rem;
+  font-weight: 550;
+  line-height: 1.4;
+}
+
+.measurement-info-box p {
+  margin: 0;
+}
+
+.measurement-form-actions {
+  justify-content: flex-end;
+  border-top: 0;
+}
+
+.measurement-form-cancel,
+.measurement-form-save {
+  min-height: 46px;
+  border-radius: 999px !important;
+}
+
+.measurement-form-cancel {
+  border: 1px solid rgba(148, 163, 184, 0.4) !important;
+  background: rgba(255, 255, 255, 0.3) !important;
+  color: #475569 !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.64) !important;
+}
+
+.measurement-form-cancel:hover,
+.measurement-form-cancel:focus-visible {
+  background: rgba(255, 255, 255, 0.66) !important;
+  color: #1e293b !important;
+}
+
+.measurement-form-save {
+  background: #007aff !important;
+  color: #fff !important;
+  box-shadow:
+    0 10px 24px rgba(0, 122, 255, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.38) !important;
+}
+
+.measurement-form-save:hover,
+.measurement-form-save:focus-visible {
+  background: #006ee6 !important;
+  box-shadow:
+    0 12px 28px rgba(0, 122, 255, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.42) !important;
+}
+
+@media (max-width: 767px) {
+  .measurement-segmented {
+    width: 100%;
+  }
+
+  .measurement-history-tools {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+  .measurement-history-card .measurement-growth-button,
+  .measurement-history-card .measurement-analysis-button {
+    flex: 1 1 auto;
+  }
+
+  .measurement-form-section {
+    padding: 1.25rem;
+    border-radius: 24px;
+  }
+
+  .measurement-form-section::before {
+    border-radius: 23px;
+  }
+
+  .measurement-form-actions {
+    align-items: stretch;
+    flex-direction: column-reverse;
+  }
+
+  .measurement-form-actions button {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .measurement-segmented,
+  .measurement-history-card,
+  .measurement-history-heading,
+  .measurement-history-scroll,
+  .measurement-history-card .ios-measurement-table thead th,
+  .measurement-form-section,
+  .measurement-form-section input:not([type="checkbox"]):not([type="radio"]),
+  .measurement-form-section .measurement-select-field {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: rgba(248, 250, 252, 0.94) !important;
+  }
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .measurement-segmented,
+  .measurement-history-card,
+  .measurement-history-heading,
+  .measurement-history-scroll,
+  .measurement-history-card .ios-measurement-table thead th,
+  .measurement-form-section,
+  .measurement-form-section input:not([type="checkbox"]):not([type="radio"]),
+  .measurement-form-section .measurement-select-field {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: rgba(248, 250, 252, 0.94) !important;
+  }
+}
+
+/* Higher-contrast glass for long data-entry forms. The previous translucent
+ * tint was too close to the light page background, especially on laptop
+ * displays. Keep the blur, but give each section and control a clear edge. */
+.add-child-section,
+.ios-identity-modal .identity-form-section,
+.measurement-form-section {
+  border-color: rgba(148, 163, 184, 0.3) !important;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.66), transparent 44%),
+    rgba(255, 255, 255, 0.62) !important;
+  box-shadow:
+    0 18px 42px rgba(15, 23, 42, 0.11),
+    0 0 0 1px rgba(255, 255, 255, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.86),
+    inset 0 -1px 0 rgba(71, 85, 105, 0.1) !important;
+}
+
+.add-child-section::before,
+.ios-identity-modal .identity-form-section::before,
+.measurement-form-section::before {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.52), transparent 46%) !important;
+}
+
+.add-child-section input:not([type="checkbox"]):not([type="radio"]),
+.add-child-section select,
+.add-child-section textarea,
+.ios-identity-modal .identity-form-section input:not([type="checkbox"]):not([type="radio"]),
+.ios-identity-modal .identity-form-section select,
+.ios-identity-modal .identity-form-section textarea,
+.measurement-form-section input:not([type="checkbox"]):not([type="radio"]),
+.measurement-form-section .measurement-select-field {
+  border-color: rgba(100, 116, 139, 0.28) !important;
+  background: rgba(255, 255, 255, 0.76) !important;
+  box-shadow:
+    0 3px 10px rgba(15, 23, 42, 0.06),
+    0 0 0 1px rgba(255, 255, 255, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.92) !important;
+}
+
+.add-child-section input:not([type="checkbox"]):not([type="radio"]):focus,
+.add-child-section select:focus,
+.add-child-section textarea:focus,
+.ios-identity-modal .identity-form-section input:not([type="checkbox"]):not([type="radio"]):focus,
+.ios-identity-modal .identity-form-section select:focus,
+.ios-identity-modal .identity-form-section textarea:focus,
+.measurement-form-section input:not([type="checkbox"]):not([type="radio"]):focus,
+.measurement-form-section .measurement-select-field:focus {
+  border-color: rgba(37, 99, 235, 0.72) !important;
+  background: rgba(255, 255, 255, 0.92) !important;
+  box-shadow:
+    0 0 0 3px rgba(59, 130, 246, 0.22),
+    0 8px 20px rgba(15, 23, 42, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.98) !important;
+}
+
+.add-child-section .ios-form-section-header,
+.ios-identity-modal .identity-form-section .ios-form-section-copy,
+.measurement-form-section-copy {
+  border-bottom-color: rgba(100, 116, 139, 0.22) !important;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .add-child-section,
+  .ios-identity-modal .identity-form-section,
+  .measurement-form-section {
+    background: rgba(248, 250, 252, 0.98) !important;
+  }
+
+  .add-child-section input:not([type="checkbox"]):not([type="radio"]),
+  .add-child-section select,
+  .add-child-section textarea,
+  .ios-identity-modal .identity-form-section input:not([type="checkbox"]):not([type="radio"]),
+  .ios-identity-modal .identity-form-section select,
+  .ios-identity-modal .identity-form-section textarea,
+  .measurement-form-section input:not([type="checkbox"]):not([type="radio"]),
+  .measurement-form-section .measurement-select-field {
+    background: rgba(255, 255, 255, 0.96) !important;
+  }
+}
+
+/* Ein UI's table uses horizontal separators only. Keep the line visible on
+ * our light page, but avoid a spreadsheet-like vertical grid. */
+.apple-page .ios-data-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 0;
+}
+
+.apple-page .ios-data-table > thead > tr > th,
+.apple-page .ios-data-table > tbody > tr > td {
+  border-right: 0 !important;
+  border-left: 0 !important;
+  border-bottom: 1px solid rgba(100, 116, 139, 0.18) !important;
+}
+
+.apple-page .ios-data-table > thead > tr:first-child > th {
+  border-top: 0 !important;
+}
+
+.apple-page .ios-data-table > thead > tr > th:last-child,
+.apple-page .ios-data-table > tbody > tr > td:last-child {
+  border-right: 0 !important;
+}
+
+.apple-page .ios-data-table > tbody > tr:last-child > td {
+  border-bottom: 0 !important;
+}
+
+.apple-page .ios-data-table > tbody > tr + tr {
+  border-top: 0 !important;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .apple-page .ios-data-table > thead > tr > th,
+  .apple-page .ios-data-table > tbody > tr > td {
+    border-color: rgba(71, 85, 105, 0.28) !important;
+  }
+}
+
+/* The PMT and measurement tables add their own cell borders for legacy
+ * layout. Match the registry surface there as well: horizontal separators,
+ * no vertical column rules. */
+.apple-page .pmt-data-table th,
+.apple-page .pmt-data-table td,
+.apple-page .ios-measurement-table th,
+.apple-page .ios-measurement-table td {
+  border-right: 0 !important;
+  border-left: 0 !important;
+  border-bottom-color: rgba(100, 116, 139, 0.18) !important;
+}
+
+.apple-page .pmt-data-table tbody tr:last-child td,
+.apple-page .ios-measurement-table tbody tr:last-child td {
+  border-bottom: 0 !important;
+}
+
+.admin-account-table th,
+.admin-account-table td {
+  border-right: 0 !important;
+  border-left: 0 !important;
+}
+
+/* The mobile dock is one continuous capsule.  liquid-glass-react renders
+ * several sibling layers, so round each layer as well as the host to avoid a
+ * square corner flashing through during resize or refraction updates. */
+.mobile-bottom-nav-surface,
+.mobile-bottom-nav-surface > .glass,
+.mobile-bottom-nav-surface > .glass > div:last-child {
+  border-radius: 9999px !important;
+}
+
+.mobile-bottom-nav-surface > .glass {
+  overflow: hidden !important;
+}
+
+.mobile-bottom-nav-surface > .glass > div:last-child {
+  box-sizing: border-box !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+}
+
+/*
+ * Cross-browser material normalization.
+ *
+ * liquid-glass-react supplies the refraction filter, while its internal
+ * `.glass` element also carries an inline dark shadow. Some mobile Chromium
+ * and WebKit builds composite that shadow as a dark fill when an SVG filter is
+ * unavailable. Keep the refraction layer transparent and define the light
+ * material here so the same pale capsule is rendered everywhere.
+ */
+.mobile-bottom-nav-surface > .glass,
+.app-header-glass-surface > .glass,
+.app-navigation-glass-surface > .glass,
+.sidebar-liquid-surface > .glass {
+  background-color: rgba(255, 255, 255, 0.24) !important;
+  background-image:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.06) 58%, transparent) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.72),
+    inset 0 -1px 0 rgba(15, 23, 42, 0.035),
+    0 18px 42px rgba(15, 23, 42, 0.08) !important;
+  color: #0f172a !important;
+  forced-color-adjust: none;
+}
+
+.mobile-bottom-nav-surface > .glass > .glass__warp,
+.app-header-glass-surface > .glass > .glass__warp,
+.app-navigation-glass-surface > .glass > .glass__warp,
+.sidebar-liquid-surface > .glass > .glass__warp {
+  background: transparent !important;
+  opacity: 1 !important;
+}
+
+.mobile-bottom-nav-surface > .glass > div:last-child,
+.app-header-glass-surface > .glass > div:last-child,
+.app-navigation-glass-surface > .glass > div:last-child,
+.sidebar-liquid-surface > .glass > div:last-child {
+  color: #0f172a !important;
+  text-shadow: none !important;
+}
+
+/* liquid-glass-react adds two black transition layers before its glass root.
+ * They are visual helpers, not part of the dock surface; hide them in the
+ * wrapper so the light liquid-glass capsule cannot fall back to solid black. */
+.mobile-bottom-nav-host > div.bg-black {
+  display: none !important;
+}
+
+.mobile-bottom-nav-surface + .mobile-bottom-nav-content-layer,
+.mobile-bottom-nav-content-layer {
+  isolation: isolate;
+}
+
+@media (max-width: 767px) {
+  .mobile-bottom-nav-surface {
+    isolation: isolate;
+    overflow: hidden !important;
+  }
+}
+
+/* Keep dock labels readable above the library's inherited text-white layer;
+ * active labels use a stronger blue so they remain visible on the bright
+ * glass blob in Safari as well as Chromium. */
+.mobile-bottom-nav-surface .mobile-tab-label,
+.mobile-bottom-nav-content-layer .mobile-tab-label {
+  position: relative !important;
+  z-index: 3 !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  white-space: nowrap;
+  color: #0f172a !important;
+  font-weight: 600;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.72);
+}
+
+.mobile-bottom-nav-surface button[aria-current="page"],
+.mobile-bottom-nav-content-layer button[aria-current="page"] {
+  isolation: isolate;
+}
+
+.mobile-bottom-nav-surface button[aria-current="page"] .mobile-tab-label,
+.mobile-bottom-nav-content-layer button[aria-current="page"] .mobile-tab-label {
+  color: #0066d6 !important;
+  font-weight: 700;
+}
+
+/* Header and context navigation use liquid-glass-react for the same optical
+ * treatment as the sidebar and mobile dock. The library renders a pair of
+ * helper transition layers as siblings; hide those helpers and keep a normal
+ * flow content layer above the visual surface so account controls and
+ * breadcrumb links stay crisp and interactive. */
+.app-topbar.app-topbar--liquid,
+.app-navigation-bar.app-navigation-bar--liquid {
+  background: transparent !important;
+  border-bottom-color: transparent !important;
+  border-radius: 18px !important;
+  box-shadow: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+/* Leave a small breathing gap when the context strip becomes sticky. The
+ * offset is deliberately a little larger than the chrome height, preventing
+ * the nav surface from sliding under the rounded header while scrolling. */
+.app-navigation-bar.app-navigation-bar--liquid {
+  top: 72px !important;
+  padding-inline: 20px !important;
+}
+
+.app-navigation-bar.app-navigation-bar--liquid .app-navigation-content {
+  padding-inline: 0 !important;
+}
+
+.app-header-glass-host,
+.app-navigation-glass-host {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+}
+
+.app-header-glass-host {
+  grid-column: 1 / -1;
+  height: 68px;
+  min-height: 68px;
+}
+
+.app-navigation-glass-host {
+  height: 52px;
+  min-height: 52px;
+}
+
+.app-header-glass-host > div.bg-black,
+.app-navigation-glass-host > div.bg-black {
+  display: none !important;
+}
+
+/* liquid-glass-react places two masked highlight spans after its root. They
+ * inherit the component's cornerRadius inline value (0 for chrome), so set
+ * both their geometry and radius explicitly to prevent square white corners
+ * flashing over the rounded surface during resize/refraction updates. */
+.app-header-glass-host > span,
+.app-navigation-glass-host > span {
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 18px !important;
+  clip-path: inset(0 round 18px);
+}
+
+.app-header-glass-surface,
+.app-navigation-glass-surface {
+  z-index: 0 !important;
+  pointer-events: none !important;
+  border-radius: 18px !important;
+  overflow: hidden !important;
+}
+
+.app-header-glass-surface > .glass,
+.app-navigation-glass-surface > .glass {
+  border-radius: 18px !important;
+  overflow: hidden !important;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.34), transparent 46%),
+    rgba(255, 255, 255, 0.2) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.62),
+    inset 0 -1px 0 rgba(15, 23, 42, 0.04) !important;
+}
+
+.app-header-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+}
+
+.app-header-content .app-header-title {
+  grid-area: auto;
+}
+
+.app-header-content .topbar-actions {
+  grid-area: auto;
+}
+
+.app-navigation-glass-host > div:last-child,
+.app-header-glass-host > div:last-child {
+  position: relative;
+  z-index: 2;
+}
+
+@media (max-width: 767px) {
+  .app-header-glass-host {
+    height: 64px;
+    min-height: 64px;
+  }
+
+  .app-navigation-glass-host {
+    height: 46px;
+    min-height: 46px;
+  }
+
+  .app-navigation-bar.app-navigation-bar--liquid {
+    top: 68px !important;
+    padding-inline: 10px !important;
+  }
+
+  .app-navigation-bar.app-navigation-bar--liquid .app-navigation-content {
+    padding-inline: 0 !important;
+  }
+
+  .app-header-content {
+    min-height: 64px !important;
+    gap: 9px;
+    padding: max(8px, env(safe-area-inset-top)) 10px 8px !important;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .app-topbar.app-topbar--liquid,
+  .app-navigation-bar.app-navigation-bar--liquid {
+    background: rgba(248, 248, 250, 0.96) !important;
+  }
+}
+
+/* The context strip has been removed. Keep the top bar focused on product
+ * identity and account controls; page titles belong to page content. */
+.app-topbar.app-topbar--liquid,
+.app-topbar {
+  position: sticky;
+  min-height: 68px;
+}
+
+.app-content-page-title {
+  margin: 0 0 18px;
+  padding: 0 4px;
+}
+
+.app-content-page-title h1 {
+  margin: 0;
+  color: var(--apple-label);
+  font-size: clamp(24px, 2.4vw, 32px);
+  font-weight: 780;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+@media (max-width: 767px) {
+  .app-content-page-title {
+    margin-bottom: 14px;
+    padding-inline: 2px;
+  }
+
+  .app-content-page-title h1 {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 767px) {
+  .app-topbar.app-topbar--liquid,
+  .app-topbar {
+    min-height: 64px;
+  }
+
+  /* On touch screens the page header follows the scroll direction: it gets
+     out of the way while reading and returns as soon as the user scrolls up. */
+  .app-topbar {
+    transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+  }
+
+  .app-topbar.is-mobile-header-hidden {
+    transform: translate3d(0, calc(-100% - 8px), 0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .app-topbar {
+      transition: none;
+    }
+  }
+
+}
+
+/* Mobile measurement history -------------------------------------------
+ * Keep the desktop table untouched while presenting each monthly session as
+ * a compact, scan-friendly glass card on phones. */
+.measurement-mobile-history {
+  min-width: 0;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.measurement-mobile-card {
+  display: grid;
+  min-width: 0;
+  gap: 10px;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.4);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.62),
+    0 8px 22px rgba(15, 23, 42, 0.06);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  backdrop-filter: blur(20px) saturate(150%);
+}
+
+.measurement-mobile-card-heading {
+  display: flex;
+  min-width: 0;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.measurement-mobile-card-date {
+  display: flex;
+  min-width: 0;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.measurement-mobile-card-date strong {
+  color: #1e293b;
+  font-size: 14px;
+  font-weight: 780;
+  letter-spacing: 0.025em;
+}
+
+.measurement-mobile-card-date span {
+  color: rgba(71, 85, 105, 0.72);
+  font-size: 11px;
+  font-weight: 550;
+  white-space: nowrap;
+}
+
+.measurement-mobile-card-actions {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 5px;
+}
+
+.measurement-mobile-action-button,
+.measurement-mobile-card .measurement-mobile-action-button {
+  width: 30px !important;
+  height: 30px !important;
+  min-height: 30px !important;
+  flex-basis: 30px !important;
+  border-radius: 999px !important;
+  border-width: 1px !important;
+  box-shadow: 0 3px 8px rgba(15, 23, 42, 0.07) !important;
+}
+
+.measurement-mobile-card .measurement-mobile-action-button.table-action-blue {
+  border-color: rgba(0, 122, 255, 0.22) !important;
+  background: rgba(0, 122, 255, 0.1) !important;
+  color: #007aff !important;
+}
+
+.measurement-mobile-card .measurement-mobile-action-button.table-action-red {
+  border-color: rgba(255, 59, 48, 0.22) !important;
+  background: rgba(255, 59, 48, 0.1) !important;
+  color: #d92d20 !important;
+}
+
+.measurement-mobile-card .measurement-mobile-action-button.table-action-blue:hover,
+.measurement-mobile-card .measurement-mobile-action-button.table-action-blue:focus-visible {
+  background: rgba(0, 122, 255, 0.18) !important;
+  color: #006ee6 !important;
+}
+
+.measurement-mobile-card .measurement-mobile-action-button.table-action-red:hover,
+.measurement-mobile-card .measurement-mobile-action-button.table-action-red:focus-visible {
+  background: rgba(255, 59, 48, 0.17) !important;
+  color: #c5221f !important;
+}
+
+.measurement-mobile-card .measurement-mobile-action-button .apple-symbol,
+.measurement-mobile-card .measurement-mobile-action-button svg {
+  width: 15px;
+  height: 15px;
+  color: currentColor;
+}
+
+.measurement-mobile-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.measurement-mobile-metric {
+  display: flex;
+  min-width: 0;
+  min-height: 53px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 3px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.3);
+  text-align: center;
+}
+
+.measurement-mobile-metric > span {
+  color: rgba(71, 85, 105, 0.68);
+  font-size: 9px;
+  font-weight: 750;
+  letter-spacing: 0.04em;
+  line-height: 1.15;
+}
+
+.measurement-mobile-metric strong {
+  overflow: hidden;
+  max-width: 100%;
+  margin-top: 2px;
+  color: #1e293b;
+  font-size: 13px;
+  font-weight: 750;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.measurement-mobile-metric small {
+  color: rgba(100, 116, 139, 0.7);
+  font-size: 8px;
+  line-height: 1;
+}
+
+.measurement-mobile-status-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  min-width: 0;
+}
+
+.measurement-mobile-status-chip {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  overflow: hidden;
+  padding: 4px 3px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.24);
+  white-space: nowrap;
+}
+
+.measurement-mobile-status-chip > span:first-child {
+  color: rgba(71, 85, 105, 0.76);
+  font-size: 9px;
+  font-weight: 750;
+}
+
+.measurement-mobile-status-chip .ios-status-pill,
+.measurement-mobile-derived .ios-status-pill {
+  max-width: 100%;
+  overflow: hidden;
+  padding-inline: 5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.measurement-mobile-status-skeleton {
+  display: inline-block;
+  width: 30px;
+  height: 17px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.2);
+}
+
+.measurement-mobile-derived {
+  min-width: 0;
+  border-top: 1px solid rgba(148, 163, 184, 0.18);
+  padding-top: 7px;
+}
+
+.measurement-mobile-derived summary {
+  cursor: pointer;
+  color: rgba(71, 85, 105, 0.76);
+  font-size: 10px;
+  font-weight: 650;
+  list-style-position: inside;
+}
+
+.measurement-mobile-derived-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+  margin-top: 8px;
+}
+
+.measurement-mobile-derived-grid > span {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
+  padding: 5px 7px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.24);
+}
+
+.measurement-mobile-derived-grid small {
+  min-width: 0;
+  overflow: hidden;
+  color: rgba(71, 85, 105, 0.68);
+  font-size: 9px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 767px) {
+  .measurement-mobile-history {
+    display: grid;
+    gap: 10px;
+  }
+
+  .measurement-history-tools {
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .measurement-history-card .measurement-growth-button,
+  .measurement-history-card .measurement-analysis-button {
+    width: 100%;
+    min-width: 0;
+    justify-content: flex-start;
+  }
+
+  .measurement-history-card .measurement-growth-button > span:not(.measurement-growth-badge),
+  .measurement-history-card .measurement-analysis-button > span:not(.measurement-growth-badge) {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .measurement-history-card .measurement-growth-badge {
+    margin-left: auto;
+  }
+
+  .measurement-history-count {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (min-width: 768px) {
+  .measurement-mobile-history {
+    display: none !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .measurement-mobile-card {
+    padding: 12px;
+  }
+
+  .measurement-mobile-status-chip > span:first-child {
+    font-size: 8px;
+  }
+
+  .measurement-mobile-status-chip .ios-status-pill {
+    font-size: 9px;
+  }
+}
+
+/* The history page renders two representations of the same data. Keep them
+ * mutually exclusive with explicit display rules rather than relying only on
+ * responsive utility classes, so a late-loaded stylesheet can never show the
+ * desktop table together with the mobile cards. */
+.measurement-history-desktop-only {
+  display: block;
+}
+
+.measurement-history-mobile-only {
+  display: none !important;
+}
+
+@media (max-width: 767px) {
+  .measurement-history-desktop-only {
+    display: none !important;
+  }
+
+  .measurement-history-mobile-only {
+    display: grid !important;
+    gap: 10px;
+  }
+}
+
+@media (min-width: 768px) {
+  .measurement-history-desktop-only {
+    display: block !important;
+  }
+
+  .measurement-history-mobile-only {
+    display: none !important;
+  }
+}
+
+/* ASI export actions use the same labelled controls on phones as they do on
+ * desktop. The two controls share the available row while retaining their
+ * pill shape, instead of collapsing into icon-only buttons. */
+.asi-toolbar-action-label {
+  display: inline;
+  min-width: 0;
+}
+
+@media (max-width: 639px) {
+  .children-table-actions > .asi-toolbar-action {
+    width: 100% !important;
+    min-width: 0 !important;
+    justify-content: center;
+    padding-inline: 10px;
+    border-radius: 999px !important;
+  }
+
+  .asi-toolbar-action-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}

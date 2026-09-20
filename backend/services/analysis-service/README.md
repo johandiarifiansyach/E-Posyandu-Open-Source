@@ -1,0 +1,153 @@
+# Analysis Service (Python engine)
+
+Service Python privat untuk kalkulasi antropometri WHO secara deterministik,
+monitoring kenaikan berat, klasifikasi ASI, agregasi dashboard, dan rendering
+grafik pertumbuhan. Paket open-source ini tidak menyertakan MCP server,
+machine learning, model prediksi, atau skrip pelatihan.
+
+## Kontrak
+
+`proto/analysis.proto` menyediakan `eposyandu.analysis.v1.AnalysisService`.
+RPC `CalculateBatch` menerima data pengukuran (beserta riwayat opsional) dan
+mengembalikan skor-z/status BB/U, TB/U, BB/TB, IMT/U, LILA/U, LK/U,
+status kenaikan berat N/T/O/B, dan klasifikasi ASI eksklusif 0–6 bulan. Status N/T/O/B
+dihitung dari berat mentah, urutan tanggal, dan ambang kenaikan usia (bukan
+label lama dari browser). ASI hanya berstatus eksklusif (Ya) bila seluruh
+jawaban usia 0, 1, 2, 3, 4, 5, dan 6 bulan adalah Ya. Setiap panggilan gRPC wajib
+mengirim metadata `x-eposyandu-service-token` yang sama dengan
+`RUST_WORKER_SHARED_SECRET`.
+
+RPC `AnalyzeDataset` menerima baris mentah anak, pengukuran, serta parameter
+periode/cakupan dan mengembalikan agregasi dashboard, filter/paginasi tabel,
+dan klasifikasi ASI. RPC ini adalah satu-satunya pemilik statistik kesehatan,
+filter status, pengurutan, dan agregasi klinis. PostgreSQL dapat melakukan
+proyeksi kolom, filter periode/cakupan, dan hitungan baris teknis melalui
+`eposyandu_dashboard_dataset`; gateway Rust memvalidasi sesi/scope dan
+meneruskan snapshot itu. Nilai hitungan teknis tidak pernah dipakai sebagai
+pengganti perhitungan Python.
+
+RPC `RenderGrowthChart` menerima titik riwayat dan mengembalikan SVG grafik
+WHO berbahasa Indonesia. Gateway operasi menyediakan endpoint HTTP
+terautentikasi `/api/v1/analysis/anthropometry` (batch status),
+`/api/v1/analysis/dashboard-stats` (agregasi), `/api/v1/children/page`
+(filter/paginasi Python), `/api/v1/exclusive-breastfeeding/page` (ASI), dan
+`/api/v1/analysis/growth-chart` (SVG). Dengan begitu tabel, ekspor tabel,
+dashboard, ASI, dan grafik memakai hasil Python tanpa menghitung atau
+memfilter ulang di browser. Saat Python tidak tersedia, UI melaporkan layanan
+belum tersedia atau menampilkan halaman Python yang telah di-cache; tidak ada
+fallback klasifikasi WHO/N/T/O/B lokal.
+
+## Runtime produksi
+
+Pada deployment opsi PyO3, modul ini tidak membuka listener gRPC sendiri.
+`backend/services/analysis-worker` (Rust) memuatnya melalui PyO3, mempertahankan kontrak
+gRPC/UDS yang sama, serta menjalankan loop outbox. Image Python/gRPC di bawah
+tetap dipertahankan untuk rollback dan pengujian kompatibilitas.
+
+## Menjalankan dengan Docker (legacy/kompatibilitas)
+
+```bash
+docker build -f backend/services/analysis-service/Dockerfile -t e-posyandu-analysis-service .
+docker run --rm \
+  -e RUST_WORKER_SHARED_SECRET=secret-uji \
+  -e ANALYSIS_GRPC_ADDR=unix:///tmp/analysis.sock \
+  -p 8082:8082 \
+  e-posyandu-analysis-service
+```
+
+Pada Compose Oracle service memakai UDS
+`unix:///run/e-posyandu/analysis.sock`, sedangkan health check HTTP berada pada
+port privat `8082`. Tabel LMS dibundel dari tabel WHO yang sudah diverifikasi.
+NumPy menjadi akselerator opsional untuk batch LMS dan koordinat kurva grafik,
+sehingga hasilnya identik dengan jalur skalar ketika
+`ANALYSIS_NUMPY_ENABLED=false`.
+
+`ANALYSIS_DATASET_WORKER_MODE=thread` adalah default dan wajib untuk image
+PyO3 karena interpreter Python tertanam di proses Rust. Service Python/gRPC
+standalone dapat memilih `process` setelah profiling; `ProcessPoolExecutor`
+menjalankan beberapa proses CPython yang masing-masing memuat tabel WHO sekali,
+sehingga pekerjaan CPU-bound tidak terserialisasi oleh GIL. Mode process tidak
+boleh diaktifkan pada worker PyO3.
+
+### Skalabilitas agregasi
+
+Service memakai cache TTL/LRU proses untuk hasil agregasi dashboard. Kunci cache
+dibuat dari seluruh parameter dan baris mentah yang diterima, sehingga perubahan
+data otomatis membuat hasil baru; TTL menjadi batas keamanan tambahan. Cache ini
+hanya menyimpan angka agregasi dashboard, bukan respons tabel yang berisi
+identitas balita. Penilaian setiap balita juga memiliki cache turunan terpisah,
+sehingga pada refresh berikutnya hanya anak yang berubah yang menjalankan ulang
+WHO dan aturan monitoring deterministik.
+
+Permintaan dataset dijalankan melalui antrean worker Python berbatas. Nilai
+defaultnya dua worker dan 16 slot antrean; ketika antrean penuh service memberi
+status `RESOURCE_EXHAUSTED` sehingga gateway tidak membuat beban tak terbatas.
+Pengaturan dapat disesuaikan melalui `ANALYSIS_DATASET_WORKERS`,
+`ANALYSIS_DATASET_QUEUE_SIZE`, `ANALYSIS_DATASET_QUEUE_TIMEOUT_SECONDS`,
+`ANALYSIS_DASHBOARD_CACHE_SIZE`, `ANALYSIS_DASHBOARD_CACHE_TTL_SECONDS`,
+`ANALYSIS_ASSESSMENT_CACHE_SIZE`, dan `ANALYSIS_ASSESSMENT_CACHE_TTL_SECONDS`.
+
+Penulisan snapshot agregasi dashboard juga dipisahkan dari jalur request.
+Setelah Python menyelesaikan kalkulasi, hasil langsung dikembalikan dan hanya
+metadata periode/cakupan serta agregat ringkas yang dimasukkan ke antrean
+berbatas. Worker penulis menyimpan `dashboard_analysis` di PostgreSQL di latar
+belakang dan mencoba ulang kegagalan koneksi hingga tiga kali. Antrean penuh
+tidak menahan kader atau mengubah hasil kalkulasi; snapshot berikutnya akan
+menggantikannya. Kapasitas dan paralelisme dapat diatur dengan
+`ANALYSIS_DASHBOARD_WRITE_QUEUE_SIZE` (default 32) dan
+`ANALYSIS_DASHBOARD_WRITE_WORKERS` (default 1). Saat proses berhenti secara
+normal, item yang sudah diterima tetap dikuras terlebih dahulu.
+
+### Proyeksi hasil ke PostgreSQL
+
+Dengan `ANALYSIS_PERSISTENCE_ENABLED=true`, service juga menjalankan worker
+outbox. Trigger migration 037 menerima perubahan dari semua tabel balita,
+pengukuran, MPASI, PMT, riwayat, dan penghapusan; Rust tidak menunggu worker
+sebelum menyimpan data utama. Worker Python membaca riwayat lengkap child,
+menghitung ulang hanya child yang berubah, lalu menyimpan hasil ke
+`measurement_analysis` bersama fingerprint sumber, `input_hash`, versi sumber,
+versi hasil, dan versi cakupan. Pada replay job, Python membandingkan hash
+input per pengukuran; baris yang sama tidak dihitung ulang dan
+`analysis_version`-nya dipertahankan. Baris pengukuran yang dihapus atau
+menjadi tidak lengkap tetap dibersihkan dari proyeksi. Rust dapat membaca
+proyeksi itu langsung dari PostgreSQL/Redis tanpa mengulang kalkulasi WHO pada
+setiap request. Setel `ANALYSIS_DATABASE_URL` (atau `ORACLE_DATABASE_URL`;
+`DATABASE_URL` diterima sebagai fallback saat rotasi secret) dan
+`ANALYSIS_PERSISTENCE_INTERVAL_SECONDS` sesuai lingkungan. Pada deployment
+Rust/PyO3, scheduler mendengarkan channel PostgreSQL
+`e_posyandu_analysis_outbox` dan interval tersebut hanya menjadi safety-net
+ketika LISTEN/NOTIFY tidak tersedia. Satu wake memproses batch terbatas yang
+diatur `ANALYSIS_PERSISTENCE_BATCH_SIZE` (default 8), sehingga input massal
+tidak menimbulkan satu lintasan PyO3 untuk setiap baris. Kegagalan dikembalikan
+ke antrean dengan exponential backoff yang diatur
+`ANALYSIS_PERSISTENCE_RETRY_BASE_SECONDS` (default 2) dan
+`ANALYSIS_PERSISTENCE_RETRY_MAX_SECONDS` (default 300). Saat worker mulai,
+job child yang sebelumnya masuk status `failed` dipulihkan sekali ke antrean
+`pending` melalui `ANALYSIS_REQUEUE_FAILED_ON_START=true` (default), sehingga
+gangguan migrasi atau koneksi tidak meninggalkan kolom status kosong selama
+berhari-hari. Grafik dan analisis pertumbuhan detail tetap melewati RPC Python.
+
+Operasi LMS yang berulang memakai cache numerik bounded di `who.py`. Renderer
+grafik menyimpan SVG identik secara process-local dengan TTL agar pembukaan
+ulang grafik tidak merender ulang kurva WHO; ukuran dan TTL diatur melalui
+`ANALYSIS_GRAPH_CACHE_SIZE` dan `ANALYSIS_GRAPH_CACHE_TTL_SECONDS`. Image
+analysis-worker memasang NumPy bounded (`numpy>=1.26,<3`) untuk perhitungan
+batch dan grafik. Dependensi pelatihan tidak dibawa ke image runtime.
+
+Setiap item mengembalikan `analysis_json` berisi status WHO,
+`weightGainStatus`, `weightGainMinimumGrams`, dan konteks ASI. Semua nilai
+berasal dari tabel WHO/LMS dan aturan deterministik yang dapat diaudit; hasil
+tetap harus dikonfirmasi oleh tenaga kesehatan.
+Hasil perhitungan bersifat informatif dan tetap harus dikonfirmasi oleh
+tenaga kesehatan.
+
+## Pengujian lokal
+
+Modul kalkulasi tidak membutuhkan `grpcio` untuk diuji:
+
+```bash
+python3 -m unittest discover -s backend/services/analysis-service/tests -p 'test_*.py'
+```
+
+Stub Python gRPC dibuat pada tahap image dengan `grpcio-tools`; source tree
+tidak menyimpan hasil generated agar kontrak selalu berasal dari proto.

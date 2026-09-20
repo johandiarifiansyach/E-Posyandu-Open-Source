@@ -1,0 +1,43 @@
+name: Queue and gRPC Load Test
+
+on:
+  workflow_dispatch:
+    inputs:
+      jobs:
+        description: Jumlah job sintetis
+        required: true
+        default: '5'
+      concurrency:
+        description: Jumlah job paralel
+        required: true
+        default: '2'
+      items_per_job:
+        description: Data sintetis per job
+        required: true
+        default: '100'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: queue-grpc-load-test
+  cancel-in-progress: false
+
+jobs:
+  load-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: load-test
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - name: Run end-to-end Queue and gRPC load test
+        env:
+          LOAD_API_URL: https://api.eposyandu.app
+          LOAD_SUPABASE_URL: ${{ secrets.LOAD_SUPABASE_URL }}
+          LOAD_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.LOAD_SUPABASE_PUBLISHABLE_KEY }}
+          LOAD_TEST_EMAIL: ${{ secrets.LOAD_TEST_EMAIL }}
+          LOAD_TEST_PASSWORD: ${{ secrets.LOAD_TEST_PASSWORD }}
+          LOAD_QUEUE_JOBS: ${{ inputs.jobs }}
+          LOAD_QUEUE_CONCURRENCY: ${{ inputs.concurrency }}
+          LOAD_QUEUE_ITEMS: ${{ inputs.items_per_job }}
+        run: npm run load:queue

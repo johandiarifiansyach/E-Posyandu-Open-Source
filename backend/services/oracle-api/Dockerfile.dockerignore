@@ -1,0 +1,13 @@
+*
+!backend/services/oracle-api/Cargo.toml
+!backend/services/oracle-api/Cargo.lock
+!backend/services/oracle-api/src/**
+!backend/services/eposyandu-proto/Cargo.toml
+!backend/services/eposyandu-proto/Cargo.lock
+!backend/services/eposyandu-proto/build.rs
+!backend/services/eposyandu-proto/src/**
+!backend/services/eposyandu-proto/proto/**
+!backend/services/data-processing-service/proto/**
+!backend/services/analysis-service/proto/**
+!backend/openapi.json
+!backend/graphql-schema.graphql

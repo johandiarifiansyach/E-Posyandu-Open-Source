@@ -1,0 +1,141 @@
+name = "e-posyandu-api"
+main = "build/worker/shim.mjs"
+compatibility_date = "2026-07-29"
+workers_dev = true
+
+[observability]
+enabled = true
+head_sampling_rate = 0.1
+
+[build]
+command = "worker-build --release --no-panic-recovery"
+
+[triggers]
+# UTC: keep warm 07:00-16:00 WIB on Monday-Friday.
+crons = [
+  "*/10 0-8 * * MON-FRI",
+  "0 9 * * MON-FRI",
+  # Retensi berjalan setiap hari, termasuk akhir pekan (06:00 WIB).
+  "0 23 * * *",
+]
+
+[[kv_namespaces]]
+# KV hanya untuk konfigurasi global yang jarang berubah seperti feature flag,
+# menu, dan referensi. Data balita/penimbangan memakai Redis TTL 5 menit;
+# dashboard operasional memakai TTL 60 detik.
+binding = "E_POSYANDU_CACHE"
+id = "05421512a237477282deac4d63bd7d8e"
+
+[[queues.producers]]
+binding = "E_POSYANDU_JOBS"
+queue = "e-posyandu-jobs"
+
+# Jalur privat dari API utama ke Worker baca Neon. Browser tidak pernah
+# memperoleh URL maupun kredensial database replica.
+[[services]]
+binding = "NEON_READ_SERVICE"
+service = "e-posyandu-neon-read"
+
+# R2 dipakai untuk hasil ekspor besar dan lampiran privat, bukan sebagai
+# database balita. File sementara dengan prefix `jobs/` dibersihkan otomatis.
+[[r2_buckets]]
+binding = "E_POSYANDU_FILES"
+bucket_name = "e-posyandu-files"
+
+[vars]
+# Pisahkan dengan koma. Nilai rahasia dibuat melalui `wrangler secret put`,
+# bukan disimpan dalam file ini.
+ENVIRONMENT = "production"
+# Ubah ke "true" hanya pada jendela pemeliharaan terjadwal. Di luar itu,
+# Worker otomatis mengaktifkan halaman maintenance bila origin tidak sehat.
+MAINTENANCE_MODE = "false"
+AUTO_MAINTENANCE_ON_HEALTH_FAILURE = "true"
+MAINTENANCE_HEALTH_CACHE_SECONDS = "15"
+CORS_ORIGINS = "https://e-posyandu.pages.dev,https://eposyandu.app,https://www.eposyandu.app"
+TURNSTILE_HOSTNAMES = "e-posyandu.pages.dev,eposyandu.app,www.eposyandu.app"
+PRODUCTION_SUPABASE_PROJECT_REF = "hujopuazuxxxpnxhermo"
+# Diaktifkan setelah Worker `e-posyandu-neon-read` tersedia dan secret
+# READ_REPLICA_SHARED_SECRET pada kedua Worker berisi nilai yang sama.
+# Ubah menjadi `primary-only` untuk mematikan replica tanpa deploy ulang kode.
+READ_REPLICA_MODE = "prefer-replica"
+
+[env.development]
+name = "e-posyandu-api-development"
+workers_dev = true
+
+[env.development.vars]
+ENVIRONMENT = "development"
+MAINTENANCE_MODE = "false"
+AUTO_MAINTENANCE_ON_HEALTH_FAILURE = "false"
+MAINTENANCE_HEALTH_CACHE_SECONDS = "5"
+CORS_ORIGINS = "http://localhost:5175,http://127.0.0.1:5175,http://localhost:5176,http://127.0.0.1:5176"
+TURNSTILE_HOSTNAMES = "localhost,127.0.0.1"
+LOCAL_TURNSTILE_BYPASS = "true"
+PRODUCTION_SUPABASE_PROJECT_REF = "hujopuazuxxxpnxhermo"
+READ_REPLICA_MODE = "primary-only"
+
+[env.development.observability]
+enabled = false
+
+[[env.development.kv_namespaces]]
+binding = "E_POSYANDU_CACHE"
+
+# Binding development hanya dipakai oleh emulator lokal. Jangan arahkan nama
+# berikut ke Queue atau bucket production ketika environment ini dideploy.
+[[env.development.queues.producers]]
+binding = "E_POSYANDU_JOBS"
+queue = "e-posyandu-jobs-development"
+
+[[env.development.r2_buckets]]
+binding = "E_POSYANDU_FILES"
+bucket_name = "e-posyandu-files-development"
+
+[env.development.secrets]
+# Redis is optional for local development; browser sessions fall back to the
+# local KV emulator when the Upstash secrets are not present. Staging and
+# production still require both Redis secrets (see the lists below).
+required = ["SUPABASE_URL", "SUPABASE_PUBLISHABLE_KEY", "SUPABASE_SECRET_KEY", "TURNSTILE_SECRET_KEY"]
+
+[env.staging]
+name = "e-posyandu-api-staging"
+workers_dev = true
+
+[env.staging.vars]
+ENVIRONMENT = "staging"
+MAINTENANCE_MODE = "false"
+AUTO_MAINTENANCE_ON_HEALTH_FAILURE = "true"
+MAINTENANCE_HEALTH_CACHE_SECONDS = "10"
+CORS_ORIGINS = "https://e-posyandu-staging.pages.dev"
+TURNSTILE_HOSTNAMES = "e-posyandu-staging.pages.dev"
+PRODUCTION_SUPABASE_PROJECT_REF = "hujopuazuxxxpnxhermo"
+# Staging mulai dari primary-only. Aktifkan service binding replika staging
+# hanya setelah database Neon staging dan seluruh secret-nya tersedia.
+READ_REPLICA_MODE = "primary-only"
+
+[env.staging.observability]
+enabled = true
+head_sampling_rate = 1.0
+
+[[env.staging.kv_namespaces]]
+binding = "E_POSYANDU_CACHE"
+id = "79568f3667f04838b1c005b4ebacef15"
+
+[[env.staging.queues.producers]]
+binding = "E_POSYANDU_JOBS"
+queue = "e-posyandu-jobs-staging"
+
+[[env.staging.r2_buckets]]
+binding = "E_POSYANDU_FILES"
+bucket_name = "e-posyandu-files-staging"
+
+# Worker private ini tersedia sebagai target binding, tetapi tidak digunakan
+# selama READ_REPLICA_MODE masih primary-only.
+[[env.staging.services]]
+binding = "NEON_READ_SERVICE"
+service = "e-posyandu-neon-read-staging"
+
+[env.staging.secrets]
+required = ["SUPABASE_URL", "SUPABASE_PUBLISHABLE_KEY", "SUPABASE_SECRET_KEY", "TURNSTILE_SECRET_KEY", "UPSTASH_REDIS_REST_URL", "UPSTASH_REDIS_REST_TOKEN"]
+
+[secrets]
+required = ["SUPABASE_URL", "SUPABASE_PUBLISHABLE_KEY", "SUPABASE_SECRET_KEY", "TURNSTILE_SECRET_KEY", "UPSTASH_REDIS_REST_URL", "UPSTASH_REDIS_REST_TOKEN"]

@@ -1,0 +1,43 @@
+name: System Monitor
+
+on:
+  workflow_dispatch:
+  schedule:
+    # UTC: 07:07-16:00 WIB on Monday-Friday.
+    - cron: '7,37 0-8 * * MON-FRI'
+    - cron: '0 9 * * MON-FRI'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: system-monitor
+  cancel-in-progress: true
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - name: Check frontend, API, readiness, and data-processing worker
+        env:
+          MONITOR_FRONTEND_URL: https://e-posyandu.pages.dev
+          MONITOR_API_URL: https://api.eposyandu.app
+          MONITOR_GRPC_HEALTH_URL: ${{ vars.DATA_PROCESSING_WORKER_HEALTH_URL || vars.NUTRITION_WORKER_HEALTH_URL || 'https://nutrition.eposyandu.app/health' }}
+          MONITOR_OUTPUT_PATH: ${{ runner.temp }}/system-monitor.json
+        run: node scripts/operations/monitor-system.mjs
+      - name: Publish monitoring summary
+        if: always()
+        run: |
+          echo '## E-Posyandu system monitor' >> "$GITHUB_STEP_SUMMARY"
+          echo '```json' >> "$GITHUB_STEP_SUMMARY"
+          cat "$RUNNER_TEMP/system-monitor.json" >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || echo '{"ok":false,"detail":"monitor tidak menghasilkan laporan"}' >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: always()
+        with:
+          name: system-monitor-${{ github.run_id }}
+          path: ${{ runner.temp }}/system-monitor.json
+          if-no-files-found: warn
+          retention-days: 14

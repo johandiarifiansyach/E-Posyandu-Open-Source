@@ -1,0 +1,7 @@
+# Salin menjadi .dev.vars untuk pengembangan lokal. Semua nilai di bawah ini
+# hanyalah placeholder dan tidak boleh dipakai sebagai kredensial nyata.
+NEON_DATABASE_URL=replace-with-neon-read-only-connection-url
+NEON_SYNC_DATABASE_URL=replace-with-neon-owner-connection-url
+SUPABASE_URL=https://project-ref.supabase.co
+SUPABASE_SECRET_KEY=replace-with-local-supabase-secret
+READ_REPLICA_SHARED_SECRET=replace-with-at-least-32-random-characters
