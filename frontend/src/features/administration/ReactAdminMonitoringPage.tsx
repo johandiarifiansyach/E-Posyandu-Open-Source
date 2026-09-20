@@ -12,8 +12,8 @@ type Metric = { key: MetricKey; title: string; description: string; color: strin
 const MAX_POINTS = 60;
 const METRICS: Metric[] = [
   { key: 'cpuPercent', title: 'CPU Utilization', description: 'Persentase waktu CPU yang sedang digunakan.', color: '#0f766e', unit: 'percent', fixedMaximum: 100 },
-  { key: 'memoryPercent', title: 'Memory Utilization', description: 'Persentase memori runtime Oracle yang sedang digunakan.', color: '#2563eb', unit: 'percent', fixedMaximum: 100 },
-  { key: 'memoryUsedBytes', title: 'Memory Used Bytes', description: 'Jumlah memori runtime Oracle yang sedang digunakan.', color: '#4f46e5', unit: 'bytes' },
+  { key: 'memoryPercent', title: 'Memory Utilization', description: 'Persentase memori runtime aplikasi yang sedang digunakan.', color: '#2563eb', unit: 'percent', fixedMaximum: 100 },
+  { key: 'memoryUsedBytes', title: 'Memory Used Bytes', description: 'Jumlah memori runtime aplikasi yang sedang digunakan.', color: '#4f46e5', unit: 'bytes' },
   { key: 'loadAverage', title: 'Load Average', description: 'Rata-rata beban sistem selama satu menit.', color: '#7c3aed', unit: 'number' },
   { key: 'diskReadOperationsPerSecond', title: 'Disk Read I/O', description: 'Jumlah operasi baca disk setiap detik.', color: '#0891b2', unit: 'number' },
   { key: 'diskWriteOperationsPerSecond', title: 'Disk Write I/O', description: 'Jumlah operasi tulis disk setiap detik.', color: '#ea580c', unit: 'number' },

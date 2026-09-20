@@ -3,6 +3,7 @@
 import { Fragment, type FocusEvent, type MouseEvent } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import {
+  AlertCircle,
   Baby,
   ChevronLeft,
   ChevronRight,
@@ -10,8 +11,11 @@ import {
   Gift,
   History,
   LayoutDashboard,
+  Minus,
   Plus,
+  Ruler,
   Trash2,
+  TrendingDown,
   Utensils,
   Users,
   X,
@@ -49,6 +53,17 @@ export const SIDEBAR_NAV_SECTIONS: SidebarNavSectionConfig<string>[] = [
     ],
   },
   {
+    id: "analysis",
+    label: "Pemantauan Gizi",
+    items: [
+      { view: "problem_underweight", id: "problem_underweight", label: "Balita Underweight", Icon: TrendingDown },
+      { view: "problem_stunting", id: "problem_stunting", label: "Balita Stunting", Icon: Ruler },
+      { view: "problem_wasting", id: "problem_wasting", label: "Balita Wasting", Icon: AlertCircle },
+      { view: "problem_tidak_naik", id: "problem_tidak_naik", label: "Balita Tidak Naik", Icon: Minus },
+      { view: "pmt", id: "pmt_program", label: "Pemberian PMT", Icon: Gift },
+    ],
+  },
+  {
     id: "management",
     label: "Manajemen Data",
     items: [
@@ -56,7 +71,6 @@ export const SIDEBAR_NAV_SECTIONS: SidebarNavSectionConfig<string>[] = [
       { view: "recent", id: "recent", label: "Balita Baru Diinput", Icon: Clock },
       { view: "history", id: "change_history", label: "Riwayat Perubahan", Icon: History },
       { view: "recycle", id: "recycle_bin", label: "Daftar Dihapus", Icon: Trash2 },
-      { view: "pmt", id: "pmt_program", label: "Pemberian PMT", Icon: Gift },
     ],
   },
 ];

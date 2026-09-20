@@ -153,7 +153,11 @@ function initialScope(user: DashboardUser): DashboardScope {
 type ChildTableView =
   | "data"
   | "recent"
-  | "recycle";
+  | "recycle"
+  | "problem_underweight"
+  | "problem_stunting"
+  | "problem_wasting"
+  | "problem_tidak_naik";
 type ActiveView =
   | "dashboard"
   | ChildTableView
@@ -182,6 +186,10 @@ const HASH_TO_VIEW: Record<string, ActiveView> = {
   data_balita: "data",
   asi_eksklusif: "asi",
   mpasi: "mpasi",
+  problem_underweight: "problem_underweight",
+  problem_stunting: "problem_stunting",
+  problem_wasting: "problem_wasting",
+  problem_tidak_naik: "problem_tidak_naik",
   pmt_program: "pmt",
   recent: "recent",
   change_history: "history",
@@ -219,6 +227,10 @@ const PAGE_TITLES: Record<ActiveView, string> = {
   data: "Data Balita",
   recent: "Balita Baru Diinput",
   recycle: "Daftar Dihapus",
+  problem_underweight: "Balita Underweight",
+  problem_stunting: "Balita Stunting",
+  problem_wasting: "Balita Wasting",
+  problem_tidak_naik: "Balita Tidak Naik",
   asi: "ASI Eksklusif",
   mpasi: "MPASI",
   pmt: "Pemberian PMT",
@@ -783,6 +795,10 @@ export default function ReactDashboardShell({
               "data",
               "recent",
               "recycle",
+              "problem_underweight",
+              "problem_stunting",
+              "problem_wasting",
+              "problem_tidak_naik",
             ].includes(activeView) ? (
             <ReactChildrenTablePage
               user={user}

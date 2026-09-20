@@ -42,9 +42,9 @@ export const RELEASE_HISTORY: AppRelease[] = [
     changes: [
       'Data balita, penimbangan, ASI, dan koleksi dinamis kini menggunakan Redis dengan TTL 5 menit; dashboard operasional tetap 60 detik agar angka yang sering berubah lebih segar.',
       'Cache dinamis dipisahkan berdasarkan role, desa, dan posyandu serta langsung diinvalisasi setelah perubahan data.',
-      'Cloudflare KV dibatasi untuk konfigurasi global yang jarang berubah seperti menu, referensi, dan feature flag.',
-      'Oracle menjalankan Redis privat tanpa port host, sementara PostgreSQL native tetap menjadi sumber data utama.',
-      'Backend Worker tetap dikompilasi sebagai WebAssembly dan API Oracle sebagai binary native ARM64 dengan health check yang lebih jelas.',
+      'Penyimpanan konfigurasi aplikasi dibatasi untuk data global yang jarang berubah seperti menu, referensi, dan feature flag.',
+      'Layanan cache privat berjalan tanpa port host, sementara PostgreSQL tetap menjadi sumber data utama.',
+      'Worker backend dikompilasi sebagai WebAssembly dan API utama sebagai binary native ARM64 dengan health check yang lebih jelas.',
       'Akun administrator aplikasi kini memakai role super_admin, nama tampilan Administrator, MFA wajib, dan recovery code sekali pakai tanpa mengubah role akun lama.',
       'Menu profil Administrator kini menyediakan halaman penuh Administrasi Backend untuk memantau layanan dan seluruh akun.',
       'Status online dan offline akun diperbarui otomatis berdasarkan aktivitas aplikasi dalam tiga menit terakhir tanpa menyimpan token atau identitas sesi mentah.',
@@ -55,10 +55,10 @@ export const RELEASE_HISTORY: AppRelease[] = [
     version: '3.6.0',
     releaseDate: '22 Agustus 2026',
     releaseDateIso: '2026-08-22',
-    title: 'Platform Oracle dan Sesi Lebih Aman',
+    title: 'Platform Aplikasi dan Sesi Lebih Aman',
     changes: [
-      'Frontend, API Rust, dan pemrosesan laporan kini berjalan sebagai platform utama di Oracle dengan autentikasi, baca, dan tulis native yang sudah diaktifkan.',
-      'PostgreSQL Oracle menyediakan salinan laporan read-only terjadwal, sementara Supabase tetap menjadi database utama untuk identitas dan seluruh perubahan data.',
+      'Frontend, API Rust, dan pemrosesan laporan kini berjalan sebagai platform aplikasi dengan autentikasi, baca, dan tulis native yang sudah diaktifkan.',
+      'Database aplikasi menyediakan salinan laporan read-only terjadwal, sementara database utama tetap menjadi sumber identitas dan seluruh perubahan data.',
       'Login tidak lagi gagal ketika koneksi IndexedDB browser sedang ditutup; cache offline mencoba pulih dan beralih sementara ke memori bila penyimpanan rusak.',
       'Sesi otomatis logout setelah 30 menit tanpa aktivitas, tersinkron antar-tab, dan tidak dipulihkan diam-diam ketika logout server sedang terganggu.',
       'Penghitungan status gizi realtime di form penimbangan dan identitas bayi baru dihapus agar pengisian lebih ringan; hasil tetap tersedia pada riwayat.',
@@ -86,7 +86,7 @@ export const RELEASE_HISTORY: AppRelease[] = [
     title: 'Simpan Penimbangan Tanpa Menunggu Antrean Lama',
     changes: [
       'Penimbangan yang baru disimpan kini diprioritaskan dan tidak lagi menunggu seluruh antrean perubahan lama di perangkat.',
-      'Data pengukuran dan ringkasan balita dikirim langsung melalui PostgreSQL terautentikasi tanpa menunggu Worker Cloudflare yang sedang mencapai limit.',
+      'Data pengukuran dan ringkasan balita dikirim langsung melalui PostgreSQL terautentikasi tanpa menunggu worker pemrosesan yang sedang mencapai batas kapasitas.',
       'Pemicu sinkronisasi otomatis ditahan sampai satu paket penimbangan selesai dirakit agar tidak terjadi proses ganda yang memperlambat ponsel.',
       'Antrean perubahan lain tetap diproses aman di latar belakang setelah penimbangan aktif berhasil disimpan.',
       'Pengujian desktop dan ponsel memastikan penyimpanan selesai cepat meskipun endpoint Worker sengaja diperlambat.'
@@ -98,7 +98,7 @@ export const RELEASE_HISTORY: AppRelease[] = [
     releaseDateIso: '2026-08-12',
     title: 'Penimbangan Tetap Tersimpan Saat API Terganggu',
     changes: [
-      'Penimbangan baru, edit penimbangan, hapus riwayat, dan ringkasan pengukuran balita tetap dapat disinkronkan saat Cloudflare Worker mencapai batas kapasitas.',
+      'Penimbangan baru, edit penimbangan, hapus riwayat, dan ringkasan pengukuran balita tetap dapat disinkronkan saat layanan pemrosesan mencapai batas kapasitas.',
       'Jalur tulis darurat menggunakan sesi Supabase aktif, transaksi PostgreSQL, idempotency key, audit log, serta pembatasan role, desa, dan posyandu.',
       'Jalur darurat hanya menerima data penimbangan dan kolom ringkasannya sehingga tidak dapat digunakan untuk mengubah identitas balita.',
       'Perubahan lain yang belum didukung tetap aman di antrean perangkat tanpa menghambat penimbangan yang sedang disimpan.',
@@ -112,7 +112,7 @@ export const RELEASE_HISTORY: AppRelease[] = [
     releaseDateIso: '2026-08-12',
     title: 'Data Tetap Tersedia Saat API Terganggu',
     changes: [
-      'Tabel Data Balita, balita bermasalah gizi, ASI eksklusif, detail balita, dan dashboard tetap dapat dibaca saat Cloudflare Worker mencapai batas kapasitas.',
+      'Tabel Data Balita, balita bermasalah gizi, ASI eksklusif, detail balita, dan dashboard tetap dapat dibaca saat layanan API mencapai batas kapasitas.',
       'Jalur baca darurat menggunakan sesi Supabase yang aktif dan selalu membatasi data berdasarkan role, desa, serta posyandu akun.',
       'Setiap halaman tetap mengambil maksimal 10 baris sehingga pemulihan layanan tidak menambah pembacaan data secara berlebihan.',
       'Peringatan status worker tidak lagi tampil ketika status hanya belum sempat diperiksa; gangguan nyata tetap diberitahukan.',
@@ -125,7 +125,7 @@ export const RELEASE_HISTORY: AppRelease[] = [
     releaseDateIso: '2026-08-12',
     title: 'Login Tetap Tersedia Saat API Terganggu',
     changes: [
-      'Login username kini memiliki jalur pemulihan melalui Supabase Auth saat Cloudflare Worker tidak dapat dijangkau atau mencapai batas kapasitas.',
+      'Login username kini memiliki jalur pemulihan melalui penyedia autentikasi saat gateway API tidak dapat dijangkau atau mencapai batas kapasitas.',
       'Role, status aktif, dan wilayah akun diverifikasi melalui RPC profil pribadi tanpa membuka tabel pengguna ke browser.',
       'Kesalahan kata sandi dan verifikasi keamanan tetap ditangani oleh alur normal sehingga jalur pemulihan tidak melemahkan pemeriksaan akun.',
       'Circuit breaker menahan permintaan API berulang selama gangguan dan halaman Data Balita menggunakan cache perangkat yang tersedia.',
@@ -241,9 +241,9 @@ export const RELEASE_HISTORY: AppRelease[] = [
     title: 'Migrasi Arsitektur Generasi Ketiga',
     changes: [
       'Frontend dimigrasikan penuh ke native TypeScript, HTML5, dan CSS.',
-      'API Rust dijalankan melalui Cloudflare Worker dengan PostgreSQL Supabase.',
+      'API Rust dijalankan sebagai layanan backend dengan PostgreSQL.',
       'Sinkronisasi offline, cache, pagination, dan penghematan egress mulai diterapkan.',
-      'Hosting frontend dialihkan ke Cloudflare Pages.'
+      'Hosting frontend disiapkan agar dapat dijalankan pada penyedia web mana pun.'
     ]
   },
   {

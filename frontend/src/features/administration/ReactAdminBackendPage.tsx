@@ -78,15 +78,15 @@ const serviceLabel = (key: string) => ({
   api: 'API Utama', database: 'Database', authentication: 'Autentikasi', cache: 'Cache',
   queue: 'Antrean', storage: 'Penyimpanan', nutritionWorker: 'Worker Gizi',
   dataProcessingWorker: 'Data Processing Worker', nativeCore: 'Backend Native',
-  migrationProxy: 'Jalur Migrasi', 'oracle-api': 'Oracle API Gateway',
+  migrationProxy: 'Jalur Migrasi', 'oracle-api': 'Gateway API Utama',
   'identity-service': 'Identity Service', 'read-service': 'Read Service',
   'write-service': 'Write Service', 'operations-service': 'Operations Service',
   'realtime-service': 'Realtime Service', 'monitoring-service': 'Monitoring Service',
   'redis-cache': 'Redis Cache', 'data-processing-worker': 'Data Processing Worker',
-  'health-proxy': 'Health Proxy', 'oracle-database': 'Database Oracle',
+  'health-proxy': 'Proxy Kesehatan', 'oracle-database': 'Database Utama',
   'supabase-database': 'Database Supabase', 'neon-database': 'Database Neon',
-  'edge-api': 'Edge API', 'cloudflare-pages': 'Frontend Cloudflare Pages',
-  'cloudflare-queue': 'Queue Cloudflare'
+  'edge-api': 'Edge API', 'cloudflare-pages': 'Hosting Frontend',
+  'cloudflare-queue': 'Antrean Pekerjaan'
 }[key] || key);
 
 const serviceIcon = (key: string) => ({
@@ -123,8 +123,8 @@ const statusEntries = (value: unknown): Array<[string, Record<string, unknown>]>
 
 function ServiceStatusGroups({ readiness, loading }: { readiness: BackendReadiness | null; loading: boolean }) {
   const groups = [
-    { key: 'frontend', title: 'Frontend & layanan Cloudflare', entries: statusEntries(readiness?.components?.frontendServices) },
-    { key: 'oracle', title: 'Backend Oracle · layanan internal', entries: statusEntries(readiness?.components?.oracleServices) },
+    { key: 'frontend', title: 'Frontend & layanan web', entries: statusEntries(readiness?.components?.frontendServices) },
+    { key: 'oracle', title: 'Backend · layanan internal', entries: statusEntries(readiness?.components?.oracleServices) },
     { key: 'databases', title: 'Layanan database', entries: statusEntries(readiness?.components?.databases) }
   ];
   return <div className="admin-service-grid">
