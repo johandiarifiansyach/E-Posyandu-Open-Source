@@ -1,7 +1,9 @@
 // Copyright (C) 2026 Johandi Arifiansyach
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import { type FormEvent, useEffect, useRef, useState } from 'react';
 import { APP_VERSION } from '../config/app';
+import { DEMO_ACCOUNTS, DEMO_PASSWORD, isDemoAuthEnabled } from '../config/demoAuth';
 import ReleaseNotesDialog from '../components/ReleaseNotesDialog';
 import { GlassButton } from '../components/ui/glass-button';
 import { GlassCard } from '../components/ui/glass-card';
@@ -31,6 +33,10 @@ type TurnstileApi = {
 type TurnstileWindow = Window & { turnstile?: TurnstileApi };
 
 const turnstileSiteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY?.trim() || '';
+
+function demoRoleLabel(role: (typeof DEMO_ACCOUNTS)[number]['role']): string {
+  return role === 'super_admin' ? 'Administrator' : role;
+}
 
 function LoginSymbol(props: React.SVGProps<SVGSVGElement>) {
   return <svg
@@ -207,6 +213,20 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
               <span data-submit-label="true">{submitting ? 'Memproses...' : 'Masuk'}</span>
             </GlassButton>
           </form>
+          {isDemoAuthEnabled() ? <aside className="login-demo-credentials" aria-label="Kredensial akun demo">
+            <div className="login-demo-heading">
+              <strong>Akun demo lokal</strong>
+              <span>Mode development</span>
+            </div>
+            <p className="login-demo-password">Kata sandi semua akun: <code>{DEMO_PASSWORD}</code></p>
+            <ul className="login-demo-account-list">
+              {DEMO_ACCOUNTS.map((account) => <li key={account.key}>
+                <code>{account.key}</code>
+                <span>{demoRoleLabel(account.role)}</span>
+              </li>)}
+            </ul>
+            <p className="login-demo-hint">Masukkan salah satu username di atas untuk mencoba aplikasi.</p>
+          </aside> : null}
         </GlassCard>
       </div>
     </main>
