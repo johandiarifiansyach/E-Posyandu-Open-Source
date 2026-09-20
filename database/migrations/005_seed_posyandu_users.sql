@@ -1,11 +1,14 @@
 -- Demo account mapping for the public E-Posyandu distribution.
 -- Create these addresses in the configured auth provider first. The migration
--- only links existing auth users and never creates or exposes passwords.
+-- only links existing auth users and never creates or exposes passwords. The
+-- Vite-only demo login is implemented in the frontend and is not a database
+-- credential.
 
 begin;
 
 with demo_accounts (email, username, role, village, posyandu) as (
   values
+    ('admin@demo.eposyandu.local', 'admin-demo', 'super_admin', null, null),
     ('kader@demo.eposyandu.local', 'kader-demo', 'Kader Posyandu', 'Desa Demo', 'Posyandu Demo 1'),
     ('bidan@demo.eposyandu.local', 'bidan-demo', 'Bidan Desa', 'Desa Demo', null),
     ('gizi@demo.eposyandu.local', 'gizi-demo', 'Ahli Gizi', null, null)

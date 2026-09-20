@@ -20,15 +20,22 @@ operasional biasa.
 
 Contoh akun (buat terlebih dahulu pada penyedia autentikasi yang digunakan):
 
-| Peran | Email demo | Desa/Posyandu |
+| Peran | Username/email demo | Desa/Posyandu |
 | --- | --- | --- |
 | Administrator | `admin@demo.eposyandu.local` | Semua data |
 | Ahli gizi | `gizi@demo.eposyandu.local` | Semua data |
 | Bidan desa | `bidan@demo.eposyandu.local` | Desa Demo |
 | Kader posyandu | `kader@demo.eposyandu.local` | Desa Demo / Posyandu Demo 1 |
 
-Project tidak menyimpan kata sandi contoh. Atur kata sandi dan MFA sesuai
-penyedia autentikasi lokal atau server Anda.
+Saat menjalankan frontend dengan Vite (`npm run dev`), akun demo dapat masuk
+dengan password default **`Demo123!`**. Login lokal menerima email di atas,
+atau username singkat `admin`, `gizi`, `bidan`, dan `kader`. Jalur demo ini
+aktif hanya pada mode development dan otomatis tidak tersedia pada build
+production. Ganti `VITE_DEMO_PASSWORD` pada `.env.local` bila diperlukan.
+
+Untuk deployment nyata, buat akun pada penyedia autentikasi Anda, nonaktifkan
+login demo, dan gunakan password unik serta MFA. Jangan memakai password demo
+di production.
 
 ## Struktur
 

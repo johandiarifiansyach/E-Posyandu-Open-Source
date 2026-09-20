@@ -23,6 +23,12 @@ import {
   updatePendingMutation
 } from '../services/offlineStore';
 import type { AgeGroup } from '../config/ageFilters';
+import {
+  DEMO_PASSWORD,
+  demoProfile,
+  findDemoAccount,
+  isDemoAuthEnabled,
+} from '../../config/demoAuth';
 import type { NikStatus } from '../../config/nikFilters';
 
 export type AuthUser = {
@@ -899,6 +905,37 @@ function sessionFromResponse(response: AuthenticatedResponse): AuthUser {
   };
 }
 
+function isLocalDemoSession(session: AuthUser | null): boolean {
+  return Boolean(session?.uid.startsWith('demo-'));
+}
+
+function localDemoProfileForSession(session: AuthUser | null): AccessProfile | null {
+  if (!isLocalDemoSession(session)) return null;
+  const account = findDemoAccount(session?.email || '');
+  return account ? demoProfile(account, session?.uid) : null;
+}
+
+async function signInToLocalDemo(
+  auth: Auth,
+  username: string,
+  password: string,
+): Promise<AuthenticatedSignInResult | null> {
+  if (!isDemoAuthEnabled()) return null;
+  const account = findDemoAccount(username);
+  if (!account) return null;
+  if (password !== DEMO_PASSWORD) throw new Error('Password demo salah.');
+
+  const profile = demoProfile(account);
+  const nextSession: AuthUser = { uid: profile.userId, email: profile.email };
+  const changesAccount = !auth.currentUser || auth.currentUser.uid !== nextSession.uid;
+  await initializeOfflineStoreSession(nextSession.uid, { forceReset: changesAccount });
+  if (changesAccount) clearSyncState();
+  auth.currentUser = nextSession;
+  saveSession(nextSession);
+  notifyAuthListeners();
+  return { mfaRequired: false, session: nextSession, profile };
+}
+
 function createRequestId() {
   if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') return crypto.randomUUID();
   return `req-${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -1557,6 +1594,13 @@ export function getAuth(_app?: FirebaseAppCompat): Auth {
 
 export async function restoreAuthSession(auth: Auth): Promise<AuthUser | null> {
   const storedSession = readStoredSession();
+  if (isDemoAuthEnabled() && storedSession && isLocalDemoSession(storedSession)) {
+    const demoSession = storedSession;
+    await initializeOfflineStoreSession(demoSession.uid, { allowLegacyMigration: true });
+    auth.currentUser = demoSession;
+    notifyAuthListeners();
+    return demoSession;
+  }
   if (!isOnline()) {
     if (!storedSession) {
       auth.currentUser = null;
@@ -1607,6 +1651,9 @@ export async function signInWithPassword(
   password: string,
   turnstileToken?: string
 ): Promise<SignInResult> {
+  const localDemoResult = await signInToLocalDemo(auth, username, password);
+  if (localDemoResult) return localDemoResult;
+
   let response: LoginResponse;
   try {
     response = await usernameLoginRequest(username, password, turnstileToken);
@@ -1803,6 +1850,8 @@ export async function verifyPasskeyAuthentication(
 }
 
 export async function getCurrentAccessProfile(): Promise<AccessProfile> {
+  const localDemoProfile = localDemoProfileForSession(authState.currentUser);
+  if (localDemoProfile) return localDemoProfile;
   if (!usesFastApi()) throw new Error('Alamat API aplikasi belum diatur.');
   return apiRequest<AccessProfile>('/me');
 }
@@ -1850,6 +1899,10 @@ export async function signOut(auth: Auth): Promise<void> {
   const pending = await getPendingMutations();
   if (pending.length > 0) throw new Error('Masih ada data offline yang belum tersinkron. Sambungkan internet sebelum keluar.');
 
+  if (isDemoAuthEnabled() && isLocalDemoSession(auth.currentUser)) {
+    await clearLocalAuthState(auth);
+    return;
+  }
   if (!isOnline()) {
     throw new Error('Sambungkan internet untuk menghapus sesi aman, lalu coba keluar kembali.');
   }
