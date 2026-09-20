@@ -1007,3 +1007,35 @@ html[data-theme="dark"] .login-loading-shell .login-loading-rule-cyan { backgrou
 .login-glass-card .admin-mfa-help {
   color: rgba(255, 255, 255, 0.82) !important;
 }
+
+/* The demo credentials are part of the card copy, so keep them readable over
+ * both the translucent card and the dark batik background. */
+.login-glass-card .login-demo-credentials {
+  border-color: rgba(255, 255, 255, 0.28);
+  background: rgba(15, 23, 42, 0.62);
+  color: rgba(255, 255, 255, 0.9);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 8px 18px rgba(0, 0, 0, 0.12);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.28);
+}
+
+.login-glass-card .login-demo-heading strong,
+.login-glass-card .login-demo-password,
+.login-glass-card .login-demo-account-list li span {
+  color: rgba(255, 255, 255, 0.94);
+}
+
+.login-glass-card .login-demo-heading span {
+  color: #bfdbfe;
+}
+
+.login-glass-card .login-demo-hint {
+  color: rgba(255, 255, 255, 0.76);
+}
+
+.login-glass-card .login-demo-password code,
+.login-glass-card .login-demo-account-list code {
+  border-color: rgba(255, 255, 255, 0.48);
+  background: rgba(255, 255, 255, 0.92);
+  color: #172033;
+  text-shadow: none;
+}
