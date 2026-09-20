@@ -1,4 +1,5 @@
-// Copyright (C) 2026 Johandi Arifiansyach
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 
 // WHO Child Growth Standards LMS references for local, request-free status calculation.
 // LILA/arm circumference starts at 3 months; LK/head circumference starts at birth.

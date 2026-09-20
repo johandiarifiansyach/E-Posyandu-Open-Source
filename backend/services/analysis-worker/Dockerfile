@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 # Build against the same CPython minor version used at runtime.  PyO3 embeds
 # this interpreter; using a matching builder avoids ABI surprises while still
 # keeping the public service binary Rust.

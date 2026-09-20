@@ -1,4 +1,5 @@
-// Copyright (C) 2026 Johandi Arifiansyach
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 
 /** Filter choices for the child registry NIK source. */
 export const NIK_STATUS_OPTIONS = [

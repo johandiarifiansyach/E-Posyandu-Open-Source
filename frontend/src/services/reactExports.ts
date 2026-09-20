@@ -1,4 +1,5 @@
-// Copyright (C) 2026 Johandi Arifiansyach
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 
 // Export adapters stay outside page components so normal table and dashboard
 // bundles do not need to know spreadsheet details. The shared service keeps

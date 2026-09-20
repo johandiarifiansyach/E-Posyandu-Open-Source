@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 # Compatibility image for the retired Render nutrition worker. The service is
 # still connected to this legacy Dockerfile path, while the maintained
 # implementation now lives under backend/services/data-processing-service.

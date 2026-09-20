@@ -1,4 +1,5 @@
-// Copyright (C) 2026 Johandi Arifiansyach
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 
 import { forwardRef, memo, type ReactNode } from 'react';
 import { GlassTableViewport } from './GlassTable';

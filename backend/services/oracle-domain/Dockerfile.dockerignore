@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 *
 !backend/services/oracle-domain/Cargo.toml
 !backend/services/oracle-domain/Dockerfile

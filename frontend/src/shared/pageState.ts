@@ -1,4 +1,5 @@
-// Copyright (C) 2026 Johandi Arifiansyach
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 
 /** Common async page-state contract used by strict React pages. */
 export type PageState<T> =

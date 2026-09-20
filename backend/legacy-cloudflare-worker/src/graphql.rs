@@ -1,4 +1,5 @@
-// Copyright (C) 2026 Johandi Arifiansyah
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 
 use crate::{ApiFailure, ApiResult, api};
 use graphql_parser::parse_query;

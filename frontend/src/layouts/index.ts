@@ -1,4 +1,5 @@
-// Copyright (C) 2026 Johandi Arifiansyach
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 
 export { default as AuthLayout } from './AuthLayout';
 export type { AuthLayoutProps } from './AuthLayout';

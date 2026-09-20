@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Copyright (C) 2026 Johandi Arifiansyach
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 
 set -euo pipefail
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

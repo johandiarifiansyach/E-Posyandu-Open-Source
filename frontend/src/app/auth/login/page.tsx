@@ -1,4 +1,5 @@
-// Copyright (C) 2026 Johandi Arifiansyach
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 
 import { useState } from "react"
 import { Eye, EyeOff, LogIn } from "lucide-react"

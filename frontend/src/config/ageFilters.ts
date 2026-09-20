@@ -1,4 +1,5 @@
-// Copyright (C) 2026 Johandi Arifiansyach
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 
 /** React-facing canonical age cohort contract. */
 export const AGE_GROUP_OPTIONS = [

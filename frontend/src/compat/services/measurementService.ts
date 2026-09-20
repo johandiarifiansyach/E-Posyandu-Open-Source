@@ -1,4 +1,5 @@
-// Copyright (C) 2026 Johandi Arifiansyach
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 
 // Child measurement history is read through the authenticated Python-backed
 // page API. This helper only assembles returned records for the UI; it does

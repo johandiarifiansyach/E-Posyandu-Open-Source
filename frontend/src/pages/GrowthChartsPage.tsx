@@ -1,4 +1,5 @@
-// Copyright (C) 2026 Johandi Arifiansyach
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 
 /** React-owned WHO growth chart dialog and export actions. */
 export { default } from '../features/growth-charts/ReactGrowthChartsPage';

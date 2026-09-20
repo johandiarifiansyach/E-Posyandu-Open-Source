@@ -1,4 +1,5 @@
-// Copyright (C) 2026 Johandi Arifiansyach
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 
 /** Shared presentation formatters owned by the React boundary. */
 export function formatChildName(value: unknown): string {

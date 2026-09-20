@@ -1,4 +1,5 @@
-// Copyright (C) 2026 Johandi Arifiansyach
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 
 // Bump whenever the deployed shell changes so browsers discard stale login bundles.
 const CACHE_NAME = 'e-posyandu-shell-v49';

@@ -1,4 +1,5 @@
-// Copyright (C) 2026 Johandi Arifiansyach
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 
 /** Browser-side WebAuthn ceremony helpers owned by the React application. */
 function decodeBase64Url(value: string): ArrayBuffer {

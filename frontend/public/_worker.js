@@ -1,4 +1,5 @@
-// Copyright (C) 2026 Johandi Arifiansyach
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 
 // Cloudflare Pages only serves the frontend and proxies API requests to the
 // Oracle gateway. The old backend Worker is archived and is not used here.

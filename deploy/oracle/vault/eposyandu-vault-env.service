@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 [Unit]
 Description=Prepare E-Posyandu runtime secrets from OCI Vault
 Wants=network-online.target

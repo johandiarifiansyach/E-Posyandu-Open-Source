@@ -1,4 +1,5 @@
-// Copyright (C) 2026 Johandi Arifiansyach
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 
 /** React-owned children table and all filtered child cohorts. */
 export { default } from '../features/children/ReactChildrenTablePage';

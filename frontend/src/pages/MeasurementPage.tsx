@@ -1,4 +1,5 @@
-// Copyright (C) 2026 Johandi Arifiansyach
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 
 /** React-owned measurement history and entry workflow. */
 export { default } from '../features/measurements/ReactMeasurementPage';

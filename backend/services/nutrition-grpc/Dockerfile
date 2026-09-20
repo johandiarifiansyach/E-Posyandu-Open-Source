@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 # Compatibility image for the legacy Render service. The implementation now
 # lives in backend/services/data-processing-service; keeping this path allows an old
 # Render service to update instead of failing on a deleted Dockerfile.

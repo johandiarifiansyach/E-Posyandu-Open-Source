@@ -1,4 +1,5 @@
-// Copyright (C) 2026 Johandi Arifiansyach
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 
 use e_posyandu_oracle_domain::{WriteDomain, request_from_proto, response_to_proto};
 use e_posyandu_proto::proto::platform::v1::{

@@ -1,4 +1,5 @@
-// Copyright (C) 2026 Johandi Arifiansyach
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 
 use e_posyandu_data_processing_service::proto::ProcessJobRequest;
 use e_posyandu_data_processing_service::proto::data_processing_worker_client::DataProcessingWorkerClient;

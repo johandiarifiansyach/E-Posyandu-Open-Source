@@ -1,4 +1,5 @@
-// Copyright (C) 2026 Johandi Arifiansyach
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 
 import { create } from "zustand";
 import { COMPACT_SIDEBAR_MEDIA_QUERY } from "../config/dashboard";

@@ -1,4 +1,5 @@
-// Copyright (C) 2026 Johandi Arifiansyach
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 
 use axum::{Router, http::StatusCode, response::IntoResponse, routing::get};
 use e_posyandu_proto::analysis::{

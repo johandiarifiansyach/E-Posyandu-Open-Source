@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 **
 !backend/services/analysis-service/requirements.txt
 !backend/services/analysis-service/analysis_service/**

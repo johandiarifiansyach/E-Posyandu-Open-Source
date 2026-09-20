@@ -1,4 +1,5 @@
-// Copyright (C) 2026 Johandi Arifiansyach
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 
 const apiUrl = process.env.LOAD_API_URL || 'https://api.eposyandu.app';
 const staticAccessToken = process.env.LOAD_ACCESS_TOKEN?.trim();

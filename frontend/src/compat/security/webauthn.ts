@@ -1,4 +1,5 @@
-// Copyright (C) 2026 Johandi Arifiansyach
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 
 function decodeBase64Url(value: string): ArrayBuffer {
   const padding = '='.repeat((4 - value.length % 4) % 4);

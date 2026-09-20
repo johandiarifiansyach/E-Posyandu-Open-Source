@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 [Unit]
 Description=Publish E-Posyandu Oracle health metrics to OCI Monitoring
 Wants=network-online.target

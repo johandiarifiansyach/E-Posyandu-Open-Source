@@ -1,4 +1,5 @@
-// Copyright (C) 2026 Johandi Arifiansyach
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 
 /** React-facing chart metadata and filename helpers. */
 export const GROWTH_CHART_TYPES = ['bbu', 'tbu', 'bbtb', 'imtu', 'lilau', 'lku'] as const;

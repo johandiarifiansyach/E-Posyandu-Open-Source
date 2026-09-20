@@ -1,3 +1,5 @@
+-- SPDX-License-Identifier: GPL-3.0-or-later
+
 -- Demo account mapping for the public E-Posyandu distribution.
 -- Create these addresses in the configured auth provider first. The migration
 -- only links existing auth users and never creates or exposes passwords. The

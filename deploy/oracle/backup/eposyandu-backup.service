@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 [Unit]
 Description=Create and upload encrypted E-Posyandu deployment backup
 Wants=network-online.target

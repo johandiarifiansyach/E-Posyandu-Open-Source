@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 services:
   - type: web
     name: e-posyandu-data-processing-worker

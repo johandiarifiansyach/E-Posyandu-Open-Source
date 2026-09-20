@@ -1,4 +1,5 @@
-// Copyright (C) 2026 Johandi Arifiansyach
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 
 export { default as ReactExclusiveBreastfeedingPage } from './ReactExclusiveBreastfeedingPage';
 export type { ReactExclusiveBreastfeedingPageProps } from './ReactExclusiveBreastfeedingPage';

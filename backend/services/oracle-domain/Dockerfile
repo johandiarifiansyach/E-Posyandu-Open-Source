@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 FROM docker.io/library/rust:1.97-bookworm AS builder
 
 ARG SERVICE_DIR

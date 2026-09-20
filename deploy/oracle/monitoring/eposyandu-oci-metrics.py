@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# Copyright (C) 2026 Johandi Arifiansyach
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 
 """Publish non-sensitive Oracle VM health metrics to OCI Monitoring.
 

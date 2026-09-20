@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# Copyright (C) 2026 Johandi Arifiansyach
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 
 """Materialize selected OCI Vault secrets into a short-lived env file."""
 

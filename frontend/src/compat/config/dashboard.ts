@@ -1,4 +1,5 @@
-// Copyright (C) 2026 Johandi Arifiansyach
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 
 export const DATA_WILAYAH = {
     "Desa Demo": ["Posyandu Demo 1", "Posyandu Demo 2"]

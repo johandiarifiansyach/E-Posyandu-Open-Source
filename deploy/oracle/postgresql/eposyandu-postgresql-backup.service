@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 [Unit]
 Description=Encrypted E-Posyandu native PostgreSQL backup to OCI Object Storage
 RequiresMountsFor=/var/lib/pgsql

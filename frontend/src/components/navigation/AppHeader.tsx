@@ -1,4 +1,5 @@
-// Copyright (C) 2026 Johandi Arifiansyach
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 
 import { useEffect, useState, type RefObject } from "react";
 import { Activity, ChevronDown, LogOut, UserRound } from "lucide-react";

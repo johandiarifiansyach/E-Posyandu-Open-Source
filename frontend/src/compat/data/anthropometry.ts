@@ -1,4 +1,5 @@
-// Copyright (C) 2026 Johandi Arifiansyach
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 
 // Data LMS WHO Child Growth Standards 0-60 bulan.
 // Permenkes No. 2 Tahun 2020 mengadopsi standar WHO ini untuk penilaian antropometri anak.

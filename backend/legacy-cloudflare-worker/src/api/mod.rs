@@ -1,4 +1,5 @@
-// Copyright (C) 2026 Johandi Arifiansyach
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 
 use crate::{
     AccessScope, ApiFailure, ApiResult, hashed_key, optional_secret, redis_commands, require_scope,
