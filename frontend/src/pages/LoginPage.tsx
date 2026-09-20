@@ -60,6 +60,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [releaseNotesOpen, setReleaseNotesOpen] = useState(false);
+  const [licenseOpen, setLicenseOpen] = useState(false);
   const turnstileContainerRef = useRef<HTMLDivElement | null>(null);
   const turnstileWidgetRef = useRef<string | null>(null);
   const turnstileTokenRef = useRef('');
@@ -127,6 +128,20 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
     input?.focus({ preventScroll: true });
   }, []);
 
+  useEffect(() => {
+    if (!licenseOpen) return undefined;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setLicenseOpen(false);
+    };
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [licenseOpen]);
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (turnstileSiteKey && !turnstileTokenRef.current) {
@@ -151,6 +166,45 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
 
   return <div className="login-shell">
     {releaseNotesOpen ? <ReleaseNotesDialog onClose={() => setReleaseNotesOpen(false)} /> : null}
+    {licenseOpen ? <div className="release-notes-backdrop is-visible" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setLicenseOpen(false); }}>
+      <section className="release-notes-dialog login-license-dialog" role="dialog" aria-modal="true" aria-labelledby="react-login-license-title" aria-describedby="react-login-license-description">
+        <header className="release-notes-header">
+          <div className="release-notes-title-group">
+            <span className="release-notes-logo"><img src="/logo-puskesmas-32981.svg" alt="" width={40} height={40} loading="lazy" decoding="async" /></span>
+            <div>
+              <p className="release-notes-eyebrow">E-Posyandu Open Source</p>
+              <h2 id="react-login-license-title">Lisensi GNU GPL v3</h2>
+            </div>
+          </div>
+          <button type="button" className="release-notes-close" onClick={() => setLicenseOpen(false)} aria-label="Tutup keterangan lisensi">×</button>
+        </header>
+        <div className="release-notes-scroll login-license-scroll">
+          <section className="release-current" id="react-login-license-description">
+            <div className="release-current-heading">
+              <div>
+                <span className="release-current-label">Open source · Copyleft</span>
+                <h3>E-Posyandu dilisensikan di bawah GNU General Public License v3.0 atau yang lebih baru.</h3>
+              </div>
+            </div>
+            <p className="login-license-lead">Lisensi ini menjaga agar setiap versi turunan yang dibagikan tetap menyediakan kebebasan yang sama bagi penggunanya.</p>
+          </section>
+          <section className="login-license-section" aria-labelledby="react-login-license-rights">
+            <h3 id="react-login-license-rights">Hak yang diberikan</h3>
+            <ul>
+              <li>Menjalankan program untuk tujuan apa pun.</li>
+              <li>Mempelajari dan mengubah kode sumber.</li>
+              <li>Membuat serta membagikan salinan program.</li>
+              <li>Membagikan versi modifikasi dengan lisensi GPL v3 yang sama.</li>
+            </ul>
+          </section>
+          <p className="login-license-note"><strong>Saat mendistribusikan turunan:</strong> sertakan teks lisensi, pemberitahuan hak cipta, dan kode sumber terkait. GPL v3 tidak memberikan jaminan dan tidak melarang penggunaan komersial; kewajiban utamanya adalah mempertahankan kebebasan tersebut ketika perangkat lunak dibagikan.</p>
+        </div>
+        <footer className="release-notes-actions login-license-actions">
+          <a className="login-license-link" href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noreferrer">Baca teks GPL v3 lengkap</a>
+          <button type="button" className="release-notes-done" onClick={() => setLicenseOpen(false)}>Tutup</button>
+        </footer>
+      </section>
+    </div> : null}
     <div className="login-batik-background" aria-hidden="true" />
     <main className="login-stage">
       <div className="login-stack">
@@ -226,6 +280,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
               </li>)}
             </ul>
             <p className="login-demo-hint">Masukkan salah satu username di atas untuk mencoba aplikasi.</p>
+            <button type="button" className="login-license-open" onClick={() => setLicenseOpen(true)} aria-haspopup="dialog">Lihat keterangan lisensi GNU GPL v3</button>
           </aside> : null}
         </GlassCard>
       </div>

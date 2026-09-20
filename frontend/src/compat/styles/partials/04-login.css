@@ -1040,3 +1040,108 @@ html[data-theme="dark"] .login-loading-shell .login-loading-rule-cyan { backgrou
   color: #172033;
   text-shadow: none;
 }
+
+.login-license-open {
+  width: fit-content;
+  border: 0;
+  border-bottom: 1px solid rgba(191, 219, 254, 0.72);
+  background: transparent;
+  padding: 0 0 2px;
+  color: #dbeafe;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.35;
+  text-align: left;
+  cursor: pointer;
+}
+
+.login-license-open:hover {
+  border-bottom-color: #fff;
+  color: #fff;
+}
+
+.login-license-open:focus-visible {
+  border-radius: 4px;
+  outline: 3px solid rgba(191, 219, 254, 0.5);
+  outline-offset: 3px;
+}
+
+.login-license-dialog {
+  width: min(650px, 100%);
+}
+
+.login-license-scroll {
+  display: grid;
+  gap: 18px;
+}
+
+.login-license-lead {
+  margin: 14px 0 0;
+  color: rgba(60, 60, 67, 0.78);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.login-license-section {
+  padding: 0 2px;
+}
+
+.login-license-section h3 {
+  margin: 0 0 10px;
+  color: inherit;
+  font-size: 17px;
+  font-weight: 750;
+}
+
+.login-license-section ul {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 20px;
+  color: rgba(60, 60, 67, 0.78);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.login-license-note {
+  margin: 0 2px;
+  border: 1px solid rgba(255, 149, 0, 0.22);
+  border-radius: 14px;
+  background: rgba(255, 149, 0, 0.09);
+  padding: 12px 14px;
+  color: rgba(60, 60, 67, 0.78);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.login-license-actions {
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.login-license-link {
+  color: var(--apple-blue);
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.login-license-link:focus-visible {
+  border-radius: 4px;
+  outline: 3px solid rgba(0, 122, 255, 0.26);
+  outline-offset: 3px;
+}
+
+@media (max-width: 639px) {
+  .login-license-actions {
+    align-items: stretch;
+    flex-direction: column-reverse;
+  }
+
+  .login-license-link {
+    align-self: center;
+  }
+}
