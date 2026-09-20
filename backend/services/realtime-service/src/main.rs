@@ -47,13 +47,13 @@ impl Interceptor for AuthInterceptor {
 }
 
 fn service_auth() -> Result<AuthInterceptor, io::Error> {
-    let value = env::var("RUST_WORKER_SHARED_SECRET")
-        .ok()
-        .filter(|value| !value.trim().is_empty())
-        .ok_or_else(|| io::Error::other("RUST_WORKER_SHARED_SECRET wajib diisi."))?;
+    let value = ["EPOSYANDU_SHARED_SECRET", "RUST_WORKER_SHARED_SECRET"]
+        .iter()
+        .find_map(|name| env::var(name).ok().filter(|value| !value.trim().is_empty()))
+        .ok_or_else(|| io::Error::other("EPOSYANDU_SHARED_SECRET wajib diisi."))?;
     let token = value
         .parse()
-        .map_err(|_| io::Error::other("RUST_WORKER_SHARED_SECRET harus ASCII."))?;
+        .map_err(|_| io::Error::other("EPOSYANDU_SHARED_SECRET harus ASCII."))?;
     Ok(AuthInterceptor { token })
 }
 

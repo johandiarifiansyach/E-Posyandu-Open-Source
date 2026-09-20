@@ -24,16 +24,13 @@ import {
   Activity,
   CheckCircle2,
   Clock,
-  CloudflareLogo,
   ClipboardCheck,
   Loader2,
-  NeonLogo,
   Pencil,
   PostgreSQLLogo,
   RedisLogo,
   RotateCcw,
   Search,
-  SupabaseLogo,
   Trash2,
   TrendingUp,
   UserPlus,
@@ -85,8 +82,8 @@ const serviceLabel = (key: string) => ({
   'realtime-service': 'Realtime Service', 'monitoring-service': 'Monitoring Service',
   'redis-cache': 'Redis Cache', 'data-processing-worker': 'Data Processing Worker',
   'health-proxy': 'Proxy Kesehatan', 'oracle-database': 'Database Utama',
-  'supabase-database': 'Database Supabase', 'neon-database': 'Database Neon',
-  'edge-api': 'Edge API', 'cloudflare-pages': 'Hosting Frontend',
+  'supabase-database': 'Database Utama', 'neon-database': 'Database Replika',
+  'edge-api': 'Gateway Aplikasi', 'cloudflare-pages': 'Hosting Frontend',
   'cloudflare-queue': 'Antrean Pekerjaan'
 }[key] || key);
 
@@ -95,17 +92,17 @@ const serviceIcon = (key: string) => ({
   'write-service': Pencil, 'operations-service': ClipboardCheck, 'realtime-service': Activity,
   'monitoring-service': TrendingUp, 'redis-cache': RedisLogo,
   'data-processing-worker': Activity, 'health-proxy': CheckCircle2,
-  'oracle-database': PostgreSQLLogo, 'supabase-database': SupabaseLogo,
-  'neon-database': NeonLogo, 'edge-api': CloudflareLogo,
-  'cloudflare-pages': CloudflareLogo, 'cloudflare-queue': CloudflareLogo
+  'oracle-database': PostgreSQLLogo, 'supabase-database': PostgreSQLLogo,
+  'neon-database': PostgreSQLLogo, 'edge-api': Activity,
+  'cloudflare-pages': Activity, 'cloudflare-queue': Activity
 }[key] || Activity);
 
 const serviceTone = (key: string) => ({
   'oracle-api': 'blue', 'identity-service': 'cyan', 'read-service': 'indigo',
   'write-service': 'blue', 'operations-service': 'indigo', 'realtime-service': 'pink',
   'monitoring-service': 'orange', 'redis-cache': 'red', 'data-processing-worker': 'orange',
-  'health-proxy': 'slate', 'oracle-database': 'postgres', 'supabase-database': 'green',
-  'neon-database': 'purple', 'edge-api': 'orange', 'cloudflare-pages': 'orange',
+  'health-proxy': 'slate', 'oracle-database': 'postgres', 'supabase-database': 'postgres',
+  'neon-database': 'postgres', 'edge-api': 'blue', 'cloudflare-pages': 'indigo',
   'cloudflare-queue': 'orange'
 }[key] || 'blue');
 
@@ -115,7 +112,7 @@ const serviceOnline = (component: Record<string, unknown>) => {
   return !['unavailable', 'unhealthy', 'down', 'disabled'].includes(String(component.status || '').toLowerCase());
 };
 const serviceDetail = (component: Record<string, unknown>) => {
-  const detail = component.primary || component.origin || component.managedBy || component.provider || component.protocol || component.status;
+  const detail = component.primary || component.origin || component.managedBy || component.protocol || component.status;
   return detail ? String(detail).replace(/-/g, ' ') : 'Terhubung ke backend aplikasi';
 };
 const statusEntries = (value: unknown): Array<[string, Record<string, unknown>]> =>
@@ -125,7 +122,7 @@ const statusEntries = (value: unknown): Array<[string, Record<string, unknown>]>
 function ServiceStatusGroups({ readiness, loading }: { readiness: BackendReadiness | null; loading: boolean }) {
   const groups = [
     { key: 'frontend', title: 'Frontend & layanan web', entries: statusEntries(readiness?.components?.frontendServices) },
-    { key: 'oracle', title: 'Backend · layanan internal', entries: statusEntries(readiness?.components?.oracleServices) },
+    { key: 'backend', title: 'Backend · layanan internal', entries: statusEntries(readiness?.components?.oracleServices) },
     { key: 'databases', title: 'Layanan database', entries: statusEntries(readiness?.components?.databases) }
   ];
   return <div className="admin-service-grid">

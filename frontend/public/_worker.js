@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 
-// Cloudflare Pages only serves the frontend and proxies API requests to the
-// Oracle gateway. The old backend Worker is archived and is not used here.
+// Optional edge adapter: serves the frontend and proxies API requests to the
+// configured application origin. The file remains compatible with edge
+// runtimes that expose an ASSETS binding, but is not required by the app.
 const PRODUCTION_API_ORIGIN = 'https://api.eposyandu.app';
 const STAGING_API_ORIGIN = 'https://api-staging.eposyandu.app';
 const MAINTENANCE_GATEWAY_STATUSES = new Set([500, 502, 503, 504]);
@@ -22,10 +23,17 @@ function safeConfiguredOrigin(value, fallback) {
 }
 
 function upstreamOrigin(hostname, env) {
-  if (hostname.includes('e-posyandu-staging.pages.dev')) {
-    return safeConfiguredOrigin(env.STAGING_API_ORIGIN, STAGING_API_ORIGIN);
+  const stagingHost = env.STAGING_HOSTNAME || 'e-posyandu-staging.pages.dev';
+  if (hostname.includes(stagingHost)) {
+    return safeConfiguredOrigin(
+      env.EPOSYANDU_STAGING_API_ORIGIN || env.STAGING_API_ORIGIN,
+      STAGING_API_ORIGIN
+    );
   }
-  return safeConfiguredOrigin(env.PRODUCTION_API_ORIGIN, PRODUCTION_API_ORIGIN);
+  return safeConfiguredOrigin(
+    env.EPOSYANDU_API_ORIGIN || env.API_ORIGIN || env.PRODUCTION_API_ORIGIN,
+    PRODUCTION_API_ORIGIN
+  );
 }
 
 function isApiPath(pathname) {

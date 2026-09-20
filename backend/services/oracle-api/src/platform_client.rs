@@ -69,10 +69,14 @@ pub(crate) struct PlatformGrpcClients {
 
 impl PlatformGrpcClients {
     pub(crate) fn from_env() -> Result<Option<Self>, String> {
-        if !env_flag("ORACLE_API_MICROSERVICES_ENABLED", false) {
+        if !env_flag(
+            "EPOSYANDU_MICROSERVICES_ENABLED",
+            env_flag("ORACLE_API_MICROSERVICES_ENABLED", false),
+        ) {
             return Ok(None);
         }
-        let token = env::var("RUST_WORKER_SHARED_SECRET")
+        let token = env::var("EPOSYANDU_SHARED_SECRET")
+            .or_else(|_| env::var("RUST_WORKER_SHARED_SECRET"))
             .ok()
             .filter(|value| !value.trim().is_empty())
             .ok_or_else(|| {
@@ -81,11 +85,26 @@ impl PlatformGrpcClients {
             .parse()
             .map_err(|_| "RUST_WORKER_SHARED_SECRET harus berupa metadata ASCII.".to_owned())?;
         Ok(Some(Self {
-            identity: endpoint("ORACLE_API_IDENTITY_GRPC_URL", DEFAULT_IDENTITY_URL)?,
-            read: endpoint("ORACLE_API_READ_GRPC_URL", DEFAULT_READ_URL)?,
-            write: endpoint("ORACLE_API_WRITE_GRPC_URL", DEFAULT_WRITE_URL)?,
-            realtime: endpoint("ORACLE_API_REALTIME_GRPC_URL", DEFAULT_REALTIME_URL)?,
-            monitoring: endpoint("ORACLE_API_MONITORING_GRPC_URL", DEFAULT_MONITORING_URL)?,
+            identity: endpoint_any(
+                &["EPOSYANDU_IDENTITY_GRPC_URL", "ORACLE_API_IDENTITY_GRPC_URL"],
+                DEFAULT_IDENTITY_URL,
+            )?,
+            read: endpoint_any(
+                &["EPOSYANDU_READ_GRPC_URL", "ORACLE_API_READ_GRPC_URL"],
+                DEFAULT_READ_URL,
+            )?,
+            write: endpoint_any(
+                &["EPOSYANDU_WRITE_GRPC_URL", "ORACLE_API_WRITE_GRPC_URL"],
+                DEFAULT_WRITE_URL,
+            )?,
+            realtime: endpoint_any(
+                &["EPOSYANDU_REALTIME_GRPC_URL", "ORACLE_API_REALTIME_GRPC_URL"],
+                DEFAULT_REALTIME_URL,
+            )?,
+            monitoring: endpoint_any(
+                &["EPOSYANDU_MONITORING_GRPC_URL", "ORACLE_API_MONITORING_GRPC_URL"],
+                DEFAULT_MONITORING_URL,
+            )?,
             token,
         }))
     }
@@ -272,10 +291,13 @@ fn env_flag(name: &str, fallback: bool) -> bool {
         .unwrap_or(fallback)
 }
 
-fn endpoint(name: &str, fallback: &str) -> Result<Channel, String> {
-    let url = env::var(name).unwrap_or_else(|_| fallback.to_owned());
+fn endpoint_any(names: &[&str], fallback: &str) -> Result<Channel, String> {
+    let url = names
+        .iter()
+        .find_map(|name| env::var(name).ok().filter(|value| !value.trim().is_empty()))
+        .unwrap_or_else(|| fallback.to_owned());
     Endpoint::from_shared(url.trim().to_owned())
-        .map_err(|_| format!("{name} bukan URL gRPC valid."))
+        .map_err(|_| format!("{} bukan URL gRPC valid.", names.join(" atau ")))
         .map(|endpoint| {
             endpoint
                 .connect_timeout(Duration::from_secs(5))

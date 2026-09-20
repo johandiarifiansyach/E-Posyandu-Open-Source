@@ -12,11 +12,12 @@ use tonic::transport::Server;
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let address = parse_listen_address(
-        &std::env::var("DATA_PROCESSING_GRPC_ADDR")
+        &std::env::var("EPOSYANDU_DATA_PROCESSING_GRPC_ADDR")
+            .or_else(|_| std::env::var("DATA_PROCESSING_GRPC_ADDR"))
             .or_else(|_| std::env::var("GRPC_ADDR"))
             .unwrap_or_default(),
         "unix:///tmp/e-posyandu/data-processing.sock",
-        "DATA_PROCESSING_GRPC_ADDR",
+        "EPOSYANDU_DATA_PROCESSING_GRPC_ADDR",
     )?;
     let (health_reporter, health_service) = tonic_health::server::health_reporter();
     health_reporter

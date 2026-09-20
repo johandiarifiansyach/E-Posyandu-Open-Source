@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-
 use std::{collections::HashMap, env, str::FromStr, time::Duration};
 
 use axum::http::Method;
@@ -25,9 +24,19 @@ const DEFAULT_POOL_RECYCLE_TIMEOUT_SECONDS: f64 = 2.0;
 
 type SqlParameter = Box<dyn ToSql + Sync + Send>;
 
-fn pool_timeout(name: &str, default_seconds: f64) -> Option<Duration> {
-    let value = env::var(name)
-        .ok()
+fn first_env(names: &[&str]) -> Option<String> {
+    names.iter().find_map(|name| {
+        env::var(name)
+            .ok()
+            .map(|value| value.trim().to_owned())
+            .filter(|value| !value.is_empty())
+    })
+}
+
+fn pool_timeout_any(names: &[&str], default_seconds: f64) -> Option<Duration> {
+    let value = names
+        .iter()
+        .find_map(|name| env::var(name).ok())
         .and_then(|raw| raw.trim().parse::<f64>().ok())
         .unwrap_or(default_seconds);
     if !value.is_finite() || value <= 0.0 {
@@ -59,32 +68,37 @@ pub(crate) struct NativeDatabase {
 
 impl NativeDatabase {
     pub(crate) fn from_env() -> Result<Self, String> {
-        let database_url = env::var("ORACLE_DATABASE_URL")
-            .ok()
-            .map(|value| value.trim().to_owned())
-            .filter(|value| !value.is_empty())
+        let database_url = first_env(&["EPOSYANDU_DATABASE_URL", "ORACLE_DATABASE_URL"])
             .ok_or_else(|| {
-                "ORACLE_DATABASE_URL wajib diisi untuk PostgreSQL native Oracle.".to_string()
+                "EPOSYANDU_DATABASE_URL wajib diisi untuk PostgreSQL native.".to_string()
             })?;
         let config = tokio_postgres::Config::from_str(&database_url)
-            .map_err(|_| "ORACLE_DATABASE_URL bukan URL PostgreSQL valid.".to_string())?;
-        let pool_size = env::var("ORACLE_DATABASE_POOL_SIZE")
-            .ok()
+            .map_err(|_| "EPOSYANDU_DATABASE_URL bukan URL PostgreSQL valid.".to_string())?;
+        let pool_size = first_env(&["EPOSYANDU_DATABASE_POOL_SIZE", "ORACLE_DATABASE_POOL_SIZE"])
             .and_then(|value| value.trim().parse::<usize>().ok())
             .unwrap_or(DEFAULT_POOL_SIZE);
         if !(1..=10).contains(&pool_size) {
-            return Err("ORACLE_DATABASE_POOL_SIZE wajib antara 1 dan 10.".into());
+            return Err("EPOSYANDU_DATABASE_POOL_SIZE wajib antara 1 dan 10.".into());
         }
-        let pool_wait_timeout = pool_timeout(
-            "ORACLE_DATABASE_POOL_WAIT_TIMEOUT_SECONDS",
+        let pool_wait_timeout = pool_timeout_any(
+            &[
+                "EPOSYANDU_DATABASE_POOL_WAIT_TIMEOUT_SECONDS",
+                "ORACLE_DATABASE_POOL_WAIT_TIMEOUT_SECONDS",
+            ],
             DEFAULT_POOL_WAIT_TIMEOUT_SECONDS,
         );
-        let pool_create_timeout = pool_timeout(
-            "ORACLE_DATABASE_POOL_CREATE_TIMEOUT_SECONDS",
+        let pool_create_timeout = pool_timeout_any(
+            &[
+                "EPOSYANDU_DATABASE_POOL_CREATE_TIMEOUT_SECONDS",
+                "ORACLE_DATABASE_POOL_CREATE_TIMEOUT_SECONDS",
+            ],
             DEFAULT_POOL_CREATE_TIMEOUT_SECONDS,
         );
-        let pool_recycle_timeout = pool_timeout(
-            "ORACLE_DATABASE_POOL_RECYCLE_TIMEOUT_SECONDS",
+        let pool_recycle_timeout = pool_timeout_any(
+            &[
+                "EPOSYANDU_DATABASE_POOL_RECYCLE_TIMEOUT_SECONDS",
+                "ORACLE_DATABASE_POOL_RECYCLE_TIMEOUT_SECONDS",
+            ],
             DEFAULT_POOL_RECYCLE_TIMEOUT_SECONDS,
         );
         let manager = Manager::from_config(
@@ -101,7 +115,7 @@ impl NativeDatabase {
             .create_timeout(pool_create_timeout)
             .recycle_timeout(pool_recycle_timeout)
             .build()
-            .map_err(|_| "Pool PostgreSQL native Oracle tidak dapat dibuat.".to_string())?;
+            .map_err(|_| "Pool PostgreSQL native tidak dapat dibuat.".to_string())?;
         Ok(Self { pool, config })
     }
 

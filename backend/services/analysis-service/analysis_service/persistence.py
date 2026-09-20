@@ -49,6 +49,8 @@ def _dsn() -> str:
     # rolling deployments where the Vault env file may still expose the
     # generic PostgreSQL name while the analysis container is restarted.
     return (
+        os.environ.get("EPOSYANDU_DATABASE_URL")
+        or
         os.environ.get("ANALYSIS_DATABASE_URL")
         or os.environ.get("ORACLE_DATABASE_URL")
         or os.environ.get("DATABASE_URL")
@@ -333,7 +335,7 @@ class AnalysisPersistenceWorker:
         if not _dsn():
             LOGGER.error(
                 "ANALYSIS_PERSISTENCE_ENABLED aktif tetapi URL PostgreSQL tidak ditemukan "
-                "(ANALYSIS_DATABASE_URL/ORACLE_DATABASE_URL/DATABASE_URL)"
+                "(EPOSYANDU_DATABASE_URL/ANALYSIS_DATABASE_URL/DATABASE_URL)"
             )
             return None
         if psycopg is None:

@@ -90,9 +90,17 @@ service-role key, password database, atau private key di dalamnya.
 | `VITE_DEMO_AUTH` | `true` untuk akun demo lokal, `false` untuk mematikannya |
 | `VITE_DEMO_PASSWORD` | Password akun demo lokal |
 | `VITE_APP_ID` | ID aplikasi pada provider autentikasi yang digunakan |
-| `VITE_TURNSTILE_SITE_KEY` | Verifikasi keamanan login, opsional |
+| `VITE_SECURITY_CHALLENGE_SITE_KEY` | Site key adapter challenge keamanan login, opsional |
+| `VITE_SECURITY_CHALLENGE_URL` | URL script challenge; nama `VITE_TURNSTILE_SITE_KEY` tetap diterima sebagai alias kompatibilitas |
 | `VITE_MAINTENANCE_MODE` | Menampilkan halaman maintenance bila bernilai `true` |
 | `VITE_REACT_PROFILER` | Profiling React development bila bernilai `true` |
+
+Konfigurasi backend dan deployment dibuat provider-neutral. Mulai dari
+[`docs/INFRASTRUCTURE.md`](docs/INFRASTRUCTURE.md) dan
+[`deploy/generic/.env.example`](deploy/generic/.env.example); isi endpoint,
+database, cache, antrean, storage, autentikasi, dan secret sesuai infrastruktur
+tujuan. Folder atau skrip yang masih menyebut provider tertentu dipertahankan
+sebagai adapter kompatibilitas deployment lama, bukan sebagai persyaratan baru.
 
 ## Peta repository
 

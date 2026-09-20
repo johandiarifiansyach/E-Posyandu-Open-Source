@@ -54,9 +54,9 @@ impl AnalysisGrpcClient {
             .map_err(|_| "ANALYSIS_GRPC_URL bukan URL gRPC valid.".to_owned())?
             .connect_timeout(Duration::from_secs(5))
             .timeout(Duration::from_secs(15));
-        let token = env::var("RUST_WORKER_SHARED_SECRET")
-            .ok()
-            .filter(|value| !value.trim().is_empty())
+        let token = ["EPOSYANDU_SHARED_SECRET", "RUST_WORKER_SHARED_SECRET"]
+            .iter()
+            .find_map(|name| env::var(name).ok().filter(|value| !value.trim().is_empty()))
             .map(|value| {
                 value
                     .parse()

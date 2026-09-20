@@ -362,7 +362,7 @@ function AuthenticatedGate() {
   if (phase === 'loading') return <AppLoadingSkeleton />;
   if (phase === 'error') return <StartupError onRetry={() => window.location.reload()} />;
   if (phase === 'login') {
-    return <LazyPage fallback={<LoginLoadingSkeleton includeTurnstile={Boolean(import.meta.env.VITE_TURNSTILE_SITE_KEY?.trim())} />}>
+    return <LazyPage fallback={<LoginLoadingSkeleton includeTurnstile={Boolean((import.meta.env.VITE_SECURITY_CHALLENGE_SITE_KEY || import.meta.env.VITE_TURNSTILE_SITE_KEY)?.trim())} />}>
       <LoginPage onLogin={handleLogin} />
     </LazyPage>;
   }
@@ -372,5 +372,5 @@ function AuthenticatedGate() {
   if (phase === 'dashboard' && user) {
     return <LazyPage><DashboardPage user={user} onLogout={handleLogout} /></LazyPage>;
   }
-  return <LoginLoadingSkeleton includeTurnstile={Boolean(import.meta.env.VITE_TURNSTILE_SITE_KEY?.trim())} />;
+  return <LoginLoadingSkeleton includeTurnstile={Boolean((import.meta.env.VITE_SECURITY_CHALLENGE_SITE_KEY || import.meta.env.VITE_TURNSTILE_SITE_KEY)?.trim())} />;
 }

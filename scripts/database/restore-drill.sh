@@ -4,6 +4,7 @@
 
 set -euo pipefail
 
+DATABASE_URL="${EPOSYANDU_DATABASE_URL:-${DATABASE_URL:-}}"
 : "${RESTORE_DATABASE_URL:?Isi RESTORE_DATABASE_URL dengan database khusus uji restore.}"
 : "${CONFIRM_RESTORE_DRILL:?Isi CONFIRM_RESTORE_DRILL=RESTORE-TEST untuk mengizinkan penghapusan database target.}"
 
@@ -12,7 +13,7 @@ if [[ "$CONFIRM_RESTORE_DRILL" != "RESTORE-TEST" ]]; then
   exit 1
 fi
 if [[ -n "${DATABASE_URL:-}" && "$RESTORE_DATABASE_URL" == "$DATABASE_URL" ]]; then
-  echo "Target restore tidak boleh sama dengan DATABASE_URL sumber/production." >&2
+  echo "Target restore tidak boleh sama dengan EPOSYANDU_DATABASE_URL sumber/production." >&2
   exit 1
 fi
 

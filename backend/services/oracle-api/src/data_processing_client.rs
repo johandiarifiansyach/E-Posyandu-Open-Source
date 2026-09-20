@@ -41,7 +41,8 @@ pub(crate) struct DataProcessingGrpcClient {
 
 impl DataProcessingGrpcClient {
     pub(crate) fn from_env() -> Result<Self, String> {
-        let url = env::var("ORACLE_API_DATA_PROCESSING_GRPC_URL")
+        let url = env::var("EPOSYANDU_DATA_PROCESSING_GRPC_URL")
+            .or_else(|_| env::var("ORACLE_API_DATA_PROCESSING_GRPC_URL"))
             .or_else(|_| env::var("ORACLE_API_NUTRITION_GRPC_URL"))
             .unwrap_or_else(|_| DEFAULT_DATA_PROCESSING_GRPC_URL.to_owned());
         let endpoint = Endpoint::from_shared(url.trim().to_owned())
@@ -51,7 +52,8 @@ impl DataProcessingGrpcClient {
         Ok(Self {
             channel: endpoint.connect_lazy(),
             interceptor: ServiceTokenInterceptor {
-                token: env::var("RUST_WORKER_SHARED_SECRET")
+                token: env::var("EPOSYANDU_SHARED_SECRET")
+                    .or_else(|_| env::var("RUST_WORKER_SHARED_SECRET"))
                     .ok()
                     .filter(|value| !value.trim().is_empty())
                     .and_then(|value| value.parse().ok()),

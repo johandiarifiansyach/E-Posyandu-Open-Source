@@ -7,8 +7,8 @@ import { resolve } from 'node:path';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
-  // Local development talks directly to the Oracle API. The retired
-  // Cloudflare Worker remains available only under backend/legacy-cloudflare-worker.
+  // Local development talks directly to the configured application API.
+  // Provider-specific edge adapters remain available for existing deployments.
   const apiTarget = env.VITE_DEV_API_TARGET || env.VITE_API_URL || 'http://127.0.0.1:8081';
 
   return {

@@ -31,7 +31,14 @@ type TurnstileApi = {
 
 type TurnstileWindow = Window & { turnstile?: TurnstileApi };
 
-const turnstileSiteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY?.trim() || '';
+// Optional security-challenge adapter. The historical Turnstile names remain
+// accepted so existing deployments keep working, while new deployments can
+// use provider-neutral environment names.
+const turnstileSiteKey = import.meta.env.VITE_SECURITY_CHALLENGE_SITE_KEY?.trim()
+  || import.meta.env.VITE_TURNSTILE_SITE_KEY?.trim()
+  || '';
+const turnstileScriptUrl = import.meta.env.VITE_SECURITY_CHALLENGE_URL?.trim()
+  || 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
 
 function demoRoleLabel(role: (typeof DEMO_ACCOUNTS)[number]['role']): string {
   return role === 'super_admin' ? 'Administrator' : role;
@@ -95,12 +102,12 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
       });
     };
 
-    let script = document.getElementById('cloudflare-turnstile') as HTMLScriptElement | null;
+    let script = document.getElementById('security-challenge-script') as HTMLScriptElement | null;
     const createdScript = !script;
     if (!script) {
       script = document.createElement('script');
-      script.id = 'cloudflare-turnstile';
-      script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+      script.id = 'security-challenge-script';
+      script.src = turnstileScriptUrl;
       script.async = true;
       script.defer = true;
       document.head.append(script);

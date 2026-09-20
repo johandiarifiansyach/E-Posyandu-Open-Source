@@ -1,9 +1,9 @@
 # Data Processing Service
 
 Layanan Rust internal untuk pekerjaan berat E-Posyandu. Browser tidak pernah
-memanggil gRPC secara langsung. REST Oracle API membuat job, Cloudflare Queue
-Queue menahannya, pull consumer mengambil job secara berurutan, lalu gRPC
-memprosesnya tanpa membebani endpoint login dan CRUD.
+memanggil gRPC secara langsung. API membuat job, queue adapter menahannya,
+pull consumer mengambil job secara berurutan, lalu gRPC memprosesnya tanpa
+membebani endpoint login dan CRUD.
 
 ## Pekerjaan yang didukung
 
@@ -35,11 +35,11 @@ npm run data-processing:dev
 ```
 
 Alamat lokal bawaan adalah UDS `unix:///tmp/e-posyandu/data-processing.sock`;
-pada Compose Oracle path-nya `/run/e-posyandu/data-processing.sock`. Gunakan
+pada container path-nya `/run/e-posyandu/data-processing.sock`. Gunakan
 alamat TCP seperti `0.0.0.0:50051` hanya bila service dipanggil dari server
 lain. Tanpa
-`QUEUE_CONSUMER_ENABLED=true`, service hanya membuka server gRPC dan tidak
-membaca Cloudflare Queue.
+`EPOSYANDU_QUEUE_CONSUMER_ENABLED=true`, service hanya membuka server gRPC dan
+tidak membaca queue sebelum adapter dikonfigurasi.
 
 Binary lokal dan container bernama `data-processing-worker`; binary ini membuka health check HTTP pada
 `$PORT` dan menjaga server gRPC tetap privat pada jaringan service.
@@ -48,19 +48,20 @@ Binary lokal dan container bernama `data-processing-worker`; binary ini membuka 
 
 Isi environment berikut pada host privat layanan Rust:
 
-- `CLOUDFLARE_ACCOUNT_ID`
-- `CLOUDFLARE_QUEUE_ID`
-- `CLOUDFLARE_QUEUES_API_TOKEN` dengan izin Queues Edit
+- `EPOSYANDU_QUEUE_API_URL`, endpoint queue adapter
+- `EPOSYANDU_QUEUE_ACCOUNT_ID` (bila provider memerlukannya)
+- `EPOSYANDU_QUEUE_ID` dan `EPOSYANDU_QUEUE_TOKEN`
 - `EPOSYANDU_API_URL`
-- `RUST_WORKER_SHARED_SECRET`, secret internal service-to-service dari OCI Vault
-- `DATA_PROCESSING_GRPC_URL`, biasanya `unix:///tmp/e-posyandu/data-processing.sock` lokal atau
+- `EPOSYANDU_SHARED_SECRET`, secret internal service-to-service
+- `EPOSYANDU_DATA_PROCESSING_GRPC_URL`, biasanya `unix:///tmp/e-posyandu/data-processing.sock` lokal atau
   `unix:///run/e-posyandu/data-processing.sock` pada Compose untuk service
   satu host atau `http://HOST:50051` untuk lintas server/platform
 
 Consumer memperbarui progres pada 5%, 85%, 95%, dan 100%. Job gagal dicoba
 ulang maksimal tiga kali. Hasil validasi, laporan, dan sinkronisasi disimpan
-sebagai JSON di PostgreSQL. Hasil XLSX/PDF disimpan secara privat ke R2; job
-ekspor akan gagal dengan pesan yang jelas bila binding R2 belum diaktifkan.
+sebagai JSON di PostgreSQL. Hasil XLSX/PDF disimpan melalui storage adapter
+privat; job ekspor akan gagal dengan pesan yang jelas bila adapter storage belum
+diaktifkan.
 
 Payload dibatasi 10.000 baris per job kalkulasi atau validasi dan 100.000
 baris per ekspor. Untuk impor yang lebih besar, REST harus membaginya menjadi
@@ -79,35 +80,20 @@ port HTTP `$PORT` untuk health check, sedangkan gRPC hanya dibuka pada jaringan
 privat antarservice dan tidak dipublish ke host. Environment Queue tetap
 diberikan sebagai secret dari platform hosting, bukan dimasukkan ke image.
 
-## Hosting Oracle Compute
+## Deployment pada platform pilihan
 
-Oracle Compute menjadi target utama untuk worker pekerjaan berat. Cloudflare
-Queue dan R2 tetap menjadi layanan pendukung; Oracle menjalankan Queue consumer
-Rust dan service
-kalkulasi WHO Python privat. Browser tidak pernah terhubung ke VM Oracle.
+Gunakan image Docker yang sama pada VM, container platform, Kubernetes, atau
+server on-premise. Template provider-neutral tersedia di
+[`deploy/generic`](../../deploy/generic/README.md). Service pada satu host
+dapat memakai UDS di `/run/e-posyandu`; bila dipisahkan, gunakan URL TCP privat.
+Port gRPC dan health internal tidak perlu dipublish ke internet. Setiap panggilan
+gRPC memerlukan metadata `x-eposyandu-service-token` dari
+`EPOSYANDU_SHARED_SECRET`.
 
-Konfigurasi siap-deploy ada di [`deploy/oracle`](../../deploy/oracle/README.md).
-Deployment memakai image yang sama pada ARM64, container non-root/read-only,
-Caddy untuk satu-satunya endpoint publik `/health`, dan restart otomatis Docker.
-Service pada satu VM menggunakan UDS di `/run/e-posyandu`; bila service
-dipisahkan, gunakan URL TCP privat. Port gRPC serta health internal `8080` hanya
-tersedia pada jaringan privat Compose dan tidak diterbitkan ke host. `oracle-api` memakai gRPC health
-dan kontrak `DataProcessingWorker` untuk komunikasi sinkron antarlayanan; Queue tetap
-dipakai untuk pekerjaan asinkron yang tahan restart. Setiap panggilan gRPC
-memerlukan metadata `x-eposyandu-service-token` yang sama-sama dimaterialisasi
-dari OCI Vault sebagai `RUST_WORKER_SHARED_SECRET`.
-
-```bash
-npm run data-processing:deploy:oracle -- eposyandu-oracle nutrition.example.go.id data-processing-worker
-npm run data-processing:connect:oracle -- https://nutrition.example.go.id/health
-```
-
-Argumen service terakhir bersifat opsional. Nilai `data-processing-worker` hanya
-membangun dan me-restart worker pemrosesan data; `oracle-api` hanya me-restart API; nilai
-`all` dipakai saat perubahan memang menyentuh seluruh platform.
-
-Jalankan satu Queue consumer aktif saja. Render atau LaunchAgent macOS baru boleh
-dimatikan setelah Oracle sehat dan satu job uji berhasil sampai status selesai.
+Jalankan tepat satu Queue consumer aktif untuk setiap antrean. Adapter historis
+di [`deploy/oracle`](../../deploy/oracle/README.md), skrip `oracle:*`, dan
+skrip platform lain tetap disimpan untuk deployment existing, tetapi bukan
+default instalasi baru.
 
 ## Layanan gratis di macOS
 
@@ -119,9 +105,10 @@ diulang oleh macOS bila proses berhenti:
 npm run data-processing:activate:macos
 ```
 
-Pada aktivasi pertama, buat Cloudflare API Token dengan izin
-`Account > Queues > Edit`. Perintah aktivasi membaca token tanpa menampilkannya,
-memverifikasi akses Queue, lalu menyimpannya hanya di konfigurasi privat.
+Pada aktivasi pertama, isi `EPOSYANDU_QUEUE_API_URL`,
+`EPOSYANDU_QUEUE_ID`, dan `EPOSYANDU_QUEUE_TOKEN` pada konfigurasi privat.
+Skrip adapter lama yang meminta token provider tertentu tetap tersedia untuk
+deployment kompatibilitas.
 
 Konfigurasi privat dibaca dari
 `~/.config/e-posyandu/data-processing-worker.env`. Mac harus menyala dan terhubung ke
@@ -132,27 +119,24 @@ Binary dan runner dipasang ke `~/Library/Application Support/EPosyandu` agar
 LaunchAgent tidak memerlukan izin akses ke folder Documents. Jalankan ulang
 `npm run data-processing:install:macos` setiap kali kode service Rust diperbarui.
 
-## Hosting Render sementara
+## Hosting sementara atau development
 
 Container menjalankan health check HTTP dan server gRPC privat pada proses yang
 sama. Queue consumer hanya menghubungi gRPC melalui `127.0.0.1`, sehingga RPC
-internal tidak dibuka ke internet. PostgreSQL tetap berada di Supabase pada
-mode kompatibilitas, sedangkan Oracle API menjadi gateway utama. Render hanya
-dicadangkan sebagai worker sementara, bukan endpoint API produksi.
+internal tidak dibuka ke internet. PostgreSQL dan API dapat ditempatkan pada
+provider mana pun yang memenuhi kontrak pada `docs/INFRASTRUCTURE.md`.
 
-Blueprint [`render.yaml`](../../render.yaml) menyiapkan web service Docker gratis
-di region Singapore. Masukkan lima environment rahasia ketika Render meminta
-nilainya. Polling kosong dibatasi setiap 15 detik dan satu pull memproses maksimal
-dua job agar penggunaan CPU, RAM, serta operasi Queue tetap ringan.
+Blueprint platform yang ada tetap dapat dipakai sebagai contoh adapter. Masukkan
+environment umum melalui secret manager platform tersebut. Polling kosong
+dibatasi setiap 15 detik dan satu pull memproses maksimal dua job agar penggunaan
+CPU, RAM, serta operasi Queue tetap ringan.
 
 Setelah deploy pertama selesai, sambungkan URL Render ke monitoring eksternal
 bila masih diperlukan. Perintah ini hanya memeriksa health check dan tidak
 mengaktifkan Worker API lama:
 
 ```bash
-npm run data-processing:connect:render -- https://NAMA-SERVICE.onrender.com
+npm run data-processing:connect:render -- https://HOST-SERVICE.example/health
 ```
 
-Gunakan hanya satu web service gratis agar jatah bulanan Render cukup. Service
-Render hanya menjadi cadangan sementara bila instance Oracle belum tersedia.
-Jangan menjalankan Render dan Oracle bersamaan dalam waktu lama.
+Gunakan hanya satu worker aktif untuk satu antrean agar job tidak diproses ganda.

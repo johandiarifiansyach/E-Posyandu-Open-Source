@@ -70,13 +70,13 @@ export const RELEASE_HISTORY: AppRelease[] = [
     version: '3.5.6',
     releaseDate: '13 Agustus 2026',
     releaseDateIso: '2026-08-13',
-    title: 'Baca Darurat Aman melalui Neon',
+    title: 'Jalur Baca Cadangan Aman',
     changes: [
-      'Daftar, dashboard, dan laporan baca tetap dapat dibuka dari Neon ketika Supabase mengalami gangguan sementara.',
+      'Daftar, dashboard, dan laporan baca tetap dapat dibuka dari database replika ketika database utama mengalami gangguan sementara.',
       'Mode darurat hanya berlaku untuk sesi yang sebelumnya sudah diverifikasi, belum kedaluwarsa, serta maksimal selama satu jam.',
       'Role, desa, dan posyandu tetap membatasi data; token mentah tidak disimpan karena cache memakai hash SHA-256.',
       'Kesalahan token atau izin 401 dan 403 tidak pernah dialihkan ke replika agar pemeriksaan keamanan tidak dapat dilewati.',
-      'Login baru dan seluruh perubahan data tetap menuju Supabase sebagai database utama; Neon tidak menerima operasi tulis.',
+      'Login baru dan seluruh perubahan data tetap menuju database utama; replika hanya menerima operasi baca.',
       'Status kesiapan API kini menampilkan konfigurasi mode baca darurat untuk membantu pemantauan layanan.'
     ]
   },
@@ -100,7 +100,7 @@ export const RELEASE_HISTORY: AppRelease[] = [
     title: 'Penimbangan Tetap Tersimpan Saat API Terganggu',
     changes: [
       'Penimbangan baru, edit penimbangan, hapus riwayat, dan ringkasan pengukuran balita tetap dapat disinkronkan saat layanan pemrosesan mencapai batas kapasitas.',
-      'Jalur tulis darurat menggunakan sesi Supabase aktif, transaksi PostgreSQL, idempotency key, audit log, serta pembatasan role, desa, dan posyandu.',
+      'Jalur tulis darurat menggunakan sesi aktif, transaksi PostgreSQL, idempotency key, audit log, serta pembatasan role, desa, dan posyandu.',
       'Jalur darurat hanya menerima data penimbangan dan kolom ringkasannya sehingga tidak dapat digunakan untuk mengubah identitas balita.',
       'Perubahan lain yang belum didukung tetap aman di antrean perangkat tanpa menghambat penimbangan yang sedang disimpan.',
       'Tabel balita, masalah gizi, ASI eksklusif, detail, dan dashboard tetap memiliki jalur baca terautentikasi selama API terganggu.',
@@ -114,7 +114,7 @@ export const RELEASE_HISTORY: AppRelease[] = [
     title: 'Data Tetap Tersedia Saat API Terganggu',
     changes: [
       'Tabel Data Balita, balita bermasalah gizi, ASI eksklusif, detail balita, dan dashboard tetap dapat dibaca saat layanan API mencapai batas kapasitas.',
-      'Jalur baca darurat menggunakan sesi Supabase yang aktif dan selalu membatasi data berdasarkan role, desa, serta posyandu akun.',
+      'Jalur baca darurat menggunakan sesi aktif dan selalu membatasi data berdasarkan role, desa, serta posyandu akun.',
       'Setiap halaman tetap mengambil maksimal 10 baris sehingga pemulihan layanan tidak menambah pembacaan data secara berlebihan.',
       'Peringatan status worker tidak lagi tampil ketika status hanya belum sempat diperiksa; gangguan nyata tetap diberitahukan.',
       'Cache PWA diperbarui agar perbaikan tabel segera diterima oleh perangkat kader, desa, dan Ahli Gizi.'

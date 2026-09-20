@@ -52,13 +52,14 @@ async fn shutdown_signal() {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
-    let grpc_target = env::var("DATA_PROCESSING_GRPC_ADDR")
+    let grpc_target = env::var("EPOSYANDU_DATA_PROCESSING_GRPC_ADDR")
+        .or_else(|_| env::var("DATA_PROCESSING_GRPC_ADDR"))
         .or_else(|_| env::var("GRPC_ADDR"))
         .unwrap_or_default();
     let grpc_address = parse_listen_address(
         &grpc_target,
         "unix:///run/e-posyandu/data-processing.sock",
-        "DATA_PROCESSING_GRPC_ADDR",
+        "EPOSYANDU_DATA_PROCESSING_GRPC_ADDR",
     )?;
     let (health_reporter, health_service) = tonic_health::server::health_reporter();
     health_reporter

@@ -46,9 +46,13 @@ impl Interceptor for ServiceAuthInterceptor {
 }
 
 pub fn service_auth_interceptor(required: bool) -> Result<ServiceAuthInterceptor, String> {
-    let value = std::env::var("RUST_WORKER_SHARED_SECRET")
-        .ok()
-        .filter(|value| !value.trim().is_empty());
+    let value = ["EPOSYANDU_SHARED_SECRET", "RUST_WORKER_SHARED_SECRET"]
+        .iter()
+        .find_map(|name| {
+            std::env::var(name)
+                .ok()
+                .filter(|value| !value.trim().is_empty())
+        });
     let token = value
         .map(|value| {
             value

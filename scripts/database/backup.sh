@@ -4,7 +4,8 @@
 
 set -euo pipefail
 
-: "${DATABASE_URL:?Isi DATABASE_URL dengan connection string PostgreSQL sumber.}"
+DATABASE_URL="${EPOSYANDU_DATABASE_URL:-${DATABASE_URL:-}}"
+: "${DATABASE_URL:?Isi EPOSYANDU_DATABASE_URL (atau DATABASE_URL kompatibilitas) dengan connection string PostgreSQL sumber.}"
 command -v pg_dump >/dev/null 2>&1 || { echo "pg_dump belum terpasang." >&2; exit 1; }
 
 root_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"

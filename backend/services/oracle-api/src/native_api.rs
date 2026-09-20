@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-
 use std::{collections::BTreeMap, env, sync::Arc};
 
 use axum::{
@@ -116,17 +115,18 @@ pub(crate) struct NativeApi {
     database: Arc<NativeDatabase>,
     auth: Arc<NativeAuth>,
     cache: Option<NativeCache>,
-    queue: Option<CloudflareQueueConfig>,
+    queue: Option<QueueProviderConfig>,
     realtime: RealtimeHub,
     reads_enabled: bool,
     writes_enabled: bool,
 }
 
 #[derive(Clone)]
-struct CloudflareQueueConfig {
+struct QueueProviderConfig {
     account_id: String,
     queue_id: String,
     api_token: String,
+    api_url: String,
 }
 
 #[derive(Clone)]
@@ -156,16 +156,28 @@ fn native_database_error(error: DatabaseError) -> ApiError {
     }
 }
 
-fn optional_queue_config() -> Result<Option<CloudflareQueueConfig>, String> {
+fn first_non_empty_env(names: &[&str]) -> Option<String> {
+    names.iter().find_map(|name| {
+        env::var(name)
+            .ok()
+            .map(|value| value.trim().to_owned())
+            .filter(|value| !value.is_empty())
+    })
+}
+
+fn optional_queue_config() -> Result<Option<QueueProviderConfig>, String> {
     let values = [
         (
-            "CLOUDFLARE_ACCOUNT_ID",
-            env::var("CLOUDFLARE_ACCOUNT_ID").ok(),
+            "EPOSYANDU_QUEUE_ACCOUNT_ID",
+            first_non_empty_env(&["EPOSYANDU_QUEUE_ACCOUNT_ID", "CLOUDFLARE_ACCOUNT_ID"]),
         ),
-        ("CLOUDFLARE_QUEUE_ID", env::var("CLOUDFLARE_QUEUE_ID").ok()),
         (
-            "CLOUDFLARE_QUEUES_API_TOKEN",
-            env::var("CLOUDFLARE_QUEUES_API_TOKEN").ok(),
+            "EPOSYANDU_QUEUE_ID",
+            first_non_empty_env(&["EPOSYANDU_QUEUE_ID", "CLOUDFLARE_QUEUE_ID"]),
+        ),
+        (
+            "EPOSYANDU_QUEUE_TOKEN",
+            first_non_empty_env(&["EPOSYANDU_QUEUE_TOKEN", "CLOUDFLARE_QUEUES_API_TOKEN"]),
         ),
     ]
     .map(|(name, value)| {
@@ -176,34 +188,41 @@ fn optional_queue_config() -> Result<Option<CloudflareQueueConfig>, String> {
                 .filter(|value| !value.is_empty()),
         )
     });
+    let api_url = first_non_empty_env(&["EPOSYANDU_QUEUE_API_URL", "CLOUDFLARE_QUEUES_API_URL"])
+        .unwrap_or_else(|| {
+            "https://api.cloudflare.com/client/v4/accounts/{account_id}/queues/{queue_id}/messages"
+                .into()
+        });
     let configured = values.iter().filter(|(_, value)| value.is_some()).count();
     if configured == 0 {
         return Ok(None);
     }
-    if configured != values.len() {
-        let missing = values
-            .iter()
-            .filter_map(|(name, value)| value.is_none().then_some(*name))
-            .collect::<Vec<_>>()
-            .join(", ");
+    let account_required = api_url.contains("{account_id}") || api_url.contains("/accounts/");
+    let missing = [
+        ("EPOSYANDU_QUEUE_ID", values[1].1.is_none()),
+        ("EPOSYANDU_QUEUE_TOKEN", values[2].1.is_none()),
+        (
+            "EPOSYANDU_QUEUE_ACCOUNT_ID",
+            account_required && values[0].1.is_none(),
+        ),
+    ]
+    .into_iter()
+    .filter_map(|(name, missing)| missing.then_some(name))
+    .collect::<Vec<_>>()
+    .join(", ");
+    if !missing.is_empty() {
         return Err(format!(
-            "Konfigurasi Cloudflare Queue belum lengkap: {missing}"
+            "Konfigurasi queue adapter belum lengkap: {missing}"
         ));
     }
     let account_id = values[0].1.clone().unwrap_or_default();
     let queue_id = values[1].1.clone().unwrap_or_default();
-    if !valid_cloudflare_id(&account_id) || !valid_cloudflare_id(&queue_id) {
-        return Err("Account ID atau Queue ID Cloudflare tidak valid.".into());
-    }
-    Ok(Some(CloudflareQueueConfig {
+    Ok(Some(QueueProviderConfig {
         account_id,
         queue_id,
         api_token: values[2].1.clone().unwrap_or_default(),
+        api_url,
     }))
-}
-
-fn valid_cloudflare_id(value: &str) -> bool {
-    value.len() == 32 && value.bytes().all(|byte| byte.is_ascii_hexdigit())
 }
 
 fn api_response(status: StatusCode, payload: Value, cache_control: &'static str) -> Response {
@@ -1786,13 +1805,15 @@ impl NativeApi {
             ApiError::new(
                 StatusCode::SERVICE_UNAVAILABLE,
                 "queue_unavailable",
-                "Antrean pekerjaan belum dikonfigurasi pada Oracle.",
+                "Antrean pekerjaan belum dikonfigurasi pada backend.",
             )
         })?;
-        let endpoint = Url::parse(&format!(
-            "https://api.cloudflare.com/client/v4/accounts/{}/queues/{}/messages",
-            queue.account_id, queue.queue_id
-        ))
+        let endpoint = Url::parse(
+            &queue
+                .api_url
+                .replace("{account_id}", &queue.account_id)
+                .replace("{queue_id}", &queue.queue_id),
+        )
         .map_err(|_| {
             ApiError::new(
                 StatusCode::SERVICE_UNAVAILABLE,
@@ -1805,7 +1826,7 @@ impl NativeApi {
             .post(endpoint)
             .bearer_auth(&queue.api_token)
             .json(&json!({
-                // Cloudflare Queue delivers this object as the message body.
+                // The queue adapter receives this object as the message body.
                 // Keep the public camelCase field aligned with the consumer;
                 // the consumer also accepts the historical snake_case form
                 // so messages already in-flight remain processable.
@@ -2092,7 +2113,7 @@ impl NativeApi {
             return Err(ApiError::new(
                 StatusCode::SERVICE_UNAVAILABLE,
                 "queue_unavailable",
-                "Antrean pekerjaan belum dikonfigurasi pada Oracle.",
+                "Antrean pekerjaan belum dikonfigurasi pada backend.",
             ));
         }
         let payload = payload

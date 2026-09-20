@@ -698,13 +698,13 @@ function ensureApiRequestAllowed() {
   clearApiUnavailable();
 }
 
-function isCloudflareCapacityResponse(status: number, body: string) {
-  return status === 429 && /error code:\s*1027|daily request limit|worker.*limit/i.test(body);
+function isCapacityResponse(status: number, body: string) {
+  return status === 429 && /error code:\s*1027|daily request limit|gateway.*limit|worker.*limit|request limit/i.test(body);
 }
 
 async function responseErrorDetail(response: Response, fallback: string): Promise<string> {
   const body = await response.text();
-  if (isCloudflareCapacityResponse(response.status, body)) {
+  if (isCapacityResponse(response.status, body)) {
     markApiUnavailable();
     throw new ApiUnavailableError();
   }
@@ -727,7 +727,7 @@ type QuerySyncState = {
 };
 
 function querySyncKey(ref: QueryRef) {
-  return `${SYNC_STATE_PREFIX}edge-api-v2:${ref.tableName}:${JSON.stringify(ref.constraints)}`;
+  return `${SYNC_STATE_PREFIX}api-v2:${ref.tableName}:${JSON.stringify(ref.constraints)}`;
 }
 
 function readQuerySyncState(ref: QueryRef): QuerySyncState | null {

@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-
 use base64::{Engine as _, engine::general_purpose::STANDARD as BASE64};
 use hmac::{Hmac, Mac};
 use reqwest::{Client, Method};
@@ -26,6 +25,7 @@ pub struct QueueConfig {
     account_id: String,
     queue_id: String,
     api_token: String,
+    queue_api_url: String,
     api_url: String,
     shared_secret: String,
     grpc_url: String,
@@ -37,6 +37,7 @@ pub struct QueueConfigInput {
     pub account_id: String,
     pub queue_id: String,
     pub api_token: String,
+    pub queue_api_url: String,
     pub api_url: String,
     pub shared_secret: String,
     pub grpc_url: String,
@@ -57,9 +58,12 @@ impl QueueConfig {
         };
 
         Ok(Self {
-            account_id: required("CLOUDFLARE_ACCOUNT_ID", input.account_id)?,
-            queue_id: required("CLOUDFLARE_QUEUE_ID", input.queue_id)?,
-            api_token: required("CLOUDFLARE_QUEUES_API_TOKEN", input.api_token)?,
+            account_id: input.account_id.trim().to_owned(),
+            queue_id: required("EPOSYANDU_QUEUE_ID", input.queue_id)?,
+            api_token: required("EPOSYANDU_QUEUE_TOKEN", input.api_token)?,
+            queue_api_url: required("EPOSYANDU_QUEUE_API_URL", input.queue_api_url)?
+                .trim_end_matches('/')
+                .into(),
             api_url: required("EPOSYANDU_API_URL", input.api_url)?
                 .trim_end_matches('/')
                 .into(),
@@ -75,35 +79,48 @@ impl QueueConfig {
     }
 
     fn from_env() -> Result<Option<Self>, String> {
-        if !env::var("QUEUE_CONSUMER_ENABLED")
+        if !env::var("EPOSYANDU_QUEUE_CONSUMER_ENABLED")
+            .or_else(|_| env::var("QUEUE_CONSUMER_ENABLED"))
             .unwrap_or_default()
             .eq_ignore_ascii_case("true")
         {
             return Ok(None);
         }
-        let required = |name: &str| {
-            env::var(name)
-                .ok()
-                .filter(|value| !value.trim().is_empty())
-                .ok_or_else(|| format!("Environment {name} wajib diisi untuk Queue consumer."))
+        let required = |names: &[&str]| {
+            names
+                .iter()
+                .find_map(|name| env::var(name).ok().filter(|value| !value.trim().is_empty()))
+                .ok_or_else(|| {
+                    format!(
+                        "Environment {} wajib diisi untuk Queue consumer.",
+                        names.join(" atau ")
+                    )
+                })
         };
-        let batch_size = env::var("QUEUE_BATCH_SIZE")
+        let batch_size = env::var("EPOSYANDU_QUEUE_BATCH_SIZE")
+            .or_else(|_| env::var("QUEUE_BATCH_SIZE"))
             .ok()
             .and_then(|value| value.parse::<u8>().ok())
             .unwrap_or(5)
             .clamp(1, 100);
-        let poll_interval = env::var("QUEUE_POLL_INTERVAL_MS")
+        let poll_interval = env::var("EPOSYANDU_QUEUE_POLL_INTERVAL_MS")
+            .or_else(|_| env::var("QUEUE_POLL_INTERVAL_MS"))
             .ok()
             .and_then(|value| value.parse::<u64>().ok())
             .unwrap_or(1_500)
             .clamp(250, 60_000);
         Self::new(QueueConfigInput {
-            account_id: required("CLOUDFLARE_ACCOUNT_ID")?,
-            queue_id: required("CLOUDFLARE_QUEUE_ID")?,
-            api_token: required("CLOUDFLARE_QUEUES_API_TOKEN")?,
-            api_url: required("EPOSYANDU_API_URL")?,
-            shared_secret: required("RUST_WORKER_SHARED_SECRET")?,
-            grpc_url: env::var("DATA_PROCESSING_GRPC_URL")
+            account_id: required(&["EPOSYANDU_QUEUE_ACCOUNT_ID", "CLOUDFLARE_ACCOUNT_ID"])
+                .unwrap_or_default(),
+            queue_id: required(&["EPOSYANDU_QUEUE_ID", "CLOUDFLARE_QUEUE_ID"])?,
+            api_token: required(&["EPOSYANDU_QUEUE_TOKEN", "CLOUDFLARE_QUEUES_API_TOKEN"])?,
+            queue_api_url: env::var("EPOSYANDU_QUEUE_API_URL")
+                .or_else(|_| env::var("CLOUDFLARE_QUEUES_API_URL"))
+                .unwrap_or_else(|_| "https://api.cloudflare.com/client/v4/accounts".into()),
+            api_url: required(&["EPOSYANDU_API_URL"])?,
+            shared_secret: required(&["EPOSYANDU_SHARED_SECRET", "RUST_WORKER_SHARED_SECRET"])?,
+            grpc_url: env::var("EPOSYANDU_DATA_PROCESSING_GRPC_URL")
+                .or_else(|_| env::var("DATA_PROCESSING_GRPC_URL"))
                 .or_else(|_| env::var("GRPC_URL"))
                 .unwrap_or_else(|_| "unix:///tmp/e-posyandu/data-processing.sock".into()),
             batch_size,
@@ -113,9 +130,21 @@ impl QueueConfig {
     }
 
     fn queue_url(&self, action: &str) -> String {
+        if self.queue_api_url.contains("{account_id}") || self.queue_api_url.contains("{queue_id}")
+        {
+            let endpoint = self
+                .queue_api_url
+                .replace("{account_id}", &self.account_id)
+                .replace("{queue_id}", &self.queue_id);
+            return if endpoint.contains("{action}") {
+                endpoint.replace("{action}", action)
+            } else {
+                format!("{endpoint}/{action}")
+            };
+        }
         format!(
-            "https://api.cloudflare.com/client/v4/accounts/{}/queues/{}/messages/{action}",
-            self.account_id, self.queue_id
+            "{}/{}/queues/{}/messages/{action}",
+            self.queue_api_url, self.account_id, self.queue_id
         )
     }
 }

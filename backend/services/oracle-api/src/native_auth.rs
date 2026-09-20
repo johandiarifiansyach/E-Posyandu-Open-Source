@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-
 use std::{
     collections::{HashMap, HashSet},
     env, fs,
@@ -288,6 +287,18 @@ fn required_env(name: &str) -> Result<String, String> {
         .map(|value| value.trim().to_owned())
         .filter(|value| !value.is_empty())
         .ok_or_else(|| format!("{name} wajib diisi untuk API native Oracle."))
+}
+
+fn required_env_any(names: &[&str]) -> Result<String, String> {
+    names
+        .iter()
+        .find_map(|name| {
+            env::var(name)
+                .ok()
+                .map(|value| value.trim().to_owned())
+                .filter(|value| !value.is_empty())
+        })
+        .ok_or_else(|| format!("{} wajib diisi untuk API native.", names.join(" atau ")))
 }
 
 fn native_database_error(error: DatabaseError, message: &'static str) -> NativeError {
@@ -2166,22 +2177,27 @@ impl NativeAuth {
         http: Client,
         database: Option<Arc<NativeDatabase>>,
     ) -> Result<Option<Self>, String> {
-        if !env_flag("ORACLE_API_NATIVE_AUTH_ENABLED", false) {
+        if !env_flag(
+            "EPOSYANDU_NATIVE_AUTH_ENABLED",
+            env_flag("ORACLE_API_NATIVE_AUTH_ENABLED", false),
+        ) {
             return Ok(None);
         }
         let database = database.ok_or_else(|| {
             "PostgreSQL native wajib tersedia saat autentikasi Oracle aktif.".to_string()
         })?;
 
-        let configured_url = required_env("SUPABASE_URL")?;
-        let mut base_url =
-            Url::parse(&configured_url).map_err(|_| "SUPABASE_URL bukan URL valid.".to_string())?;
+        let configured_url = required_env_any(&["EPOSYANDU_AUTH_URL", "SUPABASE_URL"])?;
+        let mut base_url = Url::parse(&configured_url)
+            .map_err(|_| "EPOSYANDU_AUTH_URL bukan URL valid.".to_string())?;
         if base_url.scheme() != "https"
             || base_url.username() != ""
             || base_url.password().is_some()
             || base_url.query().is_some()
         {
-            return Err("SUPABASE_URL wajib berupa origin HTTPS tanpa kredensial/query.".into());
+            return Err(
+                "EPOSYANDU_AUTH_URL wajib berupa origin HTTPS tanpa kredensial/query.".into(),
+            );
         }
         base_url.set_path("/");
         base_url.set_fragment(None);
@@ -2228,8 +2244,14 @@ impl NativeAuth {
             supabase: SupabaseClient {
                 http,
                 base_url,
-                publishable_key: required_env("SUPABASE_PUBLISHABLE_KEY")?,
-                secret_key: required_env("SUPABASE_SECRET_KEY")?,
+                publishable_key: required_env_any(&[
+                    "EPOSYANDU_AUTH_PUBLIC_KEY",
+                    "SUPABASE_PUBLISHABLE_KEY",
+                ])?,
+                secret_key: required_env_any(&[
+                    "EPOSYANDU_AUTH_SECRET_KEY",
+                    "SUPABASE_SECRET_KEY",
+                ])?,
                 database,
             },
             sessions,

@@ -185,8 +185,17 @@ fn env_flag(name: &str, fallback: bool) -> bool {
         .unwrap_or(fallback)
 }
 
+fn first_env(names: &[&str]) -> Option<String> {
+    names.iter().find_map(|name| {
+        env::var(name)
+            .ok()
+            .map(|value| value.trim().to_owned())
+            .filter(|value| !value.is_empty())
+    })
+}
+
 fn legacy_origin() -> Result<Option<Url>, String> {
-    let Ok(configured) = env::var("ORACLE_API_LEGACY_ORIGIN") else {
+    let Some(configured) = first_env(&["EPOSYANDU_LEGACY_ORIGIN", "ORACLE_API_LEGACY_ORIGIN"]) else {
         return Ok(None);
     };
     if configured.trim().is_empty() {
@@ -206,8 +215,8 @@ fn legacy_origin() -> Result<Option<Url>, String> {
 }
 
 fn public_origin() -> Result<Url, String> {
-    let configured = env::var("ORACLE_API_PUBLIC_ORIGIN")
-        .unwrap_or_else(|_| "https://api.eposyandu.app".to_string());
+    let configured = first_env(&["EPOSYANDU_PUBLIC_ORIGIN", "ORACLE_API_PUBLIC_ORIGIN"])
+        .unwrap_or_else(|| "https://api.eposyandu.app".to_string());
     let mut parsed = Url::parse(configured.trim())
         .map_err(|_| "ORACLE_API_PUBLIC_ORIGIN bukan URL valid.".to_string())?;
     if parsed.scheme() != "https" {
@@ -469,8 +478,11 @@ async fn check_analysis_worker(client: &Client, enabled: bool) -> OperationalChe
             payload: None,
         };
     }
-    let configured_url = env::var("ORACLE_API_ANALYSIS_HEALTH_URL")
-        .unwrap_or_else(|_| DEFAULT_ANALYSIS_HEALTH_URL.to_owned());
+    let configured_url = first_env(&[
+        "EPOSYANDU_ANALYSIS_HEALTH_URL",
+        "ORACLE_API_ANALYSIS_HEALTH_URL",
+    ])
+    .unwrap_or_else(|| DEFAULT_ANALYSIS_HEALTH_URL.to_owned());
     let Ok(url) = Url::parse(configured_url.trim()) else {
         return OperationalCheck {
             reachable: false,
@@ -535,10 +547,7 @@ async fn check_oracle_database(state: &AppState) -> OperationalCheck {
 
 async fn check_redis_cache(_state: &AppState) -> OperationalCheck {
     let started_at = Instant::now();
-    let Some(url) = env::var("ORACLE_REDIS_URL")
-        .ok()
-        .map(|value| value.trim().to_owned())
-        .filter(|value| !value.is_empty())
+    let Some(url) = first_env(&["EPOSYANDU_CACHE_URL", "ORACLE_REDIS_URL"])
     else {
         return OperationalCheck {
             reachable: false,
@@ -1621,7 +1630,7 @@ fn verify_internal_signature(
                 "Permintaan Worker tidak valid.",
             )
         })?;
-    let secret = env::var("RUST_WORKER_SHARED_SECRET").map_err(|_| {
+    let secret = first_env(&["EPOSYANDU_SHARED_SECRET", "RUST_WORKER_SHARED_SECRET"]).ok_or_else(|| {
         failure(
             StatusCode::SERVICE_UNAVAILABLE,
             "worker_unavailable",
@@ -1782,8 +1791,8 @@ async fn async_main(worker_threads: usize) {
         .init();
     info!(worker_threads, "runtime Tokio Oracle API dikonfigurasi");
 
-    let address: SocketAddr = env::var("ORACLE_API_LISTEN_ADDR")
-        .unwrap_or_else(|_| DEFAULT_LISTEN_ADDR.to_string())
+    let address: SocketAddr = first_env(&["EPOSYANDU_API_LISTEN_ADDR", "ORACLE_API_LISTEN_ADDR"])
+        .unwrap_or_else(|| DEFAULT_LISTEN_ADDR.to_string())
         .parse()
         .expect("ORACLE_API_LISTEN_ADDR tidak valid");
     let legacy_origin = legacy_origin().expect("konfigurasi legacy origin tidak valid");
@@ -1798,9 +1807,18 @@ async fn async_main(worker_threads: usize) {
         .timeout(Duration::from_secs(120))
         .build()
         .expect("HTTP client tidak dapat dibuat");
-    let native_auth_enabled = env_flag("ORACLE_API_NATIVE_AUTH_ENABLED", false);
-    let native_reads_enabled = env_flag("ORACLE_API_NATIVE_READS_ENABLED", false);
-    let native_writes_enabled = env_flag("ORACLE_API_NATIVE_WRITES_ENABLED", false);
+    let native_auth_enabled = env_flag(
+        "EPOSYANDU_NATIVE_AUTH_ENABLED",
+        env_flag("ORACLE_API_NATIVE_AUTH_ENABLED", false),
+    );
+    let native_reads_enabled = env_flag(
+        "EPOSYANDU_NATIVE_READS_ENABLED",
+        env_flag("ORACLE_API_NATIVE_READS_ENABLED", false),
+    );
+    let native_writes_enabled = env_flag(
+        "EPOSYANDU_NATIVE_WRITES_ENABLED",
+        env_flag("ORACLE_API_NATIVE_WRITES_ENABLED", false),
+    );
     let realtime = RealtimeHub::new();
     let native_database = if native_auth_enabled || native_reads_enabled || native_writes_enabled {
         Some(Arc::new(

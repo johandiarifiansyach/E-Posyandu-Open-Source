@@ -26,7 +26,8 @@ pub(crate) struct NativeCache {
 
 impl NativeCache {
     pub(crate) async fn from_env() -> Result<Option<Self>, String> {
-        let Some(url) = env::var("ORACLE_REDIS_URL")
+        let Some(url) = env::var("EPOSYANDU_CACHE_URL")
+            .or_else(|_| env::var("ORACLE_REDIS_URL"))
             .ok()
             .map(|value| value.trim().to_owned())
             .filter(|value| !value.is_empty())
@@ -34,10 +35,10 @@ impl NativeCache {
             return Ok(None);
         };
         let client = redis::Client::open(url)
-            .map_err(|_| "ORACLE_REDIS_URL bukan URL Redis valid.".to_string())?;
+            .map_err(|_| "EPOSYANDU_CACHE_URL bukan URL Redis valid.".to_string())?;
         let connection = ConnectionManager::new(client)
             .await
-            .map_err(|_| "Redis cache Oracle tidak dapat dihubungi.".to_string())?;
+            .map_err(|_| "Cache tidak dapat dihubungi.".to_string())?;
         Ok(Some(Self { connection }))
     }
 
