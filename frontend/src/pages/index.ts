@@ -5,6 +5,7 @@ export { default as MfaPage } from './MfaPage';
 export { default as MaintenancePage } from './MaintenancePage';
 export { default as DashboardPage } from './DashboardPage';
 export { default as DashboardOverviewPage } from './DashboardOverviewPage';
+export { default as AnalisisGiziPage } from './AnalisisGizi';
 export { default as ChildrenTablePage } from './ChildrenTablePage';
 export { default as MeasurementPage } from './MeasurementPage';
 export { default as ExclusiveBreastfeedingPage } from './ExclusiveBreastfeedingPage';

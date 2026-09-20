@@ -17,6 +17,7 @@ export function isFullAccessRole(role: string): boolean {
 
 export const DASHBOARD_TABS = [
     'dashboard',
+    'analisis_gizi',
     'data_balita',
     'asi_eksklusif',
     'mpasi',

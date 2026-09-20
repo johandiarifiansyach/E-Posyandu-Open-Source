@@ -77,6 +77,11 @@ pribadi ke repository.
 
 ## Lisensi dan kontribusi
 
-Repository ini disiapkan sebagai project open source untuk dikembangkan
-bersama. Tambahkan lisensi yang dipilih pemilik repository sebelum publikasi
-resmi, lalu ikuti `SECURITY.md` untuk pelaporan kerentanan.
+E-Posyandu Open Source dilisensikan di bawah **GNU General Public License
+v3.0 (GPLv3), atau versi lebih baru**. Setiap distribusi atau karya turunan
+wajib mempertahankan lisensi copyleft yang sama dan menyertakan sumber sesuai
+ketentuan GPLv3. Teks lisensi tersedia pada file [`LICENSE`](LICENSE).
+
+Kontribusi dipersilakan melalui pull request. Sebelum menambahkan kode,
+pastikan dependensi dan asetnya kompatibel dengan GPLv3, lalu ikuti
+`SECURITY.md` untuk pelaporan kerentanan.

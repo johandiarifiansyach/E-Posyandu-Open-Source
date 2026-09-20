@@ -1,6 +1,7 @@
 // Copyright (C) 2026 Johandi Arifiansyach
 
 import AddChildPage from './AddChildPage';
+import AnalisisGiziPage from './AnalisisGizi';
 import AdminBackendPage from './AdminBackendPage';
 import AdminInvitePage from './AdminInvitePage';
 import AdminMonitoringPage from './AdminMonitoringPage';
@@ -24,6 +25,7 @@ import RecycleBinPage from './RecycleBinPage';
  */
 export const reactPageRegistry = {
   dashboard: DashboardPage,
+  analisis_gizi: AnalisisGiziPage,
   data_balita: ChildrenTablePage,
   measurement: MeasurementPage,
   add_child: AddChildPage,

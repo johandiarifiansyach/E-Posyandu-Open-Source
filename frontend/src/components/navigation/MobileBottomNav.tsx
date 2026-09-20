@@ -1,8 +1,10 @@
 // Copyright (C) 2026 Johandi Arifiansyach
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
+  ChartLine,
   Ellipsis,
   LayoutDashboard,
   Plus,
@@ -25,7 +27,7 @@ export type MobileBottomNavProps<T extends string = string> = {
 };
 
 type MobileTab = {
-  id: "dashboard" | "data" | "addChild" | "more";
+  id: "dashboard" | "data" | "addChild" | "analysis" | "more";
   label: string;
   Icon: LucideIcon;
 };
@@ -34,25 +36,34 @@ const MOBILE_TABS: MobileTab[] = [
   { id: "dashboard", label: "Dashboard", Icon: LayoutDashboard },
   { id: "data", label: "Data Balita", Icon: Users },
   { id: "addChild", label: "Tambah", Icon: Plus },
+  { id: "analysis", label: "Analisis Gizi", Icon: ChartLine },
   { id: "more", label: "Lainnya", Icon: Ellipsis },
 ];
 
 const PRIMARY_VIEW_IDS = new Set(["dashboard", "data_balita", "add_child"]);
+const ANALYSIS_VIEW_IDS = new Set([
+  "problem_underweight",
+  "problem_stunting",
+  "problem_wasting",
+  "problem_tidak_naik",
+  "pmt_program",
+]);
 
 function tabForView(view: string): MobileTab["id"] {
   if (view === "dashboard") return "dashboard";
   if (view === "data") return "data";
   if (view === "addChild") return "addChild";
+  if (view === "analysis" || ANALYSIS_VIEW_IDS.has(view) || view === "pmt") return "analysis";
   return "more";
 }
 
 function moreSections() {
   return SIDEBAR_NAV_SECTIONS.map((section) => ({
     ...section,
-    // The dock owns the dashboard, child list and quick-add action. Keep the
-    // More sheet for the remaining pages so menu ownership stays clear.
+    // The dock owns the dashboard, child list, quick-add action, and nutrition
+    // analysis group. Keep the More sheet for the remaining pages.
     items: section.items.filter(
-      (item) => !PRIMARY_VIEW_IDS.has(item.id),
+      (item) => !PRIMARY_VIEW_IDS.has(item.id) && !ANALYSIS_VIEW_IDS.has(item.id),
     ),
   })).filter((section) => section.items.length > 0);
 }
@@ -133,7 +144,9 @@ export default function MobileBottomNav<T extends string = string>({
         ? "data"
         : tab === "addChild"
           ? "addChild"
-          : "more";
+          : tab === "analysis"
+            ? "analysis"
+            : "more";
     onNavigate(view as T);
   };
 

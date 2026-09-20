@@ -83,6 +83,7 @@ const ReactAdminBackendPage = lazy(
 const ReactAdminMonitoringPage = lazy(
   () => import("../administration/ReactAdminMonitoringPage"),
 );
+const AnalisisGiziPage = lazy(() => import("../../pages/AnalisisGizi"));
 
 type DashboardScope = {
   month: number;
@@ -160,6 +161,7 @@ type ChildTableView =
   | "problem_tidak_naik";
 type ActiveView =
   | "dashboard"
+  | "analysis"
   | ChildTableView
   | "asi"
   | "mpasi"
@@ -183,6 +185,8 @@ function defaultAgeGroupForView(view: ActiveView): AgeGroup {
 
 const HASH_TO_VIEW: Record<string, ActiveView> = {
   dashboard: "dashboard",
+  analisis_gizi: "analysis",
+  analysis: "analysis",
   data_balita: "data",
   asi_eksklusif: "asi",
   mpasi: "mpasi",
@@ -224,6 +228,7 @@ function hashForView(view: ActiveView) {
 
 const PAGE_TITLES: Record<ActiveView, string> = {
   dashboard: "Dashboard",
+  analysis: "Analisis Gizi",
   data: "Data Balita",
   recent: "Balita Baru Diinput",
   recycle: "Daftar Dihapus",
@@ -282,14 +287,16 @@ export default function ReactDashboardShell({
   const dashboardQuery = useQuery({
     queryKey: ["dashboard-stats", request],
     queryFn: () => getDashboardStats(request),
-    enabled: activeView === "dashboard",
+    enabled: activeView === "dashboard" || activeView === "analysis",
     // Never seed a new filter with a browser snapshot or the previous query.
     // The backend owns the authoritative fallback; the UI shows a skeleton
     // until the response for this exact scope arrives.
     staleTime: 0,
+    refetchInterval: (query) => query.state.data?.analysisPending ? 5_000 : false,
     refetchOnWindowFocus: true,
   });
   const stats = dashboardQuery.data || EMPTY_STATS;
+  const analysisPending = Boolean(dashboardQuery.data?.analysisPending);
   const pageState: PageState<DashboardStatsResponse> = dashboardQuery.data
       ? { status: "success", data: dashboardQuery.data }
       : dashboardQuery.error
@@ -652,6 +659,7 @@ export default function ReactDashboardShell({
   const showFilter = ![
     "addChild",
     "measurement",
+    "analysis",
     "adminBackend",
     "adminMonitoring",
   ].includes(activeView);
@@ -783,13 +791,21 @@ export default function ReactDashboardShell({
               stats={stats}
               pageState={pageState}
               loading={pageState.status === "loading"}
-              refreshing={dashboardQuery.isFetching}
+              refreshing={dashboardQuery.isFetching || analysisPending}
               monitoringStatus={monitoringStatus}
               filterMonth={scope.month}
               filterYear={scope.year}
               ageGroup={scope.ageGroup}
               viewDesa={request.village}
               viewPosyandu={request.posyandu}
+            />
+          ) : activeView === "analysis" ? (
+            <AnalisisGiziPage
+              stats={stats}
+              pageState={pageState}
+              loading={pageState.status === "loading"}
+              refreshing={dashboardQuery.isFetching || analysisPending}
+              onNavigate={navigate}
             />
           ) : [
               "data",

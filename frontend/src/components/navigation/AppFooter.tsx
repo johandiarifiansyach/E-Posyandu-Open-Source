@@ -1,4 +1,5 @@
 // Copyright (C) 2026 Johandi Arifiansyach
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import { APP_VERSION } from "../../config/app";
 
@@ -19,7 +20,7 @@ export default function AppFooter({
   return (
     <footer className="app-footer app-footer-glass mt-8 flex items-center justify-between gap-4 border-t border-white/30 px-6 py-4 text-xs text-gray-400">
       <p className="app-footer-copy min-w-0 truncate">
-        E-Posyandu
+        E-Posyandu · Lisensi GNU General Public License v3.0
       </p>
 
       <div className="app-footer-meta flex shrink-0 items-center justify-end gap-3">

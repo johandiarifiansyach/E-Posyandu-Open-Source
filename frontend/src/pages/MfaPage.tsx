@@ -84,7 +84,7 @@ function MfaShell({ children }: { children: React.ReactNode }) {
         </section>
       </div>
     </main>
-    <footer className="login-footer"><p>E-Posyandu v{APP_VERSION}</p></footer>
+    <footer className="login-footer"><p>E-Posyandu · GNU GPL v3.0 · v{APP_VERSION}</p></footer>
   </div>;
 }
 

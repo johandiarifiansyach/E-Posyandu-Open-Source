@@ -211,7 +211,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
       </div>
     </main>
     <footer className="login-footer">
-      <p>E-Posyandu</p>
+      <p>E-Posyandu · GNU GPL v3.0</p>
       <button
         type="button"
         className="app-version-button login-version-button"

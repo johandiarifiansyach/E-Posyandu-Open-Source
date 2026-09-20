@@ -1,6 +1,7 @@
 {
   "name": "e-posyandu-frontend-react",
   "private": true,
+  "license": "GPL-3.0-or-later",
   "version": "3.8.1",
   "type": "module",
   "scripts": {

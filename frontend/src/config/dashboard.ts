@@ -17,7 +17,7 @@ export function isFullAccessRole(role: string): boolean {
 }
 
 export const DASHBOARD_TABS = [
-  'dashboard', 'data_balita', 'asi_eksklusif', 'mpasi',
+  'dashboard', 'analisis_gizi', 'data_balita', 'asi_eksklusif', 'mpasi',
   'problem_underweight', 'problem_stunting', 'problem_wasting',
   'problem_tidak_naik', 'pmt_program', 'recent', 'change_history',
   'recycle_bin', 'add_child', 'measurement', 'admin_backend', 'admin_monitoring'
